@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.storage.CacheResetOnProcessCanceled.enabled
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -47,6 +46,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+    runtimeOnly("com.oracle.database.jdbc:ojdbc11")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.amqp:spring-rabbit-test")
     testImplementation("com.ninja-squad:springmockk:4.0.2")
@@ -57,8 +58,10 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:5.8.0")
     testImplementation("io.kotest:kotest-property:5.8.0")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.27")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testRuntimeOnly("com.h2database:h2")
 }
 
 gitProperties {
@@ -113,11 +116,5 @@ tasks.jacocoTestCoverageVerification {
                 minimum = "0.10".toBigDecimal()
             }
         }
-    }
-}
-
-sourceSets {
-    testFixtures {
-        kotlin.srcDir("src/test/kotlin/fixtures")
     }
 }
