@@ -1,9 +1,9 @@
 package com.konai.fxs.common
 
-import com.konai.fxs.common.entity.BaseEntity
+import com.konai.fxs.common.entity.SequenceBaseEntity
 import java.security.SecureRandom
 
-open class FakeBaseRepository<T : BaseEntity> {
+open class FakeSequenceBaseRepository<T : SequenceBaseEntity> {
 
     private val entities = mutableMapOf<Long, T>()
 

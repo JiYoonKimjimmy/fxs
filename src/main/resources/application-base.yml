@@ -1,0 +1,93 @@
+server:
+  port: 12300
+  shutdown: graceful
+  servlet:
+    context-path: /fxs
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 200
+    connection-timeout: 20s
+
+# actuator
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, shutdown, metrics, prometheus
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    shutdown:
+      enabled: true
+  health:
+    redis:
+      enabled: false
+    rabbit:
+      enabled: false
+
+# encrypt cubeone
+database:
+  encrypt-provider: CUBE_ONE
+
+# spring
+spring:
+  datasource:
+    hikari:
+      pool-name: hikaricp-pool
+      minimum-idle: 5
+      maximum-pool-size: 20
+      max-lifetime: 60000
+      idle-timeout: 30000
+      connection-timeout: 10000
+      connection-test-query: SELECT 1 FROM DUAL
+  jpa:
+    database: oracle
+  data:
+    redis:
+      timeout: 10s
+      connect-timeout: 10s
+      lettuce:
+        pool:
+          enabled: true
+          min-idle: 0
+          max-idle: 8
+          max-active: 30
+          max-wait: 20s
+          time-between-eviction-runs: 20s
+
+# logging
+logging:
+  level:
+    com.zaxxer.hikari.pool.HikariPool: DEBUG
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    hikari:
+      driver-class-name: oracle.jdbc.OracleDriver
+      jdbc-url: jdbc:oracle:thin:@10.40.10.24:15322:KMDBP19
+      username: fxs
+      password: StgFXS1104#
+  jpa:
+    show-sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: 118.33.122.28
+      port: 6379
+      password: 123456
+      sentinel:
+        master: mymaster
+        nodes: 118.33.122.28:26379

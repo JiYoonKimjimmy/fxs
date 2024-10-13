@@ -1,7 +1,10 @@
+# spring
 spring:
   profiles:
-    include: db
-    active: test
-  threads:
-    virtual:
-      enabled: true
+    include: base, external-url
+    active: dev
+
+# springdoc
+springdoc:
+  swagger-ui:
+    url: /openapi3.yaml

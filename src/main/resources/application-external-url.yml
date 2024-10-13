@@ -1,0 +1,5 @@
+# external ur
+external-url:
+  knotify:
+    host: knotify.konadc.com
+    port: 15519

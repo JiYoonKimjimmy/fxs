@@ -1,0 +1,14 @@
+# spring
+spring:
+  profiles:
+    include: base, external-url
+    active: test
+
+# test properties
+git:
+  commit:
+    id:
+      abbrev:
+  build:
+    version:
+    time:

@@ -1,0 +1,103 @@
+server:
+  port: 12300
+  shutdown: graceful
+  servlet:
+    context-path: /fxs
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 200
+    connection-timeout: 20s
+
+# actuator
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health, shutdown, metrics, prometheus
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    shutdown:
+      enabled: true
+  health:
+    redis:
+      enabled: false
+    rabbit:
+      enabled: false
+
+# encrypt cubeone
+database:
+  encrypt-provider: CUBE_ONE
+
+# spring
+spring:
+  datasource:
+    hikari:
+      pool-name: hikaricp-pool
+      minimum-idle: 5
+      maximum-pool-size: 20
+      max-lifetime: 60000
+      idle-timeout: 30000
+      connection-timeout: 10000
+      connection-test-query: SELECT 1 FROM DUAL
+  jpa:
+    database: oracle
+  data:
+    redis:
+      timeout: 10s
+      connect-timeout: 10s
+      lettuce:
+        pool:
+          enabled: true
+          min-idle: 0
+          max-idle: 8
+          max-active: 30
+          max-wait: 20s
+          time-between-eviction-runs: 20s
+
+# logging
+logging:
+  level:
+    com.zaxxer.hikari.pool.HikariPool: DEBUG
+
+---
+
+# spring
+spring:
+  config:
+    activate:
+      on-profile: test
+  # datasource
+  datasource:
+    hikari:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:fxs
+      username: sa
+      password:
+  # jpa
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    generate-ddl: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  # redis
+  data:
+    redis:
+      host: 118.33.122.28
+      port: 6379
+      password: 123456
+      sentinel:
+        master: mymaster
+        nodes: 118.33.122.28:26379
+  h2:
+    console:
+      enabled: true
