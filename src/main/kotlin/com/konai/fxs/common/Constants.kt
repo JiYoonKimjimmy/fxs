@@ -8,3 +8,5 @@ const val ZERO_CHAR = '0'
 const val ZERO_STR = "0"
 const val DEFAULT_SORT_ORDER = "DESC"
 const val DEFAULT_SORT_BY = "id"
+
+const val HEADER_REQUEST_START_TIME = "X-KM-Request-Start-Time"

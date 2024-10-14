@@ -85,10 +85,11 @@ dependencies {
     testImplementation("com.epages:restdocs-api-spec-mockmvc:0.19.2")
 
     // kotest
-    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
-    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
-    testImplementation("io.kotest:kotest-property:5.8.0")
-    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
+    val kotestVersion = "5.9.0"
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
 
     testImplementation("it.ozimov:embedded-redis:0.7.2")
 

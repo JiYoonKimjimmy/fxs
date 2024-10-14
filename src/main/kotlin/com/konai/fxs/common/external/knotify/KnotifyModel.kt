@@ -1,4 +1,4 @@
-package com.konai.fxs.common.restclient.knotify
+package com.konai.fxs.common.external.knotify
 
 data class KnotifyPostSendSmsRequest(
     val aspId: String,
@@ -7,8 +7,6 @@ data class KnotifyPostSendSmsRequest(
     val notificationType: String,
     val templateVariables: Map<String, String>
 ) {
-
-    val url by lazy { "/api/km/notifications/sms" }
 
     companion object {
 

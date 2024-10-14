@@ -1,4 +1,4 @@
-package com.konai.fxs.common.restclient
+package com.konai.fxs.common.enumerate
 
 enum class ComponentName(private val propertyName: String) {
 
