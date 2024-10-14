@@ -2,7 +2,7 @@ package com.konai.fxs.infra.config
 
 import com.konai.fxs.common.HEADER_REQUEST_START_TIME
 import com.konai.fxs.common.ZERO_STR
-import com.konai.fxs.common.enumerate.ComponentName
+import com.konai.fxs.common.enumerate.ExternalComponent
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
 import com.konasl.commonlib.springweb.correlation.headerpropagator.CorrelationHeaderField.*
 import com.konasl.commonlib.springweb.correlation.loggercontext.CorrelationLoggingField.*
@@ -30,14 +30,14 @@ class RestClientConfig(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun <T> restClientRepositoryProxy(component: ComponentName, classType: Class<T>): T {
+    fun <T> restClientRepositoryProxy(component: ExternalComponent, classType: Class<T>): T {
         val url = externalUrlProperties.getProperty(component).url
         val adapter = RestClientAdapter.create(restClient(component, url, Duration.ofSeconds(5), Duration.ofSeconds(20)))
         val factory = HttpServiceProxyFactory.builderFor(adapter).build()
         return factory.createClient(classType)
     }
 
-    private fun restClient(component: ComponentName, baseUrl: String, connectTimeout: Duration, readTimeout: Duration): RestClient {
+    private fun restClient(component: ExternalComponent, baseUrl: String, connectTimeout: Duration, readTimeout: Duration): RestClient {
         return RestClient
             .builder()
             .baseUrl(baseUrl)
@@ -73,12 +73,12 @@ class RestClientConfig(
         request.headers[CORRELATION_ID_HEADER_FIELD.getName()] = MDC.get(CORRELATION_ID_LOG_FIELD.getName()) ?: RequestContext.generateId()
     }
 
-    private fun HttpRequest.logging(body: ByteArray, component: ComponentName): String {
+    private fun HttpRequest.logging(body: ByteArray, component: ExternalComponent): String {
         logger.info("[${component.name}-REQ] ${this.method} ${this.uri} ${String(body)}")
         return Instant.now().toString()
     }
 
-    private fun ClientHttpResponse.logging(request: HttpRequest, component: ComponentName): ClientHttpResponse {
+    private fun ClientHttpResponse.logging(request: HttpRequest, component: ExternalComponent): ClientHttpResponse {
         val responseTime = Duration.between(Instant.parse(request.headers[HEADER_REQUEST_START_TIME]?.first() ?: ZERO_STR), Instant.now()).toMillis()
         logger.info("[${component.name}-RES] ${request.method} ${request.uri} ${this.statusCode.value()} ${responseTime}ms")
         return this

@@ -1,6 +1,6 @@
 package com.konai.fxs.common.enumerate
 
-enum class ComponentName(private val propertyName: String) {
+enum class ExternalComponent(private val propertyName: String) {
 
     KNOTIFY("knotify")
     ;

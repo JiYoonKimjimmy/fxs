@@ -1,6 +1,6 @@
 package com.konai.fxs.infra.config
 
-import com.konai.fxs.common.enumerate.ComponentName
+import com.konai.fxs.common.enumerate.ExternalComponent
 import com.konai.fxs.common.external.knotify.KnotifyHttpServiceProxy
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,7 +12,7 @@ class HttpServiceProxyConfig(
 
     @Bean
     fun knotifyHttpServiceProxy(): KnotifyHttpServiceProxy {
-        return restClientConfig.restClientRepositoryProxy(ComponentName.KNOTIFY, KnotifyHttpServiceProxy::class.java)
+        return restClientConfig.restClientRepositoryProxy(ExternalComponent.KNOTIFY, KnotifyHttpServiceProxy::class.java)
     }
 
 }

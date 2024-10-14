@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.konai.fxs.common.enumerate.ComponentName
+import com.konai.fxs.common.enumerate.ExternalComponent
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.common.EMPTY
@@ -24,8 +24,8 @@ class ExternalUrlProperties {
         return externalUrlMap["external-url"] ?: emptyMap()
     }
 
-    fun getProperty(componentName: ComponentName): ExternalUrlProperty {
-        return this.properties[componentName.getPropertyName()] ?: throw InternalServiceException(ErrorCode.EXTERNAL_URL_PROPERTY_NOT_DEFINED)
+    fun getProperty(component: ExternalComponent): ExternalUrlProperty {
+        return this.properties[component.getPropertyName()] ?: throw InternalServiceException(ErrorCode.EXTERNAL_URL_PROPERTY_NOT_DEFINED)
     }
 
     data class ExternalUrlProperty(
