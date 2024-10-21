@@ -1,23 +1,23 @@
 package com.konai.fxs.v1.account.service
 
 import com.konai.fxs.testsupport.CustomBehaviorSpec
+import com.konai.fxs.testsupport.TestExtensionFunctions
 import com.konai.fxs.v1.account.service.domain.V1Account
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import java.util.*
 
-class V1AccountManagementServiceTest : CustomBehaviorSpec({
+class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
 
     val v1AccountManagementService = dependencies.v1AccountManagementService
 
     lateinit var saved: V1Account
 
     given("외화 계좌 정보 저장 요청되어") {
-        val accountNumber = UUID.randomUUID().toString()
+        val accountNumber = TestExtensionFunctions.generateUUID()
         val domain = V1Account(accountNumber = accountNumber)
 
         `when`("신규 등록 요청인 경우") {
-            val result = v1AccountManagementService.save(domain)
+            val result = v1AccountManagementService.create(domain)
 
             then("저장 결과 성공 정상 확인한다") {
                 result shouldNotBe null

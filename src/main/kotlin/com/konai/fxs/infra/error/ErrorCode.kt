@@ -2,8 +2,6 @@ package com.konai.fxs.infra.error
 
 import org.springframework.http.HttpStatus
 
-const val COMPONENT_CODE = "210"
-
 enum class ErrorCode(
     val status: HttpStatus,
     val code: String,

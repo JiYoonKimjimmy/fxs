@@ -4,11 +4,9 @@ import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.extensions.Extension
 import io.kotest.extensions.spring.SpringTestExtension
 import io.kotest.extensions.spring.SpringTestLifecycleMode
-import org.springframework.context.annotation.Configuration
+import org.springframework.boot.test.context.TestConfiguration
 
-@Configuration
+@TestConfiguration
 class KotestConfig : AbstractProjectConfig() {
-
     override fun extensions(): List<Extension> = listOf(SpringTestExtension(SpringTestLifecycleMode.Root))
-
 }

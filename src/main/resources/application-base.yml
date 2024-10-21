@@ -72,7 +72,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: oracle.jdbc.OracleDriver
-      jdbc-url: jdbc:oracle:thin:@10.40.10.24:15322:KMDBP19
+      jdbc-url: jdbc:oracle:thin:@118.33.122.24:15322:KMDBP19
       username: fxs
       password: StgFXS1104#
   jpa:
@@ -91,3 +91,42 @@ spring:
       sentinel:
         master: mymaster
         nodes: 118.33.122.28:26379
+
+---
+
+# spring
+spring:
+  config:
+    activate:
+      on-profile: test
+  # datasource
+  datasource:
+    hikari:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:fxs
+      username: sa
+      password:
+  # jpa
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    show-sql: true
+    generate-ddl: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  # redis
+  data:
+    redis:
+      host: 118.33.122.28
+      port: 6379
+      password: 123456
+      sentinel:
+        master: mymaster
+        nodes: 118.33.122.28:26379
+  h2:
+    console:
+      enabled: true

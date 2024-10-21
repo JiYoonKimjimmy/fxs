@@ -1,9 +1,9 @@
 package com.konai.fxs.common.model
 
-import com.konai.fxs.infra.error.COMPONENT_CODE
+import com.konai.fxs.common.COMPONENT_CODE
+import com.konai.fxs.common.enumerate.ResultStatus
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.FeatureCode
-import com.konai.fxs.common.enumerate.ResultStatus
 
 data class BaseResult(
     val status: ResultStatus = ResultStatus.SUCCESS,
