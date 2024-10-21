@@ -1,8 +1,7 @@
 package com.konai.fxs.v1.account.repository
 
 import com.konai.fxs.infra.config.JpaAuditorConfig
-import com.konai.fxs.v1.account.repository.entity.V1AccountEntityFixture
-import io.kotest.core.spec.style.BehaviorSpec
+import com.konai.fxs.testsupport.CustomBehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -16,12 +15,12 @@ import org.springframework.test.context.ActiveProfiles
 @DataJpaTest
 class V1AccountRepositoryImplTest(
     private val v1AccountJpaRepository: V1AccountJpaRepository
-) : BehaviorSpec({
+) : CustomBehaviorSpec({
 
-    val fixture = V1AccountEntityFixture()
+    val v1AccountEntityFixture = dependencies.v1AccountEntityFixture
 
     given("외화 계좌 Entity 정보 등록 요청되어") {
-        val entity = fixture.make()
+        val entity = v1AccountEntityFixture.make()
 
         `when`("신규 정보인 경우") {
             val result = v1AccountJpaRepository.save(entity)

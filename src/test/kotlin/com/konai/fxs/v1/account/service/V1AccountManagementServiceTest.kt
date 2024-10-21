@@ -1,17 +1,14 @@
 package com.konai.fxs.v1.account.service
 
-import com.konai.fxs.v1.account.repository.FakeV1AccountRepositoryImpl
+import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.v1.account.service.domain.V1Account
-import com.konai.fxs.v1.account.service.domain.V1AccountMapper
-import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.util.*
 
-class V1AccountManagementServiceTest : BehaviorSpec({
+class V1AccountManagementServiceTest : CustomBehaviorSpec({
 
-    val fakeV1AccountRepositoryImpl = FakeV1AccountRepositoryImpl(V1AccountMapper())
-    val v1AccountManagementService = V1AccountManagementService(fakeV1AccountRepositoryImpl)
+    val v1AccountManagementService = dependencies.v1AccountManagementService
 
     lateinit var saved: V1Account
 

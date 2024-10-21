@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Table
 
-@Table(name = "ACCOUNTS")
+@Table(name = "V1_ACCOUNTS")
 @Entity
 class V1AccountEntity(
 

@@ -3,10 +3,10 @@ package com.konai.fxs.common.external.knotify
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.konai.fxs.testsupport.CustomStringSpec
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
 import com.konasl.commonlib.springweb.correlation.loggercontext.CorrelationLoggingField.CORRELATION_ID_LOG_FIELD
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import org.slf4j.MDC
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,7 +16,7 @@ import org.springframework.web.client.HttpClientErrorException
 @SpringBootTest
 class KnotifyHttpServiceImplTest(
     private val knotifyHttpService: KnotifyHttpService
-) : StringSpec({
+) : CustomStringSpec({
 
     beforeTest {
         MDC.put(CORRELATION_ID_LOG_FIELD.getName(), RequestContext.generateId())
