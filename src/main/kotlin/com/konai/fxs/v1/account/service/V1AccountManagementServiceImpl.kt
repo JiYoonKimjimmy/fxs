@@ -5,9 +5,7 @@ import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.account.repository.V1AccountRepository
 import com.konai.fxs.v1.account.service.domain.V1Account
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
-import kotlin.concurrent.thread
 
 @Service
 class V1AccountManagementServiceImpl(

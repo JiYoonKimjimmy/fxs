@@ -1,7 +1,6 @@
 package com.konai.fxs.v1.account.repository.entity
 
 import com.konai.fxs.common.entity.SequenceBaseEntity
-import com.konai.fxs.infra.converter.EncryptionCustomerInfoConverter
 import jakarta.persistence.*
 import java.math.BigDecimal
 
