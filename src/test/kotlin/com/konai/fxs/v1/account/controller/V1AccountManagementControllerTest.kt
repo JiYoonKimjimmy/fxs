@@ -23,7 +23,7 @@ class V1AccountManagementControllerTest(
         val acquirerType = AcquirerType.FX_DEPOSIT
         val acquirerName = "외화 예치금 계좌"
         val currency = "USD"
-        val minRequiredBalance = 0L
+        val minRequiredBalance = 100000L
         val request = V1CreateAccountRequest(
             acquirerId = acquirerId,
             acquirerType = acquirerType,
@@ -51,8 +51,8 @@ class V1AccountManagementControllerTest(
                             jsonPath("data.acquirerType", equalTo(acquirerType.name))
                             jsonPath("data.acquirerName", equalTo(acquirerName))
                             jsonPath("data.currency", equalTo(currency))
-                            jsonPath("data.minRequiredBalance", equalTo(0))
-                            jsonPath("data.averageExchangeRate", equalTo(0.0))
+                            jsonPath("data.minRequiredBalance", equalTo(minRequiredBalance.toInt()))
+                            jsonPath("data.averageExchangeRate", equalTo(0.toDouble()))
                         }
                     }
             }
