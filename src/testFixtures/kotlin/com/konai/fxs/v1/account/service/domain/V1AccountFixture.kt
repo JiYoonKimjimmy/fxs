@@ -1,14 +1,14 @@
-package com.konai.fxs.v1.account.repository.entity
+package com.konai.fxs.v1.account.service.domain
 
 import java.math.BigDecimal
 
-class V1AccountEntityFixture {
+class V1AccountFixture {
 
     fun make(
         id: Long? = null,
-        acquirer: V1AcquirerEntity
-    ): V1AccountEntity {
-        return V1AccountEntity(
+        acquirer: V1Acquirer
+    ): V1Account {
+        return V1Account(
             id = id,
             acquirer = acquirer,
             currency = "USD",

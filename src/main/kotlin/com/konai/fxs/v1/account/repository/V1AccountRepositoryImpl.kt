@@ -1,7 +1,9 @@
 package com.konai.fxs.v1.account.repository
 
+import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
+import com.konai.fxs.v1.account.service.domain.V1Acquirer
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -18,6 +20,11 @@ class V1AccountRepositoryImpl(
 
     override fun findOne(id: Long): V1Account? {
         return v1AccountJpaRepository.findById(id).orElse(null)
-            .let { v1AccountMapper.entityToDomain(it) }
+            ?.let { v1AccountMapper.entityToDomain(it) }
     }
+
+    override fun existsByAcquirer(acquirer: V1Acquirer): Boolean {
+        return v1AccountJpaRepository.existsByAcquirer(V1AcquirerEntity(id = acquirer.id, type = acquirer.type, name = acquirer.name))
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.controller
 
+import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.CustomSpringBootTest
 import com.konai.fxs.testsupport.TestExtensionFunctions
@@ -18,8 +19,18 @@ class V1AccountManagementControllerTest(
     val objectMapper = dependencies.objectMapper
 
     given("외화 계좌 등록 API 요청하여") {
-        val accountNumber = TestExtensionFunctions.generateUUID()
-        val request = V1CreateAccountRequest(accountNumber = accountNumber)
+        val acquirerId = TestExtensionFunctions.generateUUID()
+        val acquirerType = AcquirerType.FX_DEPOSIT
+        val acquirerName = "외화 예치금 계좌"
+        val currency = "USD"
+        val minRequiredBalance = 0L
+        val request = V1CreateAccountRequest(
+            acquirerId = acquirerId,
+            acquirerType = acquirerType,
+            acquirerName = acquirerName,
+            currency = currency,
+            minRequiredBalance = minRequiredBalance,
+        )
         val createAccountUrl = "/api/v1/account"
 
         `when`("신규 외화 계좌 정보인 경우") {
@@ -36,7 +47,12 @@ class V1AccountManagementControllerTest(
                         status { isCreated() }
                         content {
                             jsonPath("data.accountId", greaterThan(0))
-                            jsonPath("data.accountNumber", equalTo(accountNumber))
+                            jsonPath("data.acquirerId", equalTo(acquirerId))
+                            jsonPath("data.acquirerType", equalTo(acquirerType.name))
+                            jsonPath("data.acquirerName", equalTo(acquirerName))
+                            jsonPath("data.currency", equalTo(currency))
+                            jsonPath("data.minRequiredBalance", equalTo(0))
+                            jsonPath("data.averageExchangeRate", equalTo(0.0))
                         }
                     }
             }

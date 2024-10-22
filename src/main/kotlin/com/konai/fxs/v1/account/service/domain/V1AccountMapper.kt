@@ -3,35 +3,66 @@ package com.konai.fxs.v1.account.service.domain
 import com.konai.fxs.v1.account.controller.model.V1AccountModel
 import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity
+import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 
 @Component
 class V1AccountMapper {
 
     fun requestToDomain(request: V1CreateAccountRequest): V1Account {
         return V1Account(
-            accountNumber = request.accountNumber
+            acquirer = V1Acquirer(
+                id = request.acquirerId,
+                type = request.acquirerType,
+                name = request.acquirerName,
+            ),
+            currency = request.currency,
+            minRequiredBalance = BigDecimal(request.minRequiredBalance),
+            averageExchangeRate = BigDecimal.ZERO,
         )
     }
 
     fun domainToModel(domain: V1Account): V1AccountModel {
         return V1AccountModel(
             accountId = domain.id,
-            accountNumber = domain.accountNumber
+            acquirerId = domain.acquirer.id,
+            acquirerType = domain.acquirer.type,
+            acquirerName = domain.acquirer.name,
+            currency = domain.currency,
+            balance = domain.balance.toLong(),
+            minRequiredBalance = domain.minRequiredBalance.toLong(),
+            averageExchangeRate = domain.averageExchangeRate.toDouble()
         )
     }
 
     fun domainToEntity(domain: V1Account): V1AccountEntity {
         return V1AccountEntity(
             id = domain.id,
-            accountNumber = domain.accountNumber
+            acquirer = V1AcquirerEntity(
+                id = domain.acquirer.id,
+                type = domain.acquirer.type,
+                name = domain.acquirer.name,
+            ),
+            currency = domain.currency,
+            balance = domain.balance,
+            minRequiredBalance = domain.minRequiredBalance,
+            averageExchangeRate = domain.averageExchangeRate,
         )
     }
 
     fun entityToDomain(entity: V1AccountEntity): V1Account {
         return V1Account(
             id = entity.id,
-            accountNumber = entity.accountNumber
+            acquirer = V1Acquirer(
+                id = entity.acquirer.id,
+                type = entity.acquirer.type,
+                name = entity.acquirer.name,
+            ),
+            currency = entity.currency,
+            balance = entity.balance,
+            minRequiredBalance = entity.minRequiredBalance,
+            averageExchangeRate = entity.averageExchangeRate
         )
     }
 

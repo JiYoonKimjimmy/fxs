@@ -5,7 +5,7 @@ import com.konai.fxs.testsupport.TestExtensionFunctions
 
 open class FakeSequenceBaseRepository<T : SequenceBaseEntity> {
 
-    private val entities = mutableMapOf<Long, T>()
+    protected val entities = mutableMapOf<Long, T>()
 
     protected fun save(entity: T): T {
         val id = entity.id ?: TestExtensionFunctions.generateSequence()

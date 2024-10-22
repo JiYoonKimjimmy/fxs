@@ -103,7 +103,7 @@ spring:
   datasource:
     hikari:
       driver-class-name: org.h2.Driver
-      jdbc-url: jdbc:h2:mem:fxs
+      jdbc-url: jdbc:h2:mem:fxs;MODE=Oracle
       username: sa
       password:
   # jpa
@@ -114,7 +114,7 @@ spring:
     generate-ddl: true
     open-in-view: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
