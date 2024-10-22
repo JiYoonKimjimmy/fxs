@@ -4,7 +4,6 @@ import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.CustomDataJpaTest
 import com.konai.fxs.testsupport.TestExtensionFunctions
-import com.konai.fxs.v1.account.repository.entity.V1AccountEntity
 import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
@@ -15,17 +14,6 @@ class V1AccountRepositoryImplTest(
 ) : CustomBehaviorSpec({
 
     val v1AccountEntityFixture = dependencies.v1AccountEntityFixture
-
-    lateinit var saved: V1AccountEntity
-
-    beforeSpec {
-        val acquirerId = TestExtensionFunctions.generateUUID()
-        val acquirerType = AcquirerType.FX_DEPOSIT
-        val acquirerName = "외화 예치금 계좌"
-        val acquirer = V1AcquirerEntity(id = acquirerId, type = acquirerType, name = acquirerName)
-        val entity = v1AccountEntityFixture.make(acquirer = acquirer)
-        saved = v1AccountJpaRepository.save(entity)
-    }
 
     given("외화 계좌 Entity 정보 저장 요청되어") {
         val acquirerId = TestExtensionFunctions.generateUUID()
@@ -46,7 +34,22 @@ class V1AccountRepositoryImplTest(
     }
 
     given("'acquirer' 기준 외화 계좌 Entity 조회 요청하여") {
-        val acquirer = saved.acquirer
+        val acquirerId = TestExtensionFunctions.generateUUID()
+        val acquirerType = AcquirerType.FX_DEPOSIT
+        val acquirerName = "외화 예치금 계좌"
+        val acquirer = V1AcquirerEntity(id = acquirerId, type = acquirerType, name = acquirerName)
+
+        `when`("일치한 Entity 정보가 없는 경우") {
+            val result = v1AccountJpaRepository.existsByAcquirer(acquirer)
+
+            then("조회 결과 'false' 정상 확인한다") {
+                result shouldBe false
+            }
+        }
+
+        // 외화 계좌 정보 DB 저장
+        val entity = v1AccountEntityFixture.make(acquirer = acquirer)
+        v1AccountJpaRepository.save(entity)
 
         `when`("일치한 Entity 정보 있는 경우") {
             val result = v1AccountJpaRepository.existsByAcquirer(acquirer)
