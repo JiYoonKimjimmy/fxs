@@ -33,7 +33,7 @@ class V1AccountRepositoryImplTest(
         }
     }
 
-    given("'acquirer' 기준 외화 계좌 Entity 조회 요청하여") {
+    given("'acquirer' 기준 외화 계좌 Entity 존재 여부 조회 요청하여") {
         val acquirerId = TestExtensionFunctions.generateUUID()
         val acquirerType = AcquirerType.FX_DEPOSIT
         val acquirerName = "외화 예치금 계좌"

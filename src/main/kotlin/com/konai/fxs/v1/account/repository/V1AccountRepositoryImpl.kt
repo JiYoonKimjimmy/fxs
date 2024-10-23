@@ -24,7 +24,12 @@ class V1AccountRepositoryImpl(
     }
 
     override fun existsByAcquirer(acquirer: V1Acquirer): Boolean {
-        return v1AccountJpaRepository.existsByAcquirer(V1AcquirerEntity(id = acquirer.id, type = acquirer.type, name = acquirer.name))
+        return V1AcquirerEntity(
+                id = acquirer.id,
+                type = acquirer.type,
+                name = acquirer.name
+            )
+            .let { v1AccountJpaRepository.existsByAcquirer(it) }
     }
 
 }
