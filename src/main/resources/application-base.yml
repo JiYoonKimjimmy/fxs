@@ -28,7 +28,7 @@ management:
     rabbit:
       enabled: false
 
-# encrypt cubeone
+# encrypt CubeOne
 database:
   encrypt-provider: CUBE_ONE
 
@@ -45,6 +45,7 @@ spring:
       connection-test-query: SELECT 1 FROM DUAL
   jpa:
     database: oracle
+    database-platform: org.hibernate.dialect.OracleDialect
   data:
     redis:
       timeout: 10s
@@ -70,12 +71,14 @@ spring:
     activate:
       on-profile: dev
   datasource:
+    url: jdbc:oracle:thin:@118.33.122.24:15322:KMDBP19
     hikari:
       driver-class-name: oracle.jdbc.OracleDriver
       jdbc-url: jdbc:oracle:thin:@118.33.122.24:15322:KMDBP19
       username: fxs
       password: StgFXS1104#
   jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
     show-sql: true
     generate-ddl: false
     hibernate:

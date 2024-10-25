@@ -5,7 +5,9 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.v1.account.repository.FakeV1AccountRepositoryImpl
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntityFixture
+import com.konai.fxs.v1.account.service.V1AccountFindServiceImpl
 import com.konai.fxs.v1.account.service.V1AccountManagementServiceImpl
+import com.konai.fxs.v1.account.service.V1AccountSaveServiceImpl
 import com.konai.fxs.v1.account.service.domain.V1AccountFixture
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
 
@@ -18,7 +20,9 @@ object TestDependencies {
     private val fakeV1AccountRepository = FakeV1AccountRepositoryImpl(v1AccountMapper)
 
     // service
-    val v1AccountManagementService = V1AccountManagementServiceImpl(fakeV1AccountRepository)
+    private val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
+    private val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
+    val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountFindService, v1AccountSaveService)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

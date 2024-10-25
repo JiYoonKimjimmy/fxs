@@ -7,6 +7,7 @@ import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestExtensionFunctions
 import com.konai.fxs.v1.account.service.domain.V1Account
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.account.service.domain.V1Acquirer
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -59,19 +60,22 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
         }
     }
 
-    given("외화 계좌 정보 by id 조회 요청하여") {
+    given("외화 계좌 정보 'id' 조건 조회 요청하여") {
         val id = 1234567890L
+        var predicate = V1AccountPredicate(id = id)
 
         `when`("요청 'id' 정보와 일치한 정보 없는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1AccountManagementService.findOne(id) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1AccountManagementService.findByPredicate(predicate) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
             }
         }
 
+        predicate = V1AccountPredicate(id = saved.id!!)
+
         `when`("요청 'id' 정보와 일치한 정보 있는 경우") {
-            val result = v1AccountManagementService.findOne(saved.id!!)
+            val result = v1AccountManagementService.findByPredicate(predicate)!!
 
             then("조회 결과 성공 정상 확인한다") {
                 result shouldNotBe null

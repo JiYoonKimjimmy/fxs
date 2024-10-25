@@ -53,7 +53,7 @@ dependencies {
 
     implementation("org.redisson:redisson-spring-boot-starter:3.34.1")
 
-    val jdslVersion = "3.4.1"
+    val jdslVersion = "3.5.3"
     implementation("com.linecorp.kotlin-jdsl:jpql-dsl:$jdslVersion")
     implementation("com.linecorp.kotlin-jdsl:jpql-render:$jdslVersion")
     implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:$jdslVersion")

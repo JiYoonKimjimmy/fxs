@@ -1,12 +1,15 @@
 package com.konai.fxs.v1.account.repository
 
 import com.konai.fxs.common.enumerate.AcquirerType
+import com.konai.fxs.common.jdsl.findByPredicate
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.CustomDataJpaTest
 import com.konai.fxs.testsupport.TestExtensionFunctions
 import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 
 @CustomDataJpaTest
 class V1AccountRepositoryImplTest(
@@ -29,6 +32,23 @@ class V1AccountRepositoryImplTest(
                 result.id!! shouldBeGreaterThan 0L
                 result.acquirer.id shouldBe acquirerId
                 result.acquirer.name shouldBe acquirerName
+            }
+        }
+    }
+
+    given("외화 계좌 'id' 조건으로 조회 요청되어") {
+        // 외화 계좌 정보 DB 저장
+        val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
+
+        val id = entity.id!!
+        val predicate = V1AccountPredicate(id = id)
+
+        `when`("일치한 Entity 정보 있는 경우") {
+            val result = v1AccountJpaRepository.findByPredicate(predicate::generateQuery)!!
+
+            then("조회 결과 'id' 일치 정상 확인한다") {
+                result shouldNotBe null
+                result.id shouldBe id
             }
         }
     }
