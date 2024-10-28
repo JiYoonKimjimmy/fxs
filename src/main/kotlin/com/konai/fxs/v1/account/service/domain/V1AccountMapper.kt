@@ -2,6 +2,7 @@ package com.konai.fxs.v1.account.service.domain
 
 import com.konai.fxs.v1.account.controller.model.V1AccountModel
 import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest
+import com.konai.fxs.v1.account.controller.model.V1FindOneAccountRequest
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity
 import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
 import org.springframework.stereotype.Component
@@ -20,6 +21,13 @@ class V1AccountMapper {
             currency = request.currency,
             minRequiredBalance = BigDecimal(request.minRequiredBalance),
             averageExchangeRate = BigDecimal.ZERO,
+        )
+    }
+
+    fun requestToPredicate(request: V1FindOneAccountRequest): V1AccountPredicate {
+        return V1AccountPredicate(
+            id = request.accountId,
+            acquirer = request.acquirer
         )
     }
 

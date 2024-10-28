@@ -7,4 +7,4 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @Order(value = 1)
 @RestControllerAdvice(assignableTypes = [V1AccountManagementController::class])
-class V1AccountManagementControllerAdvice : BaseExceptionHandler(FeatureCode.V1_ACCOUNT_SERVICE)
+class V1AccountManagementControllerAdvice : BaseExceptionHandler(FeatureCode.V1_ACCOUNT_MANAGEMENT_SERVICE)

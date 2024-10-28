@@ -15,3 +15,7 @@ fun Logger.error(exception: Exception): Exception {
     this.error(exception.message, exception)
     return exception
 }
+
+fun String.emptyStringToNull(): String? {
+    return this.takeIf { it.isNotEmpty() }
+}

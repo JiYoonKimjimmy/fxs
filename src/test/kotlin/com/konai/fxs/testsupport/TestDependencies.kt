@@ -20,9 +20,9 @@ object TestDependencies {
     private val fakeV1AccountRepository = FakeV1AccountRepositoryImpl(v1AccountMapper)
 
     // service
-    private val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
     private val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
-    val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountFindService, v1AccountSaveService)
+    private val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
+    val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountSaveService, v1AccountFindService)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

@@ -1,12 +1,14 @@
 package com.konai.fxs.v1.account.repository
 
+import com.konai.fxs.common.EMPTY
 import com.konai.fxs.common.enumerate.AcquirerType
-import com.konai.fxs.common.jdsl.findByPredicate
+import com.konai.fxs.common.jdsl.findOne
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.CustomDataJpaTest
 import com.konai.fxs.testsupport.TestExtensionFunctions
 import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
+import com.konai.fxs.v1.account.service.domain.V1Acquirer
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -37,18 +39,46 @@ class V1AccountRepositoryImplTest(
     }
 
     given("외화 계좌 'id' 조건으로 조회 요청되어") {
-        // 외화 계좌 정보 DB 저장
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
-
         val id = entity.id!!
         val predicate = V1AccountPredicate(id = id)
 
         `when`("일치한 Entity 정보 있는 경우") {
-            val result = v1AccountJpaRepository.findByPredicate(predicate::generateQuery)!!
+            val result = v1AccountJpaRepository.findOne(predicate.selectQuery())
 
             then("조회 결과 'id' 일치 정상 확인한다") {
-                result shouldNotBe null
+                result!! shouldNotBe null
                 result.id shouldBe id
+            }
+        }
+    }
+
+    given("'acquirerId' & 'acquirerType' 외화 계좌 Entity 정보 조회 요청하여") {
+        val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
+        val acquirer = V1Acquirer(entity.acquirer.id, entity.acquirer.type, name = EMPTY)
+        val predicate = V1AccountPredicate(acquirer = acquirer)
+
+        `when`("일치한 Entity 정보 있는 경우") {
+            val result = v1AccountJpaRepository.findOne(predicate.selectQuery())
+
+            then("조회 결과 'id' 일치 정상 확인한다") {
+                result!! shouldNotBe null
+                result.id shouldBe entity.id
+            }
+        }
+    }
+
+    given("'acquirerId' & 'acquirerType' & 'acquirerName' 외화 계좌 Entity 정보 조회 요청하여") {
+        val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
+        val acquirer = V1Acquirer(entity.acquirer.id, entity.acquirer.type, name = entity.acquirer.name)
+        val predicate = V1AccountPredicate(acquirer = acquirer)
+
+        `when`("일치한 Entity 정보 있는 경우") {
+            val result = v1AccountJpaRepository.findOne(predicate.selectQuery())
+
+            then("조회 결과 'id' 일치 정상 확인한다") {
+                result!! shouldNotBe null
+                result.id shouldBe entity.id
             }
         }
     }

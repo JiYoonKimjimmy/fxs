@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 @Service
 class V1AccountManagementServiceImpl(
-    private val v1AccountFindService: V1AccountFindService,
-    private val v1AccountSaveService: V1AccountSaveService
+    private val v1AccountSaveService: V1AccountSaveService,
+    private val v1AccountFindService: V1AccountFindService
 ) : V1AccountManagementService {
 
     override fun create(domain: V1Account): V1Account {
@@ -20,8 +20,9 @@ class V1AccountManagementServiceImpl(
             .let { v1AccountSaveService.save(it) }
     }
 
-    override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
-        return v1AccountFindService.findByPredicate(predicate) ?: throw ResourceNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND)
+    override fun findByPredicate(predicate: V1AccountPredicate): V1Account {
+        return v1AccountFindService.findByPredicate(predicate)
+            ?: throw ResourceNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND)
     }
 
 }

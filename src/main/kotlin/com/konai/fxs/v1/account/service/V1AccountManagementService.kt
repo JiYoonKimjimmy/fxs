@@ -7,6 +7,6 @@ interface V1AccountManagementService {
 
     fun create(domain: V1Account): V1Account
 
-    fun findByPredicate(predicate: V1AccountPredicate): V1Account?
+    fun findByPredicate(predicate: V1AccountPredicate): V1Account
 
 }

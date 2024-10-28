@@ -75,7 +75,7 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
         predicate = V1AccountPredicate(id = saved.id!!)
 
         `when`("요청 'id' 정보와 일치한 정보 있는 경우") {
-            val result = v1AccountManagementService.findByPredicate(predicate)!!
+            val result = v1AccountManagementService.findByPredicate(predicate)
 
             then("조회 결과 성공 정상 확인한다") {
                 result shouldNotBe null
@@ -86,6 +86,5 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
             }
         }
     }
-
 
 })

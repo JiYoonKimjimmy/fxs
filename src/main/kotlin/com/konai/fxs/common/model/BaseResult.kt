@@ -15,7 +15,7 @@ data class BaseResult(
     constructor(featureCode: FeatureCode, errorCode: ErrorCode, detailMessage: String? = null): this(
         status = ResultStatus.FAILED,
         code = "${COMPONENT_CODE}_${featureCode.code}_${errorCode.code}",
-        message = "${featureCode.message} Failed. ${errorCode.message}.",
+        message = "${featureCode.message} failed. ${errorCode.message}.",
         detailMessage = detailMessage
     )
 

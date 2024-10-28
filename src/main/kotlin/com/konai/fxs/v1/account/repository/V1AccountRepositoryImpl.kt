@@ -1,6 +1,6 @@
 package com.konai.fxs.v1.account.repository
 
-import com.konai.fxs.common.jdsl.findByPredicate
+import com.konai.fxs.common.jdsl.findOne
 import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
@@ -21,16 +21,12 @@ class V1AccountRepositoryImpl(
     }
 
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
-        return v1AccountJpaRepository.findByPredicate(predicate::generateQuery)
+        return v1AccountJpaRepository.findOne(predicate.selectQuery())
             ?.let { v1AccountMapper.entityToDomain(it) }
     }
 
     override fun existsByAcquirer(acquirer: V1Acquirer): Boolean {
-        return V1AcquirerEntity(
-                id = acquirer.id,
-                type = acquirer.type,
-                name = acquirer.name
-            )
+        return V1AcquirerEntity(id = acquirer.id, type = acquirer.type, name = acquirer.name)
             .let { v1AccountJpaRepository.existsByAcquirer(it) }
     }
 
