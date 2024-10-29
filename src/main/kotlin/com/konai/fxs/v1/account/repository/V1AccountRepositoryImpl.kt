@@ -2,7 +2,7 @@ package com.konai.fxs.v1.account.repository
 
 import com.konai.fxs.common.jdsl.findOne
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
-import com.konai.fxs.v1.account.repository.jdsl.V1AccountJdslPredicate
+import com.konai.fxs.v1.account.repository.jdsl.V1AccountJdslExecutor
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
@@ -22,7 +22,7 @@ class V1AccountRepositoryImpl(
     }
 
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
-        return V1AccountJdslPredicate(predicate)
+        return V1AccountJdslExecutor(predicate)
             .let { v1AccountJpaRepository.findOne(it.selectQuery()) }
             ?.let { v1AccountMapper.entityToDomain(it) }
     }

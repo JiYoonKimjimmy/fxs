@@ -10,7 +10,7 @@ import com.linecorp.kotlinjdsl.querymodel.jpql.path.Paths
 import com.linecorp.kotlinjdsl.querymodel.jpql.predicate.Predicatable
 import com.linecorp.kotlinjdsl.querymodel.jpql.select.SelectQuery
 
-class V1AccountJdslPredicate(
+class V1AccountJdslExecutor(
     private val predicate: V1AccountPredicate
 ) {
 
