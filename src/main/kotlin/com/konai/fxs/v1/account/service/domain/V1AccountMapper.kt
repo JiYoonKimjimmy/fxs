@@ -3,6 +3,7 @@ package com.konai.fxs.v1.account.service.domain
 import com.konai.fxs.v1.account.controller.model.V1AccountModel
 import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest
 import com.konai.fxs.v1.account.controller.model.V1FindOneAccountRequest
+import com.konai.fxs.v1.account.controller.model.V1UpdateAccountRequest
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
@@ -14,11 +15,7 @@ class V1AccountMapper {
 
     fun requestToDomain(request: V1CreateAccountRequest): V1Account {
         return V1Account(
-            acquirer = V1Acquirer(
-                id = request.acquirerId,
-                type = request.acquirerType,
-                name = request.acquirerName,
-            ),
+            acquirer = request.acquirer,
             currency = request.currency,
             minRequiredBalance = BigDecimal(request.minRequiredBalance),
             averageExchangeRate = BigDecimal.ZERO,
@@ -29,6 +26,15 @@ class V1AccountMapper {
         return V1AccountPredicate(
             id = request.accountId,
             acquirer = request.acquirer
+        )
+    }
+
+    fun requestToPredicate(request: V1UpdateAccountRequest): V1AccountPredicate {
+        return V1AccountPredicate(
+            id = request.accountId,
+            acquirer = request.acquirer,
+            currency = request.currency,
+            minRequiredBalance = request.minRequiredBalance?.let(BigDecimal::valueOf)
         )
     }
 

@@ -13,6 +13,7 @@ import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import java.security.SecureRandom
 
 @CustomDataJpaTest
 class V1AccountRepositoryImplTest(
@@ -39,7 +40,7 @@ class V1AccountRepositoryImplTest(
         }
     }
 
-    given("외화 계좌 'id' 조건으로 조회 요청되어") {
+    given("'id' 조건 외화 계좌 Entity 정보 조회 요청하여") {
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
         val id = entity.id!!
         val predicate = V1AccountPredicate(id = id)
@@ -55,7 +56,7 @@ class V1AccountRepositoryImplTest(
         }
     }
 
-    given("'acquirerId' & 'acquirerType' 외화 계좌 Entity 정보 조회 요청하여") {
+    given("'acquirerId' & 'acquirerType' 조건 외화 계좌 Entity 정보 조회 요청하여") {
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
         val acquirer = V1Acquirer(entity.acquirer.id, entity.acquirer.type, name = EMPTY)
         val predicate = V1AccountPredicate(acquirer = acquirer)
@@ -71,7 +72,7 @@ class V1AccountRepositoryImplTest(
         }
     }
 
-    given("'acquirerId' & 'acquirerType' & 'acquirerName' 외화 계좌 Entity 정보 조회 요청하여") {
+    given("'acquirerId' & 'acquirerType' & 'acquirerName' 조건 외화 계좌 Entity 정보 조회 요청하여") {
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
         val acquirer = V1Acquirer(entity.acquirer.id, entity.acquirer.type, name = entity.acquirer.name)
         val predicate = V1AccountPredicate(acquirer = acquirer)
@@ -85,6 +86,24 @@ class V1AccountRepositoryImplTest(
                 result.id shouldBe entity.id
             }
         }
+
+        `when`("일치한 Entity 정보가 요청 'id' 정보와 같은 경우") {
+            val result = v1AccountJpaRepository.findOne(executor.selectQuery())?.let { it.id == entity.id } ?: false
+
+            then("'true' 결과 정상 확인한다") {
+                result shouldBe true
+            }
+        }
+
+        `when`("일치한 Entity 정보가 요청 'id' 정보와 다른 경우") {
+            val newAccountId = SecureRandom().nextLong()
+            val result = v1AccountJpaRepository.findOne(executor.selectQuery())?.let { it.id == newAccountId } ?: false
+
+            then("'false' 결과 정상 확인한다") {
+                result shouldBe false
+            }
+        }
+
     }
 
     given("'acquirer' 기준 외화 계좌 Entity 존재 여부 조회 요청하여") {

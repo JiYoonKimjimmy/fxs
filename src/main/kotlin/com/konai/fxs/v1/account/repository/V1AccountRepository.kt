@@ -10,6 +10,4 @@ interface V1AccountRepository {
 
     fun findByPredicate(predicate: V1AccountPredicate): V1Account?
 
-    fun existsByAcquirer(acquirer: V1Acquirer): Boolean
-
 }

@@ -20,11 +20,21 @@ data class V1Account(
         val name: String
     )
 
-    fun checkDuplicatedAcquirer(function: (V1Acquirer) -> Boolean): V1Account {
-        return if (function(this.acquirer)) {
+    fun checkDuplicatedAcquirer(function: (V1Acquirer, Long?) -> Boolean): V1Account {
+        return if (function(this.acquirer, this.id)) {
             throw InternalServiceException(ErrorCode.ACCOUNT_ACQUIRER_IS_DUPLICATED)
         } else {
             this
         }
     }
+
+    fun update(predicate: V1AccountPredicate): V1Account {
+        return this.copy(
+            acquirer = predicate.acquirer ?: this.acquirer,
+            currency = predicate.currency ?: this.currency,
+            balance = predicate.balance ?: this.balance,
+            minRequiredBalance = predicate.minRequiredBalance ?: this.minRequiredBalance
+        )
+    }
+
 }

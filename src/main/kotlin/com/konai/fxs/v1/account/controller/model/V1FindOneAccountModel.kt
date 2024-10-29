@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.controller.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.konai.fxs.common.EMPTY
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.model.BaseResponse
@@ -15,6 +16,7 @@ data class V1FindOneAccountRequest(
     val acquirerType: AcquirerType?
 ) {
 
+    @get:JsonIgnore
     val acquirer: V1Acquirer? by lazy {
         takeIf {
             it.acquirerId != null && it.acquirerType != null
@@ -23,10 +25,11 @@ data class V1FindOneAccountRequest(
         }
     }
 
-    init {
+    fun validation(): V1FindOneAccountRequest {
         if (accountId == null && (acquirerId == null || acquirerType == null)) {
             throw InternalServiceException(ErrorCode.ARGUMENT_NOT_VALID_ERROR)
         }
+        return this
     }
 
 }

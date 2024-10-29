@@ -1,12 +1,10 @@
 package com.konai.fxs.v1.account.repository
 
 import com.konai.fxs.common.jdsl.findOne
-import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.repository.jdsl.V1AccountJdslExecutor
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -25,11 +23,6 @@ class V1AccountRepositoryImpl(
         return V1AccountJdslExecutor(predicate)
             .let { v1AccountJpaRepository.findOne(it.selectQuery()) }
             ?.let { v1AccountMapper.entityToDomain(it) }
-    }
-
-    override fun existsByAcquirer(acquirer: V1Acquirer): Boolean {
-        return V1AcquirerEntity(id = acquirer.id, type = acquirer.type, name = acquirer.name)
-            .let { v1AccountJpaRepository.existsByAcquirer(it) }
     }
 
 }

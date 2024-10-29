@@ -8,6 +8,6 @@ interface V1AccountFindService {
 
     fun findByPredicate(predicate: V1AccountPredicate): V1Account?
 
-    fun existsByAcquirer(acquirer: V1Acquirer): Boolean
+    fun existsByAcquirer(acquirer: V1Acquirer, id: Long? = null): Boolean
 
 }

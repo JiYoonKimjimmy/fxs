@@ -1,17 +1,19 @@
 package com.konai.fxs.v1.account.service
 
-import com.konai.fxs.common.enumerate.AcquirerType
+import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.testsupport.CustomBehaviorSpec
-import com.konai.fxs.testsupport.TestExtensionFunctions
+import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
+import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.v1.account.service.domain.V1Account
-import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import java.math.BigDecimal
 
 class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
 
@@ -21,12 +23,12 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
     lateinit var saved: V1Account
 
     beforeSpec {
-        val acquirerId = TestExtensionFunctions.generateUUID()
-        val acquirerType = AcquirerType.FX_DEPOSIT
+        val acquirerId = generateUUID()
+        val acquirerType = FX_DEPOSIT
         val acquirerName = "외화 예치금 계좌"
         val acquirer = V1Acquirer(id = acquirerId, type = acquirerType, name = acquirerName)
         val domain = v1AccountFixture.make(acquirer = acquirer)
-        saved = v1AccountManagementService.create(domain)
+        saved = v1AccountManagementService.save(domain)
     }
 
     given("외화 계좌 정보 저장 요청되어") {
@@ -34,21 +36,21 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
 
         `when`("이미 동일한 'acquirer' 정보 존재하는 경우") {
             val domain = v1AccountFixture.make(acquirer = acquirer)
-            val exception = shouldThrow<InternalServiceException> { v1AccountManagementService.create(domain) }
+            val exception = shouldThrow<InternalServiceException> { v1AccountManagementService.save(domain) }
 
             then("'ACCOUNT_ACQUIRER_IS_DUPLICATED' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_ACQUIRER_IS_DUPLICATED
             }
         }
 
-        val acquirerId = TestExtensionFunctions.generateUUID()
-        val acquirerType = AcquirerType.FX_DEPOSIT
+        val acquirerId = generateUUID()
+        val acquirerType = FX_DEPOSIT
         val acquirerName = "외화 예치금 계좌"
         val newAcquirer = V1Acquirer(acquirerId, acquirerType, acquirerName)
 
         `when`("신규 등록 요청인 경우") {
             val domain = v1AccountFixture.make(acquirer = newAcquirer)
-            val result = v1AccountManagementService.create(domain)
+            val result = v1AccountManagementService.save(domain)
 
             then("저장 성공 결과 정상 확인한다") {
                 result shouldNotBe null
@@ -83,6 +85,70 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
                 result.acquirer.id shouldBe saved.acquirer.id
                 result.acquirer.type shouldBe saved.acquirer.type
                 result.acquirer.name shouldBe saved.acquirer.name
+            }
+        }
+    }
+
+    given("외화 계좌 정보 'acquirer' 정보 변경 요청하여") {
+        val acquirerId = generateUUID()
+        val acquirerType = FX_DEPOSIT
+        val acquirerName = "외화 예치금 계좌"
+        val acquirer = V1Acquirer(id = acquirerId, type = acquirerType, name = acquirerName)
+        val newEntity = v1AccountManagementService.save(v1AccountFixture.make(acquirer = acquirer))
+
+        `when`("요청 'id' 기준 동일한 외화 계좌 정보 없는 경우") {
+            val exception = shouldThrow<ResourceNotFoundException> { v1AccountManagementService.update(V1AccountPredicate(id = generateSequence())) }
+
+            then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
+                exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
+            }
+        }
+
+        val accountId = newEntity.id!!
+
+        `when`("동일한 'acquirer' 정보 이미 등록되어 있는 경우") {
+            val predicate = V1AccountPredicate(id = accountId, acquirer = saved.acquirer)
+            val exception = shouldThrow<InternalServiceException> { v1AccountManagementService.update(predicate) }
+
+            then("'ACCOUNT_ACQUIRER_IS_DUPLICATED' 예외 발생 정상 확인한다") {
+                exception.errorCode shouldBe ErrorCode.ACCOUNT_ACQUIRER_IS_DUPLICATED
+            }
+        }
+
+        `when`("신규 'acquirer.id' 정보 변경인 경우") {
+            val newAcquirerId = generateUUID()
+            val newAcquirerType = FX_DEPOSIT
+            val newAcquirerName = "외화 예치금 계좌"
+            val predicate = V1AccountPredicate(id = accountId, acquirer = V1Acquirer(id = newAcquirerId, type = newAcquirerType, name = newAcquirerName))
+            val result = v1AccountManagementService.update(predicate)
+
+            then("변경된 'acquirerId' 정보 정상 확인한다") {
+                result.id shouldBe newEntity.id
+                result.acquirer.id shouldBe newAcquirerId
+                result.acquirer.type shouldBe newAcquirerType
+                result.acquirer.name shouldBe newAcquirerName
+            }
+        }
+
+        `when`("'currency' 정보 변경인 경우") {
+            val newCurrency = "KRW"
+            val predicate = V1AccountPredicate(id = accountId, currency = newCurrency)
+            val result = v1AccountManagementService.update(predicate)
+
+            then("변경된 'currency' 정보 정상 확인한다") {
+                result.id shouldBe newEntity.id
+                result.currency shouldBe newCurrency
+            }
+        }
+
+        `when`("'balance' 정보 변경인 경우") {
+            val newBalance = BigDecimal.valueOf(10000000)
+            val predicate = V1AccountPredicate(id = accountId, balance = newBalance)
+            val result = v1AccountManagementService.update(predicate)
+
+            then("변경된 'currency' 정보 정상 확인한다") {
+                result.id shouldBe newEntity.id
+                result.balance shouldBe newBalance
             }
         }
     }

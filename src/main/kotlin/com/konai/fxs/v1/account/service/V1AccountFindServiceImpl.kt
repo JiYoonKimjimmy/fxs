@@ -14,11 +14,16 @@ class V1AccountFindServiceImpl(
 ) : V1AccountFindService {
 
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
+        // 요청 `predicate` 별 외화 계좌 정보 조회
         return v1AccountRepository.findByPredicate(predicate)
     }
 
-    override fun existsByAcquirer(acquirer: V1Acquirer): Boolean {
-        return v1AccountRepository.existsByAcquirer(acquirer)
+    override fun existsByAcquirer(acquirer: V1Acquirer, id: Long?): Boolean {
+        // 요청 `acquirer` 조건 외화 계좌 정보 조회
+        return findByPredicate(predicate = V1AccountPredicate(acquirer = acquirer))
+            // 동일한 `acquirer` 다른 외화 계좌가 존재하는 경우, `ture` 반환 처리
+            ?.let { it.id != id }
+            ?: false
     }
 
 }
