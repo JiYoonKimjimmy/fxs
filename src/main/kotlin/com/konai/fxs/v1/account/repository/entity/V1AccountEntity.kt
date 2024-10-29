@@ -1,6 +1,7 @@
 package com.konai.fxs.v1.account.repository.entity
 
 import com.konai.fxs.common.entity.SequenceBaseEntity
+import com.konai.fxs.common.enumerate.AcquirerType
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -24,4 +25,17 @@ class V1AccountEntity(
     @Column(name = "averageExchangeRate")
     val averageExchangeRate: BigDecimal
 
-) : SequenceBaseEntity()
+) : SequenceBaseEntity() {
+
+    @Embeddable
+    class V1AcquirerEntity(
+        @Column(name = "ACQUIRER_ID")
+        val id: String,
+        @Enumerated(EnumType.STRING)
+        @Column(name = "ACQUIRER_TYPE")
+        val type: AcquirerType,
+        @Column(name = "ACQUIRER_NAME")
+        val name: String,
+    )
+
+}

@@ -4,7 +4,8 @@ import com.konai.fxs.v1.account.controller.model.V1AccountModel
 import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest
 import com.konai.fxs.v1.account.controller.model.V1FindOneAccountRequest
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity
-import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
+import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
+import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 

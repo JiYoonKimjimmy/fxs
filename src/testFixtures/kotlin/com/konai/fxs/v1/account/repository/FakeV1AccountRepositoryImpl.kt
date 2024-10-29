@@ -6,7 +6,7 @@ import com.konai.fxs.v1.account.repository.entity.V1AccountEntity
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 
 class FakeV1AccountRepositoryImpl(
     private val v1AccountMapper: V1AccountMapper
@@ -20,7 +20,7 @@ class FakeV1AccountRepositoryImpl(
 
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
         return super.entities.values.find {
-                ifNotNullEquals(predicate.id, it.id)
+            ifNotNullEquals(predicate.id, it.id)
                 && ifNotNullEquals(predicate.acquirer?.id, it.acquirer.id)
                 && ifNotNullEquals(predicate.acquirer?.type, it.acquirer.type)
                 && ifNotNullEquals(predicate.acquirer?.name, it.acquirer.name)

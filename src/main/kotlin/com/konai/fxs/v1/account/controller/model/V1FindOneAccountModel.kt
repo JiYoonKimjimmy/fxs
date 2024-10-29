@@ -5,7 +5,7 @@ import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.model.BaseResponse
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
-import com.konai.fxs.v1.account.service.domain.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 

@@ -6,9 +6,10 @@ import com.konai.fxs.common.jdsl.findOne
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.CustomDataJpaTest
 import com.konai.fxs.testsupport.TestExtensionFunctions
-import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
+import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
+import com.konai.fxs.v1.account.repository.jdsl.V1AccountJdslPredicate
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import io.kotest.matchers.longs.shouldBeGreaterThan
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -41,7 +42,7 @@ class V1AccountRepositoryImplTest(
     given("외화 계좌 'id' 조건으로 조회 요청되어") {
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
         val id = entity.id!!
-        val predicate = V1AccountPredicate(id = id)
+        val predicate = V1AccountPredicate(id = id).let(::V1AccountJdslPredicate)
 
         `when`("일치한 Entity 정보 있는 경우") {
             val result = v1AccountJpaRepository.findOne(predicate.selectQuery())
@@ -56,7 +57,7 @@ class V1AccountRepositoryImplTest(
     given("'acquirerId' & 'acquirerType' 외화 계좌 Entity 정보 조회 요청하여") {
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
         val acquirer = V1Acquirer(entity.acquirer.id, entity.acquirer.type, name = EMPTY)
-        val predicate = V1AccountPredicate(acquirer = acquirer)
+        val predicate = V1AccountPredicate(acquirer = acquirer).let(::V1AccountJdslPredicate)
 
         `when`("일치한 Entity 정보 있는 경우") {
             val result = v1AccountJpaRepository.findOne(predicate.selectQuery())
@@ -71,7 +72,7 @@ class V1AccountRepositoryImplTest(
     given("'acquirerId' & 'acquirerType' & 'acquirerName' 외화 계좌 Entity 정보 조회 요청하여") {
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
         val acquirer = V1Acquirer(entity.acquirer.id, entity.acquirer.type, name = entity.acquirer.name)
-        val predicate = V1AccountPredicate(acquirer = acquirer)
+        val predicate = V1AccountPredicate(acquirer = acquirer).let(::V1AccountJdslPredicate)
 
         `when`("일치한 Entity 정보 있는 경우") {
             val result = v1AccountJpaRepository.findOne(predicate.selectQuery())

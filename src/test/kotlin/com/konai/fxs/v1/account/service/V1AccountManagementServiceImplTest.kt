@@ -8,7 +8,7 @@ import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestExtensionFunctions
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe

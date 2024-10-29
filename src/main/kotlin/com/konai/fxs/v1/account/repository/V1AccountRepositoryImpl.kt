@@ -1,11 +1,12 @@
 package com.konai.fxs.v1.account.repository
 
 import com.konai.fxs.common.jdsl.findOne
-import com.konai.fxs.v1.account.repository.entity.V1AcquirerEntity
+import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
+import com.konai.fxs.v1.account.repository.jdsl.V1AccountJdslPredicate
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -21,7 +22,8 @@ class V1AccountRepositoryImpl(
     }
 
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
-        return v1AccountJpaRepository.findOne(predicate.selectQuery())
+        return V1AccountJdslPredicate(predicate)
+            .let { v1AccountJpaRepository.findOne(it.selectQuery()) }
             ?.let { v1AccountMapper.entityToDomain(it) }
     }
 
