@@ -1,6 +1,7 @@
 package com.konai.fxs.v1.account.repository.entity
 
 import com.konai.fxs.common.entity.SequenceBaseEntity
+import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.common.enumerate.AcquirerType
 import jakarta.persistence.*
 import java.math.BigDecimal
@@ -16,14 +17,17 @@ class V1AccountEntity(
     override var id: Long? = null,
     @Embedded
     val acquirer: V1AcquirerEntity,
-    @Column(name = "currency")
+    @Column(name = "CURRENCY")
     val currency: String,
-    @Column(name = "balance")
+    @Column(name = "BALANCE")
     val balance: BigDecimal,
-    @Column(name = "minRequiredBalance")
+    @Column(name = "MIN_REQUIRED_BALANCE")
     val minRequiredBalance: BigDecimal,
-    @Column(name = "averageExchangeRate")
-    val averageExchangeRate: BigDecimal
+    @Column(name = "AVERAGE_EXCHANGE_RATE")
+    val averageExchangeRate: BigDecimal,
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS")
+    val status: AccountStatus
 
 ) : SequenceBaseEntity() {
 

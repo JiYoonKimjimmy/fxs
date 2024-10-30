@@ -1,6 +1,7 @@
 package com.konai.fxs.v1.account.controller.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.model.BaseResponse
 import com.konai.fxs.infra.error.ErrorCode
@@ -15,7 +16,8 @@ data class V1UpdateAccountRequest(
     val acquirerType: AcquirerType?,
     val acquirerName: String?,
     val currency: String?,
-    val minRequiredBalance: Long?
+    val minRequiredBalance: Long?,
+    val status: AccountStatus?
 ) {
 
     @get:JsonIgnore

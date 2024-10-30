@@ -1,6 +1,9 @@
 package com.konai.fxs.v1.account.controller
 
+import com.konai.fxs.common.enumerate.AccountStatus.ACTIVE
+import com.konai.fxs.common.enumerate.AccountStatus.DELETED
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
+import com.konai.fxs.common.enumerate.ResultStatus
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.CustomSpringBootTest
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
@@ -8,6 +11,7 @@ import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest
 import com.konai.fxs.v1.account.controller.model.V1FindOneAccountRequest
 import com.konai.fxs.v1.account.repository.V1AccountJpaRepository
+import io.kotest.matchers.shouldBe
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.greaterThan
 import org.springframework.http.MediaType
@@ -82,7 +86,7 @@ class V1AccountManagementControllerTest(
                     .andExpect {
                         status { isNotFound() }
                         content {
-                            jsonPath("result.status", equalTo("FAILED"))
+                            jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                             jsonPath("result.code", equalTo("210_1000_001"))
                             jsonPath("result.message", equalTo("Account management service failed. Account not found."))
                         }
@@ -90,6 +94,7 @@ class V1AccountManagementControllerTest(
             }
         }
 
+        // 외화 계좌 정보 DB 저장
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
 
         `when`("'accountId' 기준 일치한 외화 계좌 정보 있는 경우") {
@@ -122,28 +127,6 @@ class V1AccountManagementControllerTest(
     given("외화 계좌 변경 API 요청하여") {
         val updateAccountUrl = "/api/v1/account/update"
 
-        `when`("'accountId' 기준 일치한 외화 계좌 정보 없는 경우") {
-            val request = v1UpdateAccountRequestFixture.make()
-            val result = mockMvc
-                .post(updateAccountUrl) {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(request)
-                }
-                .andDo { print() }
-
-            then("'404 Not Found - 210_1000_001' 에러 응답 정상 확인한다") {
-                result
-                    .andExpect {
-                        status { isNotFound() }
-                        content {
-                            jsonPath("result.status", equalTo("FAILED"))
-                            jsonPath("result.code", equalTo("210_1000_001"))
-                            jsonPath("result.message", equalTo("Account management service failed. Account not found."))
-                        }
-                    }
-            }
-        }
-
         `when`("'acquirer' 요청 필수 여부 검증 실패하는 경우") {
             val request = v1UpdateAccountRequestFixture.make(acquirerId = generateUUID())
             val result = mockMvc
@@ -158,7 +141,7 @@ class V1AccountManagementControllerTest(
                     .andExpect {
                         status { isBadRequest() }
                         content {
-                            jsonPath("result.status", equalTo("FAILED"))
+                            jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                             jsonPath("result.code", equalTo("210_1000_905"))
                             jsonPath("result.message", equalTo("Account management service failed. Argument not valid."))
                         }
@@ -166,6 +149,29 @@ class V1AccountManagementControllerTest(
             }
         }
 
+        `when`("'accountId' 기준 일치한 외화 계좌 정보 없는 경우") {
+            val request = v1UpdateAccountRequestFixture.make()
+            val result = mockMvc
+                .post(updateAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("'404 Not Found - 210_1000_001' 에러 응답 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isNotFound() }
+                        content {
+                            jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                            jsonPath("result.code", equalTo("210_1000_001"))
+                            jsonPath("result.message", equalTo("Account management service failed. Account not found."))
+                        }
+                    }
+            }
+        }
+
+        // 외화 계좌 정보 DB 저장
         val entity = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
 
         `when`("'accountId' 기준 일치한 외화 계좌 정보 있는 경우") {
@@ -195,6 +201,62 @@ class V1AccountManagementControllerTest(
                             jsonPath("data.currency", equalTo(entity.currency))
                             jsonPath("data.minRequiredBalance", equalTo(entity.minRequiredBalance.toInt()))
                             jsonPath("data.averageExchangeRate", equalTo(entity.averageExchangeRate.toDouble()))
+                        }
+                    }
+            }
+        }
+
+        `when`("'accountId' 기준 일치한 외화 계좌 정보 'status' 상태 변경인 경우") {
+            val request = v1UpdateAccountRequestFixture.make(accountId = entity.id!!, status = DELETED)
+            val result = mockMvc
+                .post(updateAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("변경 결과 응답 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isOk() }
+                        content {
+                            jsonPath("data.accountId", equalTo(entity.id?.toInt()))
+                            jsonPath("data.acquirerId", equalTo(entity.acquirer.id))
+                            jsonPath("data.acquirerType", equalTo(entity.acquirer.type.name))
+                            jsonPath("data.acquirerName", equalTo(entity.acquirer.name))
+                            jsonPath("data.currency", equalTo(entity.currency))
+                            jsonPath("data.minRequiredBalance", equalTo(entity.minRequiredBalance.toInt()))
+                            jsonPath("data.averageExchangeRate", equalTo(entity.averageExchangeRate.toDouble()))
+                            jsonPath("data.status", equalTo(DELETED.name))
+                        }
+                    }
+            }
+
+            then("외화 계좌 정보 상태 'DELETED' 변경 정상 확인한다") {
+                val deleted = v1AccountJpaRepository.findById(entity.id!!).orElseThrow()
+                deleted.status shouldBe DELETED
+            }
+        }
+
+        `when`("이미 'DELETED' 상태 변경 된 'accountId' 기준 일치한 외화 계좌 정보 변경인 경우") {
+            // 외화 계좌 정보 DB 저장
+            val newEntity = v1AccountJpaRepository.save(v1AccountEntityFixture.make(status = DELETED))
+            val request = v1UpdateAccountRequestFixture.make(accountId = newEntity.id!!, status = ACTIVE)
+            val result = mockMvc
+                .post(updateAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("'400 Bad Request - 210_1000_003' 에러 응답 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isBadRequest() }
+                        content {
+                            jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                            jsonPath("result.code", equalTo("210_1000_003"))
+                            jsonPath("result.message", equalTo("Account management service failed. Account's status is already deleted."))
                         }
                     }
             }

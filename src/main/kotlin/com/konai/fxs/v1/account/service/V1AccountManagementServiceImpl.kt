@@ -4,7 +4,6 @@ import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -28,6 +27,7 @@ class V1AccountManagementServiceImpl(
 
     override fun update(predicate: V1AccountPredicate): V1Account {
         return findByPredicate(predicate = V1AccountPredicate(id = predicate.id))
+            .checkCanBeUpdated()
             .update(predicate = predicate)
             .let { save(it) }
     }

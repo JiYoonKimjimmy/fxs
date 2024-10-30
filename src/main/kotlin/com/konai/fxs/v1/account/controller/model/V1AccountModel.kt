@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.controller.model
 
+import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.common.enumerate.AcquirerType
 
 data class V1AccountModel(
@@ -10,5 +11,6 @@ data class V1AccountModel(
     val currency: String,
     val balance: Long,
     val minRequiredBalance: Long,
-    val averageExchangeRate: Double
+    val averageExchangeRate: Double,
+    val status: AccountStatus
 )

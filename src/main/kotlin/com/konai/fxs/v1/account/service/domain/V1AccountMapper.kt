@@ -34,7 +34,8 @@ class V1AccountMapper {
             id = request.accountId,
             acquirer = request.acquirer,
             currency = request.currency,
-            minRequiredBalance = request.minRequiredBalance?.let(BigDecimal::valueOf)
+            minRequiredBalance = request.minRequiredBalance?.let(BigDecimal::valueOf),
+            status = request.status
         )
     }
 
@@ -47,7 +48,8 @@ class V1AccountMapper {
             currency = domain.currency,
             balance = domain.balance.toLong(),
             minRequiredBalance = domain.minRequiredBalance.toLong(),
-            averageExchangeRate = domain.averageExchangeRate.toDouble()
+            averageExchangeRate = domain.averageExchangeRate.toDouble(),
+            status = domain.status
         )
     }
 
@@ -63,6 +65,7 @@ class V1AccountMapper {
             balance = domain.balance,
             minRequiredBalance = domain.minRequiredBalance,
             averageExchangeRate = domain.averageExchangeRate,
+            status = domain.status
         )
     }
 
@@ -77,7 +80,8 @@ class V1AccountMapper {
             currency = entity.currency,
             balance = entity.balance,
             minRequiredBalance = entity.minRequiredBalance,
-            averageExchangeRate = entity.averageExchangeRate
+            averageExchangeRate = entity.averageExchangeRate,
+            status = entity.status
         )
     }
 

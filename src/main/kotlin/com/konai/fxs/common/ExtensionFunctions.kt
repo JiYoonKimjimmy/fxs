@@ -11,6 +11,10 @@ fun <T> ifNotNullEquals(source: T?, target: T?): Boolean {
     return source?.let { target == it } ?: true
 }
 
+fun <T> T?.ifNull(value: T): T {
+    return this ?: value
+}
+
 fun Logger.error(exception: Exception): Exception {
     this.error(exception.message, exception)
     return exception

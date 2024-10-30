@@ -23,6 +23,7 @@ class V1UpdateAccountRequestTest : CustomBehaviorSpec({
                 acquirerName = null,
                 currency = null,
                 minRequiredBalance = null,
+                status = null
             )
             val exception = shouldThrow<InternalServiceException> { request.validation() }
 
@@ -41,6 +42,7 @@ class V1UpdateAccountRequestTest : CustomBehaviorSpec({
                 acquirerName = null,
                 currency = null,
                 minRequiredBalance = null,
+                status = null
             )
             val exception = shouldThrow<InternalServiceException> { request.validation() }
 
@@ -59,6 +61,7 @@ class V1UpdateAccountRequestTest : CustomBehaviorSpec({
                 acquirerName = acquirerName,
                 currency = null,
                 minRequiredBalance = null,
+                status = null
             )
             val result = request.validation()
 

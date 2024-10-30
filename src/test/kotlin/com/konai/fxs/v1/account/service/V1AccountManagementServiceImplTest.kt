@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.service
 
+import com.konai.fxs.common.enumerate.AccountStatus.*
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
@@ -89,7 +90,7 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
         }
     }
 
-    given("외화 계좌 정보 'acquirer' 정보 변경 요청하여") {
+    given("외화 계좌 정보 변경 요청하여") {
         val acquirerId = generateUUID()
         val acquirerType = FX_DEPOSIT
         val acquirerName = "외화 예치금 계좌"
@@ -146,11 +147,49 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
             val predicate = V1AccountPredicate(id = accountId, balance = newBalance)
             val result = v1AccountManagementService.update(predicate)
 
-            then("변경된 'currency' 정보 정상 확인한다") {
+            then("변경된 'balance' 정보 정상 확인한다") {
                 result.id shouldBe newEntity.id
                 result.balance shouldBe newBalance
             }
         }
+
+        `when`("'status' 정보 'INACTIVE' 변경인 경우") {
+            val predicate = V1AccountPredicate(id = accountId, status = INACTIVE)
+            val result = v1AccountManagementService.update(predicate)
+
+            then("변경된 'status' 정보 정상 확인한다") {
+                result.id shouldBe newEntity.id
+                result.status shouldBe INACTIVE
+            }
+        }
+
+        `when`("'status' 정보 'DELETED' 변경인 경우") {
+            val predicate = V1AccountPredicate(id = accountId, status = DELETED)
+            val result = v1AccountManagementService.update(predicate)
+
+            then("변경된 'status' 정보 정상 확인한다") {
+                result.id shouldBe newEntity.id
+                result.status shouldBe DELETED
+            }
+        }
+
+    }
+
+    given("외화 계좌 정보 'status' 변경 요청하여") {
+        val entity = v1AccountManagementService.save(v1AccountFixture.make())
+        val accountId = entity.id!!
+        // `DELETED` 상태 변경 사전 처리
+        v1AccountManagementService.update(V1AccountPredicate(id = accountId, status = DELETED))
+
+        `when`("이미 'DELETED' 상태 변경된 외화 계좌 정보 변경 요청인 경우") {
+            val predicate = V1AccountPredicate(id = accountId, status = ACTIVE)
+            val exception = shouldThrow<InternalServiceException> { v1AccountManagementService.update(predicate) }
+
+            then("'ACCOUNT_ACQUIRER_IS_DUPLICATED' 예외 발생 정상 확인한다") {
+                exception.errorCode shouldBe ErrorCode.ACCOUNT_STATUS_IS_DELETED
+            }
+        }
+
     }
 
 })

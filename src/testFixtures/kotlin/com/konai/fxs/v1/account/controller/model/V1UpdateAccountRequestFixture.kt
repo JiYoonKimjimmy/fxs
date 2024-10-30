@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.controller.model
 
+import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
 
@@ -11,7 +12,8 @@ class V1UpdateAccountRequestFixture {
         acquirerType: AcquirerType? = null,
         acquirerName: String? = null,
         currency: String? = null,
-        minRequiredBalance: Long? = null
+        minRequiredBalance: Long? = null,
+        status: AccountStatus? = null,
     ): V1UpdateAccountRequest {
         return V1UpdateAccountRequest(
             accountId = accountId,
@@ -19,7 +21,8 @@ class V1UpdateAccountRequestFixture {
             acquirerType = acquirerType,
             acquirerName = acquirerName,
             currency = currency,
-            minRequiredBalance = minRequiredBalance
+            minRequiredBalance = minRequiredBalance,
+            status = status
         )
     }
 
