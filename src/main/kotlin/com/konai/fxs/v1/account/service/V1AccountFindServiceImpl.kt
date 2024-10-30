@@ -5,8 +5,7 @@ import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.v1.account.repository.V1AccountRepository
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
-import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.*
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

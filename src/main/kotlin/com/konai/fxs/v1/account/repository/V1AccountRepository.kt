@@ -4,7 +4,6 @@ import com.konai.fxs.common.model.BasePageable
 import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 
 interface V1AccountRepository {
 
