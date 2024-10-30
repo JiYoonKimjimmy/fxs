@@ -7,7 +7,7 @@ enum class FeatureCode(
 
     UNKNOWN("9999", "Unknown Service"),
 
-    V1_ACCOUNT_MANAGEMENT_SERVICE("1000", "Account management service"),
-    TRANSACTION_SERVICE("2000", "Transaction service"),
+    V1_ACCOUNT_MANAGEMENT_SERVICE("1001", "Account management service"),
+    V1_ACCOUNT_TRANSACTION_SERVICE("1002", "Account transaction service"),
 
 }

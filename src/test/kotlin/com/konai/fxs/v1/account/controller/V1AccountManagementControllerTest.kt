@@ -81,13 +81,13 @@ class V1AccountManagementControllerTest(
                 }
                 .andDo { print() }
 
-            then("'404 Not Found - 210_1000_001' 에러 응답 정상 확인한다") {
+            then("'404 Not Found - 210_1001_001' 에러 응답 정상 확인한다") {
                 result
                     .andExpect {
                         status { isNotFound() }
                         content {
                             jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                            jsonPath("result.code", equalTo("210_1000_001"))
+                            jsonPath("result.code", equalTo("210_1001_001"))
                             jsonPath("result.message", equalTo("Account management service failed. Account not found."))
                         }
                     }
@@ -250,13 +250,13 @@ class V1AccountManagementControllerTest(
                 }
                 .andDo { print() }
 
-            then("'400 Bad Request - 210_1000_905' 에러 응답 정상 확인한다") {
+            then("'400 Bad Request - 210_1001_905' 에러 응답 정상 확인한다") {
                 result
                     .andExpect {
                         status { isBadRequest() }
                         content {
                             jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                            jsonPath("result.code", equalTo("210_1000_905"))
+                            jsonPath("result.code", equalTo("210_1001_905"))
                             jsonPath("result.message", equalTo("Account management service failed. Argument not valid."))
                         }
                     }
@@ -272,13 +272,13 @@ class V1AccountManagementControllerTest(
                 }
                 .andDo { print() }
 
-            then("'404 Not Found - 210_1000_001' 에러 응답 정상 확인한다") {
+            then("'404 Not Found - 210_1001_001' 에러 응답 정상 확인한다") {
                 result
                     .andExpect {
                         status { isNotFound() }
                         content {
                             jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                            jsonPath("result.code", equalTo("210_1000_001"))
+                            jsonPath("result.code", equalTo("210_1001_001"))
                             jsonPath("result.message", equalTo("Account management service failed. Account not found."))
                         }
                     }
@@ -363,13 +363,13 @@ class V1AccountManagementControllerTest(
                 }
                 .andDo { print() }
 
-            then("'400 Bad Request - 210_1000_003' 에러 응답 정상 확인한다") {
+            then("'400 Bad Request - 210_1001_003' 에러 응답 정상 확인한다") {
                 result
                     .andExpect {
                         status { isBadRequest() }
                         content {
                             jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                            jsonPath("result.code", equalTo("210_1000_003"))
+                            jsonPath("result.code", equalTo("210_1001_003"))
                             jsonPath("result.message", equalTo("Account management service failed. Account's status is already deleted."))
                         }
                     }
