@@ -1,9 +1,6 @@
 package com.konai.fxs.v1.account.service.domain
 
-import com.konai.fxs.v1.account.controller.model.V1AccountModel
-import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest
-import com.konai.fxs.v1.account.controller.model.V1FindOneAccountRequest
-import com.konai.fxs.v1.account.controller.model.V1UpdateAccountRequest
+import com.konai.fxs.v1.account.controller.model.*
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
@@ -26,6 +23,14 @@ class V1AccountMapper {
         return V1AccountPredicate(
             id = request.accountId,
             acquirer = request.acquirer
+        )
+    }
+
+    fun requestToPredicate(request: V1FindAllAccountRequest): V1AccountPredicate {
+        return V1AccountPredicate(
+            id = request.accountId,
+            acquirer = request.acquirer,
+            currency = request.currency,
         )
     }
 

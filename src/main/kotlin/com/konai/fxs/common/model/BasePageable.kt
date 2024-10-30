@@ -12,7 +12,7 @@ open class BasePageable<T>(
         val numberOfElements: Int = 0,
         val size: Int = 10,
         val totalPages: Int = 0,
-        val totalElements: Int = 0,
+        val totalElements: Long = 0,
     )
 
 }

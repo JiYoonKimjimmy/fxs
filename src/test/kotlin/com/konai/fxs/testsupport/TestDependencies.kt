@@ -3,6 +3,7 @@ package com.konai.fxs.testsupport
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.konai.fxs.v1.account.controller.model.V1FindAllAccountRequestFixture
 import com.konai.fxs.v1.account.controller.model.V1UpdateAccountRequestFixture
 import com.konai.fxs.v1.account.repository.FakeV1AccountRepositoryImpl
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntityFixture
@@ -29,6 +30,7 @@ object TestDependencies {
     val v1AccountFixture = V1AccountFixture()
     val v1AccountEntityFixture = V1AccountEntityFixture()
 
+    val v1FindAllAccountRequestFixture = V1FindAllAccountRequestFixture()
     val v1UpdateAccountRequestFixture = V1UpdateAccountRequestFixture()
 
     // etc

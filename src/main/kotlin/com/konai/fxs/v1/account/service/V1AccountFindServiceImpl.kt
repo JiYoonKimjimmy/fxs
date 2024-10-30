@@ -1,5 +1,7 @@
 package com.konai.fxs.v1.account.service
 
+import com.konai.fxs.common.model.BasePageable
+import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.v1.account.repository.V1AccountRepository
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
@@ -16,6 +18,10 @@ class V1AccountFindServiceImpl(
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
         // 요청 `predicate` 별 외화 계좌 정보 조회
         return v1AccountRepository.findByPredicate(predicate)
+    }
+
+    override fun findAllByPredicate(predicate: V1AccountPredicate, pageable: PageableRequest): BasePageable<V1Account> {
+        return v1AccountRepository.findAllByPredicate(predicate, pageable)
     }
 
     override fun existsByAcquirer(acquirer: V1Acquirer, id: Long?): Boolean {

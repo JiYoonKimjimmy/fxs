@@ -3,12 +3,12 @@ package com.konai.fxs.common
 import org.slf4j.Logger
 import org.springframework.data.domain.Slice
 
-fun <T> Slice<T>.getContentFirstOrNull(): T? {
+fun <T> Slice<T?>.firstOrNull(): T? {
     return this.content.ifEmpty { listOf(null) }.first()
 }
 
-fun <T> ifNotNullEquals(source: T?, target: T?): Boolean {
-    return source?.let { target == it } ?: true
+fun <T> T?.ifNotNullEquals(target: T?): Boolean {
+    return this?.let { target == it } ?: true
 }
 
 fun <T> T?.ifNull(value: T): T {

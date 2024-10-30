@@ -1,6 +1,10 @@
 package com.konai.fxs.v1.account.repository
 
+import com.konai.fxs.common.jdsl.findAll
 import com.konai.fxs.common.jdsl.findOne
+import com.konai.fxs.common.model.BasePageable
+import com.konai.fxs.common.model.PageableRequest
+import com.konai.fxs.common.util.PageRequestUtil.toBasePageable
 import com.konai.fxs.v1.account.repository.jdsl.V1AccountJdslExecutor
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
@@ -23,6 +27,12 @@ class V1AccountRepositoryImpl(
         return V1AccountJdslExecutor(predicate)
             .let { v1AccountJpaRepository.findOne(it.selectQuery()) }
             ?.let { v1AccountMapper.entityToDomain(it) }
+    }
+
+    override fun findAllByPredicate(predicate: V1AccountPredicate, pageable: PageableRequest): BasePageable<V1Account> {
+        return V1AccountJdslExecutor(predicate)
+            .let { v1AccountJpaRepository.findAll(pageable, it.selectQuery()) }
+            .toBasePageable(v1AccountMapper::entityToDomain)
     }
 
 }

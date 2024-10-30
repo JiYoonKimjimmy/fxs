@@ -1,13 +1,12 @@
 package com.konai.fxs.common.util
 
+import com.konai.fxs.common.DEFAULT_SORT_BY
+import com.konai.fxs.common.DEFAULT_SORT_ORDER
 import com.konai.fxs.common.model.BasePageable
 import com.konai.fxs.common.model.BasePageable.Pageable
 import com.konai.fxs.common.model.PageableRequest
-import com.konai.fxs.common.DEFAULT_SORT_BY
-import com.konai.fxs.common.DEFAULT_SORT_ORDER
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Slice
 import org.springframework.data.domain.Sort
 
 object PageRequestUtil {
@@ -21,7 +20,7 @@ object PageRequestUtil {
         )
     }
 
-    fun <T> Page<T>.toBasePageable(): BasePageable<T> {
+    fun <I, O> Page<I?>.toBasePageable(mapper: (I) -> O): BasePageable<O> {
         return BasePageable(
             pageable = Pageable(
                 first = this.isFirst,
@@ -30,23 +29,9 @@ object PageRequestUtil {
                 numberOfElements = this.numberOfElements,
                 size = this.size,
                 totalPages = this.totalPages,
-                totalElements = this.numberOfElements,
+                totalElements = this.totalElements,
             ),
-            content = this.content
-        )
-    }
-
-    fun <T> Slice<T>.toBasePageable(): BasePageable<T> {
-        return BasePageable(
-            pageable = Pageable(
-                first = this.isFirst,
-                last = this.isLast,
-                number = this.number,
-                numberOfElements = this.numberOfElements,
-                size = this.size,
-                totalElements = this.numberOfElements,
-            ),
-            content = this.content
+            content = this.content.filterNotNull().map(mapper)
         )
     }
 

@@ -1,5 +1,7 @@
 package com.konai.fxs.v1.account.service
 
+import com.konai.fxs.common.model.BasePageable
+import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.account.service.domain.V1Account
@@ -23,6 +25,10 @@ class V1AccountManagementServiceImpl(
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account {
         return v1AccountFindService.findByPredicate(predicate)
             ?: throw ResourceNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND)
+    }
+
+    override fun findAllByPredicate(predicate: V1AccountPredicate, pageable: PageableRequest): BasePageable<V1Account> {
+        return v1AccountFindService.findAllByPredicate(predicate, pageable)
     }
 
     override fun update(predicate: V1AccountPredicate): V1Account {

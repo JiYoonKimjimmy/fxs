@@ -12,8 +12,7 @@ import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest
 import com.konai.fxs.v1.account.controller.model.V1FindOneAccountRequest
 import com.konai.fxs.v1.account.repository.V1AccountJpaRepository
 import io.kotest.matchers.shouldBe
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.greaterThan
+import org.hamcrest.Matchers.*
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.post
@@ -26,6 +25,7 @@ class V1AccountManagementControllerTest(
 
     val objectMapper = dependencies.objectMapper
     val v1AccountEntityFixture = dependencies.v1AccountEntityFixture
+    val v1FindAllAccountRequestFixture = dependencies.v1FindAllAccountRequestFixture
     val v1UpdateAccountRequestFixture = dependencies.v1UpdateAccountRequestFixture
 
     given("외화 계좌 등록 API 요청하여") {
@@ -122,6 +122,103 @@ class V1AccountManagementControllerTest(
                     }
             }
         }
+    }
+
+    given("외화 계좌 다건 API 요청하여") {
+        val findAllAccountUrl = "/api/v1/account/all"
+
+        `when`("저장된 외화 계좌 정보 없는 경우") {
+            val request = v1FindAllAccountRequestFixture.make()
+            val result = mockMvc
+                .post(findAllAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("조회 결과 '0'건 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isOk() }
+                        content {
+                            jsonPath("pageable.totalElements", equalTo(0))
+                            jsonPath("content", hasSize<Any>(0))
+                        }
+                    }
+            }
+        }
+
+        // 외화 계좌 정보 DB 저장
+        val entity1 = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
+        val entity2 = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
+
+        `when`("추가 조건 없이 '10' 건 조회 요청인 경우") {
+            val request = v1FindAllAccountRequestFixture.make()
+            val result = mockMvc
+                .post(findAllAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("조회 결과 '2'건 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isOk() }
+                        content {
+                            jsonPath("pageable.totalElements", equalTo(2))
+                            jsonPath("content", hasSize<Any>(2))
+                        }
+                    }
+            }
+        }
+
+        `when`("'accountId' 조건으로 '10' 건 조회 요청인 경우") {
+            val request = v1FindAllAccountRequestFixture.make(accountId = entity1.id)
+            val result = mockMvc
+                .post(findAllAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("조회 결과 '1'건 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isOk() }
+                        content {
+                            jsonPath("pageable.totalElements", equalTo(1))
+                            jsonPath("content", hasSize<Any>(1))
+                        }
+                    }
+            }
+        }
+
+        `when`("'acquirer' 조건으로 '10' 건 조회 요청인 경우") {
+            val request = v1FindAllAccountRequestFixture.make(
+                acquirerId = entity2.acquirer.id,
+                acquirerType = entity2.acquirer.type,
+                acquirerName = entity2.acquirer.name
+            )
+            val result = mockMvc
+                .post(findAllAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("조회 결과 '2'건 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isOk() }
+                        content {
+                            jsonPath("pageable.totalElements", equalTo(2))
+                            jsonPath("content", hasSize<Any>(2))
+                        }
+                    }
+            }
+        }
+
     }
 
     given("외화 계좌 변경 API 요청하여") {

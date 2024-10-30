@@ -36,6 +36,14 @@ class V1AccountManagementController(
             .success(HttpStatus.OK)
     }
 
+    @PostMapping("/all")
+    fun findAll(@RequestBody request: V1FindAllAccountRequest): ResponseEntity<V1FindAllAccountResponse> {
+        return v1AccountMapper.requestToPredicate(request)
+            .let { v1AccountManagementService.findAllByPredicate(predicate = it, pageable = request.pageable) }
+            .let { V1FindAllAccountResponse(it, v1AccountMapper::domainToModel) }
+            .success(HttpStatus.OK)
+    }
+
     @PostMapping("/update")
     fun update(@RequestBody request: V1UpdateAccountRequest): ResponseEntity<V1UpdateAccountResponse> {
         return request.validation()
