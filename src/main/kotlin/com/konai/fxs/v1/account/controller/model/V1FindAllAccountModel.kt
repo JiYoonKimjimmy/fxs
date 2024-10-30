@@ -7,6 +7,8 @@ import com.konai.fxs.common.model.BaseResponse
 import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
@@ -20,12 +22,8 @@ data class V1FindAllAccountRequest(
 ) {
 
     @get:JsonIgnore
-    val acquirer: V1Acquirer? by lazy {
-        takeIf {
-            it.acquirerId != null && it.acquirerType != null
-        }?.let {
-            V1Acquirer(id = this.acquirerId!!, type = this.acquirerType!!, name = this.acquirerName!!)
-        }
+    val acquirer: V1AcquirerPredicate? by lazy {
+        V1AcquirerPredicate(acquirerId, acquirerType, acquirerName)
     }
 
 }

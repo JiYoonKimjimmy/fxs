@@ -4,7 +4,7 @@ import com.konai.fxs.common.model.BasePageable
 import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
-import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 
 interface V1AccountFindService {
 
@@ -12,6 +12,6 @@ interface V1AccountFindService {
 
     fun findAllByPredicate(predicate: V1AccountPredicate, pageable: PageableRequest): BasePageable<V1Account>
 
-    fun existsByAcquirer(acquirer: V1Acquirer, id: Long? = null): Boolean
+    fun existsByAcquirer(acquirer: V1AcquirerPredicate, id: Long? = null): Boolean
 
 }

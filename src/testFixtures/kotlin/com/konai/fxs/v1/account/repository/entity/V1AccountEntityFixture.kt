@@ -8,15 +8,9 @@ import java.math.BigDecimal
 
 class V1AccountEntityFixture {
 
-    private val defaultAcquirer: V1AcquirerEntity = V1AcquirerEntity(
-        id = TestExtensionFunctions.generateUUID(),
-        type = AcquirerType.FX_DEPOSIT,
-        name = "외화 예치금 계좌"
-    )
-
     fun make(
         id: Long? = null,
-        acquirer: V1AcquirerEntity = defaultAcquirer,
+        acquirer: V1AcquirerEntity = generateAcquirerEntity(),
         currency: String = "USD",
         balance: BigDecimal = BigDecimal.ZERO,
         minRequiredBalance: BigDecimal = BigDecimal.ZERO,
@@ -33,5 +27,11 @@ class V1AccountEntityFixture {
             status = status
         )
     }
+
+    private fun generateAcquirerEntity(): V1AcquirerEntity = V1AcquirerEntity(
+        id = TestExtensionFunctions.generateUUID(),
+        type = AcquirerType.FX_DEPOSIT,
+        name = "외화 예치금 계좌"
+    )
 
 }

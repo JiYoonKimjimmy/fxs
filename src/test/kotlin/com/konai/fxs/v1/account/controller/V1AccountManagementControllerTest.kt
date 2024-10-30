@@ -152,7 +152,7 @@ class V1AccountManagementControllerTest(
         val entity1 = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
         val entity2 = v1AccountJpaRepository.save(v1AccountEntityFixture.make())
 
-        `when`("추가 조건 없이 '10' 건 조회 요청인 경우") {
+        `when`("요청 조건 없이 전체 조회 요청인 경우") {
             val request = v1FindAllAccountRequestFixture.make()
             val result = mockMvc
                 .post(findAllAccountUrl) {
@@ -173,7 +173,7 @@ class V1AccountManagementControllerTest(
             }
         }
 
-        `when`("'accountId' 조건으로 '10' 건 조회 요청인 경우") {
+        `when`("'accountId' 조건 조회 요청인 경우") {
             val request = v1FindAllAccountRequestFixture.make(accountId = entity1.id)
             val result = mockMvc
                 .post(findAllAccountUrl) {
@@ -194,12 +194,29 @@ class V1AccountManagementControllerTest(
             }
         }
 
-        `when`("'acquirer' 조건으로 '10' 건 조회 요청인 경우") {
-            val request = v1FindAllAccountRequestFixture.make(
-                acquirerId = entity2.acquirer.id,
-                acquirerType = entity2.acquirer.type,
-                acquirerName = entity2.acquirer.name
-            )
+        `when`("'acquirerId' 조건 조회 요청인 경우") {
+            val request = v1FindAllAccountRequestFixture.make(acquirerId = entity2.acquirer.id)
+            val result = mockMvc
+                .post(findAllAccountUrl) {
+                    contentType = MediaType.APPLICATION_JSON
+                    content = objectMapper.writeValueAsString(request)
+                }
+                .andDo { print() }
+
+            then("조회 결과 '1'건 정상 확인한다") {
+                result
+                    .andExpect {
+                        status { isOk() }
+                        content {
+                            jsonPath("pageable.totalElements", equalTo(1))
+                            jsonPath("content", hasSize<Any>(1))
+                        }
+                    }
+            }
+        }
+
+        `when`("'acquirerName' 조건 조회 요청인 경우") {
+            val request = v1FindAllAccountRequestFixture.make(acquirerName = entity2.acquirer.name)
             val result = mockMvc
                 .post(findAllAccountUrl) {
                     contentType = MediaType.APPLICATION_JSON

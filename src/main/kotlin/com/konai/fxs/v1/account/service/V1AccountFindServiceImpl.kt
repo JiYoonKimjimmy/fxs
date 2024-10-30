@@ -6,6 +6,7 @@ import com.konai.fxs.v1.account.repository.V1AccountRepository
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,7 +25,7 @@ class V1AccountFindServiceImpl(
         return v1AccountRepository.findAllByPredicate(predicate, pageable)
     }
 
-    override fun existsByAcquirer(acquirer: V1Acquirer, id: Long?): Boolean {
+    override fun existsByAcquirer(acquirer: V1AcquirerPredicate, id: Long?): Boolean {
         // 요청 `acquirer` 조건 외화 계좌 정보 조회
         return findByPredicate(predicate = V1AccountPredicate(acquirer = acquirer))
             // 동일한 `acquirer` 다른 외화 계좌가 존재하는 경우, `ture` 반환 처리

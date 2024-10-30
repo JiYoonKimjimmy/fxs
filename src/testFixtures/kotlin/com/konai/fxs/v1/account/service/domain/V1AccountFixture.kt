@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.service.domain
 
+import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
@@ -9,11 +10,13 @@ class V1AccountFixture {
 
     fun make(
         id: Long? = null,
-        acquirer: V1Acquirer = V1Acquirer(id = generateUUID(), type = FX_DEPOSIT, name = "외화 예치금 계좌")
+        acquirerId: String = generateUUID(),
+        acquirerType: AcquirerType = FX_DEPOSIT,
+        acquirerName: String = "외화 예치금 계좌"
     ): V1Account {
         return V1Account(
             id = id,
-            acquirer = acquirer,
+            acquirer = V1Acquirer(acquirerId, acquirerType, acquirerName),
             currency = "USD",
             balance = BigDecimal.ZERO,
             minRequiredBalance = BigDecimal.ZERO,

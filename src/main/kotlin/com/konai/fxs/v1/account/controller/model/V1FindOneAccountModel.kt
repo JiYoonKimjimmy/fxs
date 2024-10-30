@@ -1,12 +1,11 @@
 package com.konai.fxs.v1.account.controller.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.konai.fxs.common.EMPTY
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.model.BaseResponse
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
-import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
@@ -17,11 +16,11 @@ data class V1FindOneAccountRequest(
 ) {
 
     @get:JsonIgnore
-    val acquirer: V1Acquirer? by lazy {
-        takeIf {
-            it.acquirerId != null && it.acquirerType != null
-        }?.let {
-            V1Acquirer(id = this.acquirerId!!, type = this.acquirerType!!, name = EMPTY)
+    val acquirer: V1AcquirerPredicate? by lazy {
+        if (acquirerId != null && acquirerType != null) {
+            V1AcquirerPredicate(id = this.acquirerId, type = this.acquirerType)
+        } else {
+            null
         }
     }
 

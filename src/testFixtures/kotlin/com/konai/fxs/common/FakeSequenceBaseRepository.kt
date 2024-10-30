@@ -1,6 +1,7 @@
 package com.konai.fxs.common
 
 import com.konai.fxs.common.entity.SequenceBaseEntity
+import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.testsupport.TestExtensionFunctions
 
 open class FakeSequenceBaseRepository<T : SequenceBaseEntity> {
@@ -15,6 +16,15 @@ open class FakeSequenceBaseRepository<T : SequenceBaseEntity> {
 
     protected fun findById(id: Long): T? {
         return entities[id]
+    }
+
+    protected fun findPage(pageable: PageableRequest, predicate: (T) -> Boolean): Pair<Int, List<T>> {
+        val total = this.entities.values.filter { predicate(it) }
+        val start = pageable.number * pageable.size
+        val last = ((pageable.number + 1) * pageable.size) - 1
+        val end = if (total.size < last) total.size else last
+        val content = total.subList(start, end)
+        return Pair(total.size, content)
     }
 
 }

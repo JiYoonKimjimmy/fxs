@@ -6,7 +6,7 @@ import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.model.BaseResponse
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
-import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
@@ -21,11 +21,11 @@ data class V1UpdateAccountRequest(
 ) {
 
     @get:JsonIgnore
-    val acquirer: V1Acquirer? by lazy {
-        this.takeIf {
-            this.acquirerId != null && this.acquirerType != null && this.acquirerName != null
-        }?.let {
-            V1Acquirer(id = this.acquirerId!!, type = this.acquirerType!!, name = this.acquirerName!!)
+    val acquirer: V1AcquirerPredicate? by lazy {
+        if (acquirerId != null && acquirerType != null && acquirerName != null) {
+            V1AcquirerPredicate(acquirerId, acquirerType, acquirerName)
+        } else {
+            null
         }
     }
 

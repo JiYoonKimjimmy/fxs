@@ -25,9 +25,13 @@ class FakeV1AccountRepositoryImpl(
     }
 
     override fun findAllByPredicate(predicate: V1AccountPredicate, pageable: PageableRequest): BasePageable<V1Account> {
+        val (totalSize, content) = super.findPage(pageable) { checkPredicate(predicate, it) }
         return BasePageable(
-            pageable = BasePageable.Pageable(),
-            content = super.entities.values.filter { checkPredicate(predicate, it) }.map(v1AccountMapper::entityToDomain)
+            pageable = BasePageable.Pageable(
+                numberOfElements = content.size,
+                totalElements = totalSize.toLong(),
+            ),
+            content = content.map(v1AccountMapper::entityToDomain)
         )
     }
 
