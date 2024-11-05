@@ -4,6 +4,7 @@ import com.konai.fxs.common.model.BasePageable
 import com.konai.fxs.common.model.PageableRequest
 import com.konai.fxs.v1.account.repository.V1AccountRepository
 import com.konai.fxs.v1.account.service.domain.V1Account
+import com.konai.fxs.v1.account.service.domain.V1Account.*
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import org.springframework.stereotype.Service
@@ -22,6 +23,18 @@ class V1AccountFindServiceImpl(
 
     override fun findAllByPredicate(predicate: V1AccountPredicate, pageable: PageableRequest): BasePageable<V1Account> {
         return v1AccountRepository.findAllByPredicate(predicate, pageable)
+    }
+
+    override fun findByAcquirer(acquirer: V1Acquirer, currency: String): V1Account? {
+        return V1AccountPredicate(
+                acquirer = V1AcquirerPredicate(
+                    id = acquirer.id,
+                    type = acquirer.type,
+                    name = acquirer.name
+                ),
+                currency = currency
+            )
+            .let(this::findByPredicate)
     }
 
     override fun existsByAcquirer(acquirer: V1AcquirerPredicate, id: Long?): Boolean {

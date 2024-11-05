@@ -1,6 +1,8 @@
 package com.konai.fxs.v1.account.service.domain
 
+import com.konai.fxs.common.EMPTY
 import com.konai.fxs.common.enumerate.AccountStatus
+import com.konai.fxs.common.enumerate.AccountStatus.ACTIVE
 import com.konai.fxs.common.enumerate.AccountStatus.DELETED
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.ifNull
@@ -22,7 +24,7 @@ data class V1Account(
     data class V1Acquirer(
         val id: String,
         val type: AcquirerType,
-        val name: String
+        val name: String = EMPTY
     )
 
     fun checkDuplicatedAcquirer(isExistsByAcquirer: (V1AcquirerPredicate, Long?) -> Boolean): V1Account {
@@ -37,6 +39,13 @@ data class V1Account(
     fun checkCanBeUpdated(): V1Account {
         if (this.status == DELETED) {
             throw InternalServiceException(ErrorCode.ACCOUNT_STATUS_IS_DELETED)
+        }
+        return this
+    }
+
+    fun checkStatusIsActive(): V1Account {
+        if (this.status != ACTIVE) {
+            throw InternalServiceException(ErrorCode.ACCOUNT_STATUS_IS_INVALID)
         }
         return this
     }

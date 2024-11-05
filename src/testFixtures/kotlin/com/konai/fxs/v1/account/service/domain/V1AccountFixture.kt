@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.service.domain
 
+import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
@@ -12,7 +13,8 @@ class V1AccountFixture {
         id: Long? = null,
         acquirerId: String = generateUUID(),
         acquirerType: AcquirerType = FX_DEPOSIT,
-        acquirerName: String = "외화 예치금 계좌"
+        acquirerName: String = "외화 예치금 계좌",
+        status: AccountStatus = AccountStatus.ACTIVE
     ): V1Account {
         return V1Account(
             id = id,
@@ -20,7 +22,8 @@ class V1AccountFixture {
             currency = "USD",
             balance = BigDecimal.ZERO,
             minRequiredBalance = BigDecimal.ZERO,
-            averageExchangeRate = BigDecimal.ZERO
+            averageExchangeRate = BigDecimal.ZERO,
+            status = status
         )
     }
 

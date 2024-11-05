@@ -370,7 +370,7 @@ class V1AccountManagementControllerTest(
                         content {
                             jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                             jsonPath("result.code", equalTo("210_1001_003"))
-                            jsonPath("result.message", equalTo("Account management service failed. Account's status is already deleted."))
+                            jsonPath("result.message", equalTo("Account management service failed. Account status is already deleted."))
                         }
                     }
             }
