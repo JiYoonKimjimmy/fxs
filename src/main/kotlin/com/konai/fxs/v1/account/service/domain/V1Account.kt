@@ -18,7 +18,7 @@ data class V1Account(
     val balance: BigDecimal = BigDecimal.ZERO,
     val minRequiredBalance: BigDecimal,
     val averageExchangeRate: BigDecimal,
-    val status: AccountStatus = AccountStatus.ACTIVE
+    val status: AccountStatus = ACTIVE
 ) {
 
     data class V1Acquirer(

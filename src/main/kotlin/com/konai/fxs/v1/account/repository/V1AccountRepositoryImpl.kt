@@ -17,8 +17,8 @@ class V1AccountRepositoryImpl(
     private val v1AccountJpaRepository: V1AccountJpaRepository
 ) : V1AccountRepository {
 
-    override fun save(domain: V1Account): V1Account {
-        return v1AccountMapper.domainToEntity(domain)
+    override fun save(account: V1Account): V1Account {
+        return v1AccountMapper.domainToEntity(account)
             .let { v1AccountJpaRepository.save(it) }
             .let { v1AccountMapper.entityToDomain(it) }
     }

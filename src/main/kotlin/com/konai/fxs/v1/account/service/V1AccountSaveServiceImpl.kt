@@ -11,8 +11,8 @@ class V1AccountSaveServiceImpl(
 ) : V1AccountSaveService {
 
     @Transactional
-    override fun save(domain: V1Account): V1Account {
-        return v1AccountRepository.save(domain)
+    override fun save(account: V1Account): V1Account {
+        return v1AccountRepository.save(account)
     }
 
 }

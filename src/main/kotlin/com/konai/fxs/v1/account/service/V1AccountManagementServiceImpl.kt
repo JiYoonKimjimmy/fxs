@@ -16,8 +16,8 @@ class V1AccountManagementServiceImpl(
     private val v1AccountFindService: V1AccountFindService
 ) : V1AccountManagementService {
 
-    override fun save(domain: V1Account): V1Account {
-        return domain
+    override fun save(account: V1Account): V1Account {
+        return account
             .checkDuplicatedAcquirer(v1AccountFindService::existsByAcquirer)
             .let { v1AccountSaveService.save(it) }
     }

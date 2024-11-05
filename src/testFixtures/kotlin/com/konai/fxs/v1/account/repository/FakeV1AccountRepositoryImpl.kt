@@ -13,8 +13,8 @@ class FakeV1AccountRepositoryImpl(
     private val v1AccountMapper: V1AccountMapper
 ) : V1AccountRepository, FakeSequenceBaseRepository<V1AccountEntity>() {
 
-    override fun save(domain: V1Account): V1Account {
-        return v1AccountMapper.domainToEntity(domain)
+    override fun save(account: V1Account): V1Account {
+        return v1AccountMapper.domainToEntity(account)
             .let { super.save(it) }
             .let {v1AccountMapper.entityToDomain(it) }
     }
