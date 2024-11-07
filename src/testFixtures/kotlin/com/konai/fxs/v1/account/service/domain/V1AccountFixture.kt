@@ -14,13 +14,14 @@ class V1AccountFixture {
         acquirerId: String = generateUUID(),
         acquirerType: AcquirerType = FX_DEPOSIT,
         acquirerName: String = "외화 예치금 계좌",
+        balance: Long = 0,
         status: AccountStatus = AccountStatus.ACTIVE
     ): V1Account {
         return V1Account(
             id = id,
             acquirer = V1Acquirer(acquirerId, acquirerType, acquirerName),
             currency = "USD",
-            balance = BigDecimal.ZERO,
+            balance = BigDecimal.valueOf(balance),
             minRequiredBalance = BigDecimal.ZERO,
             averageExchangeRate = BigDecimal.ZERO,
             status = status

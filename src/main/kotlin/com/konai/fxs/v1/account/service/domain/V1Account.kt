@@ -50,6 +50,13 @@ data class V1Account(
         return this
     }
 
+    fun checkSufficientBalance(amount: BigDecimal): V1Account {
+        if (this.balance < amount) {
+            throw InternalServiceException(ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT)
+        }
+        return this
+    }
+
     fun update(predicate: V1AccountPredicate): V1Account {
         return this.copy(
             acquirer           = predicate.acquirer?.toDomain().ifNull(acquirer),

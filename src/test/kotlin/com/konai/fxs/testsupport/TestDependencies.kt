@@ -30,11 +30,11 @@ object TestDependencies {
     private val transactionCacheRepository = TransactionCacheRepositoryImpl(numberRedisTemplate)
 
     // service
+    val transactionCacheService = TransactionCacheServiceImpl(transactionCacheRepository)
     val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
     private val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
     val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountSaveService, v1AccountFindService)
-    val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService)
-    val transactionCacheService = TransactionCacheServiceImpl(transactionCacheRepository)
+    val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService, transactionCacheService)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()
