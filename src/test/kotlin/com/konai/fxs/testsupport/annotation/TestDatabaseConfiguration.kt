@@ -1,4 +1,4 @@
-package com.konai.fxs.testsupport
+package com.konai.fxs.testsupport.annotation
 
 import com.konai.fxs.infra.config.JpaAuditorConfig
 import com.linecorp.kotlinjdsl.support.spring.data.jpa.autoconfigure.KotlinJdslAutoConfiguration

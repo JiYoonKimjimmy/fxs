@@ -1,4 +1,4 @@
-package com.konai.fxs.testsupport
+package com.konai.fxs.testsupport.redis
 
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.Spec

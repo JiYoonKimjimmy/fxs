@@ -5,7 +5,7 @@ import com.konai.fxs.common.enumerate.AccountStatus.DELETED
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.common.enumerate.ResultStatus
 import com.konai.fxs.testsupport.CustomBehaviorSpec
-import com.konai.fxs.testsupport.CustomSpringBootTest
+import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.v1.account.controller.model.V1CreateAccountRequest

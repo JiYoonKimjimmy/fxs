@@ -1,8 +1,8 @@
 package com.konai.fxs.infra.config
 
 import com.konai.fxs.testsupport.CustomStringSpec
-import com.konai.fxs.testsupport.EmbeddedRedis.numberRedisTemplate
-import com.konai.fxs.testsupport.RedisTestListener
+import com.konai.fxs.testsupport.redis.EmbeddedRedis.numberRedisTemplate
+import com.konai.fxs.testsupport.redis.RedisTestListener
 import io.kotest.matchers.shouldBe
 
 class RedisConfigTest: CustomStringSpec({

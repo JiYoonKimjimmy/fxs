@@ -1,4 +1,4 @@
-package com.konai.fxs.testsupport
+package com.konai.fxs.testsupport.redis
 
 import jakarta.annotation.PostConstruct
 import jakarta.annotation.PreDestroy

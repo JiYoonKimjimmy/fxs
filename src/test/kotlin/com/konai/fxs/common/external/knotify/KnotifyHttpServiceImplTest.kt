@@ -3,7 +3,7 @@ package com.konai.fxs.common.external.knotify
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.konai.fxs.testsupport.CustomRestClientTest
+import com.konai.fxs.testsupport.annotation.CustomRestClientTest
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
 import com.konasl.commonlib.springweb.correlation.loggercontext.CorrelationLoggingField.CORRELATION_ID_LOG_FIELD

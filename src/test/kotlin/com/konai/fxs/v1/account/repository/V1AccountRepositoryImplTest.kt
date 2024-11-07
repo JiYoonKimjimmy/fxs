@@ -4,7 +4,7 @@ import com.konai.fxs.common.EMPTY
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.common.jdsl.findOne
 import com.konai.fxs.testsupport.CustomBehaviorSpec
-import com.konai.fxs.testsupport.CustomDataJpaTest
+import com.konai.fxs.testsupport.annotation.CustomDataJpaTest
 import com.konai.fxs.testsupport.TestExtensionFunctions
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.repository.jdsl.V1AccountJdslExecutor

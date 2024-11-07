@@ -1,4 +1,4 @@
-package com.konai.fxs.testsupport
+package com.konai.fxs.testsupport.redis
 
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
