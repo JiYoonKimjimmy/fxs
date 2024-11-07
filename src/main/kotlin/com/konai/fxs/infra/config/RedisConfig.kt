@@ -24,16 +24,20 @@ class RedisConfig(
             redisProperties.sentinel.nodes.toSet()
         )
         redisSentinelConfiguration.password = RedisPassword.of(redisProperties.password)
-        return LettuceConnectionFactory(redisSentinelConfiguration)
+        return LettuceConnectionFactory(redisSentinelConfiguration).also { it.afterPropertiesSet() }
     }
 
     @Bean
-    fun redisTemplate(): RedisTemplate<String, Any> {
-        val redisTemplate = RedisTemplate<String, Any>()
-        redisTemplate.keySerializer = StringRedisSerializer()
-        redisTemplate.valueSerializer = GenericJackson2JsonRedisSerializer()
-        redisTemplate.connectionFactory = redisConnectionFactory()
-        return redisTemplate
+    fun numberRedisTemplate(): RedisTemplate<String, Number> {
+        return configureRedisTemplate(RedisTemplate<String, Number>()).also { it.afterPropertiesSet() }
+    }
+
+    private fun <T> configureRedisTemplate(redisTemplate: RedisTemplate<String, T>): RedisTemplate<String, T> {
+        return redisTemplate.apply {
+            this.keySerializer = StringRedisSerializer()
+            this.valueSerializer = GenericJackson2JsonRedisSerializer()
+            this.connectionFactory = redisConnectionFactory()
+        }
     }
 
 }

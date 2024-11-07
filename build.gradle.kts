@@ -73,6 +73,10 @@ dependencies {
     // prometheus
     implementation("io.micrometer:micrometer-registry-prometheus")
 
+    implementation("com.github.codemonstur:embedded-redis:1.4.3")
+
+    implementation("commons-io:commons-io:2.14.0")
+
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -90,8 +94,6 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property:$kotestVersion")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-
-    testImplementation("it.ozimov:embedded-redis:0.7.2")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("com.h2database:h2")

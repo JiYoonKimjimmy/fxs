@@ -8,8 +8,10 @@ import org.redisson.config.Config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import java.time.Duration
 
+@Profile("!test")
 @Configuration
 class RedissonConfig(
     @Value("\${spring.profiles.active}")
@@ -37,7 +39,7 @@ class RedissonConfig(
 
     private fun redissonClientConfig(): Config {
         val config = when (environment) {
-            "dev", "qa", "test" -> this::useSingleServerConfig
+            "dev", "qa" -> this::useSingleServerConfig
             "prod" -> this::useSentinelServersConfig
             else -> throw InternalServiceException(ErrorCode.UNKNOWN_ENVIRONMENT)
         }
