@@ -10,3 +10,8 @@ const val DEFAULT_SORT_ORDER = "DESC"
 const val DEFAULT_SORT_BY = "id"
 
 const val HEADER_REQUEST_START_TIME = "X-KM-Request-Start-Time"
+
+object Currency {
+    const val KRW = "KRW"
+    const val USD = "USD"
+}

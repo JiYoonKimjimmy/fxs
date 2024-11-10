@@ -73,6 +73,7 @@ dependencies {
     // prometheus
     implementation("io.micrometer:micrometer-registry-prometheus")
 
+    // embedded redis
     implementation("com.github.codemonstur:embedded-redis:1.4.3")
 
     implementation("commons-io:commons-io:2.14.0")

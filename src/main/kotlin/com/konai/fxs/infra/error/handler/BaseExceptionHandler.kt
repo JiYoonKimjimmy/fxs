@@ -45,7 +45,7 @@ class BaseExceptionHandler(
 
     @ExceptionHandler(BaseException::class)
     protected fun handleCustomException(e: BaseException): ResponseEntity<ErrorResponse> {
-        return ErrorResponse.toResponseEntity(featureCode, e.errorCode)
+        return ErrorResponse.toResponseEntity(featureCode, e.errorCode, e.detailMessage)
     }
 
     @ExceptionHandler(Exception::class)

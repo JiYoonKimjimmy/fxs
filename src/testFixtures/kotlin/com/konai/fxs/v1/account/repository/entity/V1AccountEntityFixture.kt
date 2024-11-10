@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.account.repository.entity
 
+import com.konai.fxs.common.Currency
 import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.testsupport.TestExtensionFunctions
@@ -11,8 +12,8 @@ class V1AccountEntityFixture {
     fun make(
         id: Long? = null,
         acquirer: V1AcquirerEntity = generateAcquirerEntity(),
-        currency: String = "USD",
-        balance: BigDecimal = BigDecimal.ZERO,
+        currency: String = Currency.USD,
+        balance: Long = 0,
         minRequiredBalance: BigDecimal = BigDecimal.ZERO,
         averageExchangeRate: BigDecimal = BigDecimal.ZERO,
         status: AccountStatus = AccountStatus.ACTIVE,
@@ -21,7 +22,7 @@ class V1AccountEntityFixture {
             id = id,
             acquirer = acquirer,
             currency = currency,
-            balance = balance,
+            balance = BigDecimal(balance),
             minRequiredBalance = minRequiredBalance,
             averageExchangeRate = averageExchangeRate,
             status = status

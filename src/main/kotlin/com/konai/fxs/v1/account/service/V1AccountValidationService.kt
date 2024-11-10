@@ -14,6 +14,6 @@ interface V1AccountValidationService {
     /**
      * 외화 계좌 한도 확인
      */
-    fun checkLimit(account: V1Account, amount: BigDecimal): V1Account
+    fun checkLimit(acquirer: V1Acquirer, currency: String, amount: BigDecimal): V1Account
 
 }

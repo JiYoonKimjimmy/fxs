@@ -125,11 +125,11 @@ spring:
   data:
     redis:
       host: localhost
-      port: 6381
+      port: 6379
       password:
       sentinel:
         master: mymaster
-        nodes: localhost:26381
+        nodes: localhost:26379
   h2:
     console:
       enabled: true

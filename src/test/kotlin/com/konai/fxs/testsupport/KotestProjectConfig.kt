@@ -8,5 +8,11 @@ import org.springframework.boot.test.context.TestConfiguration
 
 @TestConfiguration
 class KotestProjectConfig : AbstractProjectConfig() {
+
     override fun extensions(): List<Extension> = listOf(SpringTestExtension(SpringTestLifecycleMode.Root))
+
+    override suspend fun afterProject() {
+        TestDependencies.lettuceConnectionFactory.resetConnection()
+    }
+
 }

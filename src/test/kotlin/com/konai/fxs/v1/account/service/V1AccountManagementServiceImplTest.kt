@@ -191,7 +191,7 @@ class V1AccountManagementServiceImplTest : CustomBehaviorSpec({
         }
 
         `when`("'balance' 정보 변경인 경우") {
-            val newBalance = BigDecimal.valueOf(10000000)
+            val newBalance = BigDecimal(10000000)
             val predicate = V1AccountPredicate(id = accountId, balance = newBalance)
             val result = v1AccountManagementService.update(predicate)
 

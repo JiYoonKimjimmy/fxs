@@ -12,7 +12,7 @@ class TransactionCacheServiceImpl(
 
     override fun findWithdrawalReadyTotalAmountCache(acquirer: V1Account.V1Acquirer): BigDecimal {
         return transactionCacheRepository.findWithdrawalReadyTotalAmountCache(acquirer.id, acquirer.type)
-            ?.let { BigDecimal.valueOf(it.toLong()) }
+            ?.let { BigDecimal(it.toLong()) }
             ?: BigDecimal.ZERO
     }
 

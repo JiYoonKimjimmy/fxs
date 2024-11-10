@@ -50,9 +50,12 @@ data class V1Account(
         return this
     }
 
-    fun checkSufficientBalance(amount: BigDecimal): V1Account {
-        if (this.balance < amount) {
-            throw InternalServiceException(ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT)
+    fun checkSufficientBalance(readyAmount: BigDecimal, amount: BigDecimal): V1Account {
+        if (this.balance < (readyAmount + amount)) {
+            throw InternalServiceException(
+                errorCode =ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT,
+                detailMessage = "balance: ${this.balance} < (readyAmount: $readyAmount + amount: $amount)"
+            )
         }
         return this
     }

@@ -15,4 +15,19 @@ class TransactionCacheRepositoryImpl(
         return numberRedisTemplate.opsForValue().get(key)
     }
 
+    override fun incrementWithdrawalReadyTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
+        val key = WITHDRAWAL_READY_TOTAL_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
+        return numberRedisTemplate.opsForValue().increment(key, amount)
+    }
+
+    override fun decrementWithdrawalReadyTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
+        val key = WITHDRAWAL_READY_TOTAL_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
+        return numberRedisTemplate.opsForValue().decrement(key, amount)
+    }
+
+    override fun clearWithdrawalReadyTotalAmountCache(acquirerId: String, acquirerType: AcquirerType) {
+        val key = WITHDRAWAL_READY_TOTAL_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
+        numberRedisTemplate.delete(key)
+    }
+    
 }

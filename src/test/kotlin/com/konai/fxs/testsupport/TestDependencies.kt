@@ -3,7 +3,7 @@ package com.konai.fxs.testsupport
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
-import com.konai.fxs.testsupport.redis.EmbeddedRedis
+import com.konai.fxs.testsupport.redis.RedisTestConfig
 import com.konai.fxs.v1.account.controller.model.V1FindAllAccountRequestFixture
 import com.konai.fxs.v1.account.controller.model.V1UpdateAccountRequestFixture
 import com.konai.fxs.v1.account.repository.FakeV1AccountRepositoryImpl
@@ -20,14 +20,15 @@ import com.konai.fxs.v1.transaction.service.cache.TransactionCacheServiceImpl
 object TestDependencies {
 
     // ext-library
-    val numberRedisTemplate = EmbeddedRedis.numberRedisTemplate
+    val numberRedisTemplate = RedisTestConfig.numberRedisTemplate
+    val lettuceConnectionFactory = RedisTestConfig.lettuceConnectionFactory
 
     // mapper
     private val v1AccountMapper = V1AccountMapper()
 
     // repository
     private val fakeV1AccountRepository = FakeV1AccountRepositoryImpl(v1AccountMapper)
-    private val transactionCacheRepository = TransactionCacheRepositoryImpl(numberRedisTemplate)
+    val transactionCacheRepository = TransactionCacheRepositoryImpl(numberRedisTemplate)
 
     // service
     val transactionCacheService = TransactionCacheServiceImpl(transactionCacheRepository)

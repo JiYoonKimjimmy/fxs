@@ -4,7 +4,7 @@ import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_READY_TOTAL_AMOUNT_CACHE
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
-import com.konai.fxs.testsupport.redis.RedisTestListener
+import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import io.kotest.matchers.bigdecimal.shouldBeZero
 import io.kotest.matchers.equals.shouldBeEqual
@@ -12,7 +12,7 @@ import java.math.BigDecimal
 
 class TransactionCacheServiceImplTest : CustomBehaviorSpec({
 
-    listeners(RedisTestListener())
+    listeners(EmbeddedRedisTestListener())
 
     val transactionCacheService = dependencies.transactionCacheService
     val numberRedisTemplate = dependencies.numberRedisTemplate
@@ -37,7 +37,7 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
             val result = transactionCacheService.findWithdrawalReadyTotalAmountCache(acquirer)
 
             then("'100000' 금액 반환 정상 확인한다") {
-                result.shouldBeEqual(BigDecimal.valueOf(100000))
+                result.shouldBeEqual(BigDecimal(100000))
             }
         }
     }

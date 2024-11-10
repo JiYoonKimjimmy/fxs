@@ -8,7 +8,10 @@ fun <T> Slice<T?>.firstOrNull(): T? {
 }
 
 fun <T> T?.ifNotNullEquals(target: T?): Boolean {
-    return this?.let { target == it } ?: true
+    return when (this) {
+        is String -> this.emptyStringToNull()?.let { target == it } ?: true
+        else -> this?.let { target == it } ?: true
+    }
 }
 
 fun <T> T?.ifNull(value: T): T {
@@ -21,5 +24,5 @@ fun Logger.error(exception: Exception): Exception {
 }
 
 fun String.emptyStringToNull(): String? {
-    return this.takeIf { it.isNotEmpty() }
+    return this.ifEmpty { null }
 }

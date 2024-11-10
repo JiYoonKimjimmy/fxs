@@ -25,16 +25,18 @@ class V1AccountValidationServiceImpl(
             ?: throw ResourceNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND)
     }
 
-    override fun checkLimit(account: V1Account, amount: BigDecimal): V1Account {
+    override fun checkLimit(acquirer: V1Acquirer, currency: String, amount: BigDecimal): V1Account {
         /**
          * 외화 계좌 한도 확인
-         * 1. 출금 준비 금액 합계 Cache 정보 조회
-         * 2. 외화 계좌 한도 계산
+         * 1. 외화 계좌 조회 & 상태 확인
+         * 2. 출금 준비 금액 합계 Cache 정보 조회
+         * 3. 외화 계좌 한도 계산
          *  - 계좌 잔액 < (요청 거래 금액 + 출금 준비 금액 합계)
          */
-        return transactionCacheService.findWithdrawalReadyTotalAmountCache(account.acquirer)
-            .let { amount + it }
-            .let { account.checkSufficientBalance(it) }
+        return with(checkStatus(acquirer, currency)) {
+            transactionCacheService.findWithdrawalReadyTotalAmountCache(this.acquirer)
+                .let { this.checkSufficientBalance(readyAmount = it, amount = amount) }
+        }
     }
 
 }
