@@ -4,7 +4,6 @@ import com.konai.fxs.testsupport.redis.EmbeddedRedis
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
