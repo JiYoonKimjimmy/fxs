@@ -1,18 +1,23 @@
 package com.konai.fxs.common.lock
 
+import com.konai.fxs.common.enumerate.DistributedLockType
+import com.konai.fxs.testsupport.CustomStringSpec
+import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
 import com.konai.fxs.testsupport.redis.EmbeddedRedis
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
-import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
+
 import org.redisson.config.Config
 import java.util.concurrent.TimeUnit
 
-class DistributedLockManagerTest : StringSpec({
+class DistributedLockManagerTest : CustomStringSpec({
 
     listeners(EmbeddedRedisTestListener())
+
+    val v1AccountFixture = dependencies.v1AccountFixture
 
     lateinit var redissonClient: RedissonClient
     lateinit var distributedLockManager: DistributedLockManager
@@ -87,6 +92,20 @@ class DistributedLockManagerTest : StringSpec({
 
         // then
         result shouldBe "Hello World!!"
+    }
+
+    "Lock 유지 시간 설정 없이 'accountLock' 정상 확인한다" {
+        // given
+        val lockType = DistributedLockType.ACCOUNT_LOCK
+        val account = v1AccountFixture.make(id = generateSequence())
+
+        // when
+        val result = distributedLockManager.accountLock(lockType, account) {
+            "Hello World, ${account.acquirer.name}"
+        }
+
+        // then
+        result shouldBe "Hello World, 외화 예치금 계좌"
     }
 
 })
