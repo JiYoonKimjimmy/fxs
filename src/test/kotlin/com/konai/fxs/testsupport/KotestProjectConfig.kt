@@ -1,5 +1,6 @@
 package com.konai.fxs.testsupport
 
+import com.konai.fxs.testsupport.redis.RedisTestConfig
 import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.core.extensions.Extension
 import io.kotest.extensions.spring.SpringTestExtension
@@ -12,7 +13,7 @@ class KotestProjectConfig : AbstractProjectConfig() {
     override fun extensions(): List<Extension> = listOf(SpringTestExtension(SpringTestLifecycleMode.Root))
 
     override suspend fun afterProject() {
-        TestDependencies.lettuceConnectionFactory.resetConnection()
+        RedisTestConfig.lettuceConnectionFactory.resetConnection()
     }
 
 }

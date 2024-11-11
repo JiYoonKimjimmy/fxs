@@ -21,7 +21,6 @@ object TestDependencies {
 
     // ext-library
     val numberRedisTemplate = RedisTestConfig.numberRedisTemplate
-    val lettuceConnectionFactory = RedisTestConfig.lettuceConnectionFactory
 
     // mapper
     private val v1AccountMapper = V1AccountMapper()
