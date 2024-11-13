@@ -1,4 +1,4 @@
-package com.konai.fxs.common.lock;
+package com.konai.fxs.common.lock
 
 import com.konai.fxs.common.enumerate.DistributedLockType
 import com.konai.fxs.testsupport.redis.RedisTestConfig

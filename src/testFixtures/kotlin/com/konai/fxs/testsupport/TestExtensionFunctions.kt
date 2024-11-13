@@ -17,7 +17,7 @@ object TestExtensionFunctions {
     }
 
     fun generateAcquirerEntity(): V1AcquirerEntity = V1AcquirerEntity(
-        id = TestExtensionFunctions.generateUUID(),
+        id = generateUUID(),
         type = AcquirerType.FX_DEPOSIT,
         name = "외화 예치금 계좌"
     )
