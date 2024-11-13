@@ -16,6 +16,7 @@ class V1AccountEntityFixture {
         balance: Long = 0,
         minRequiredBalance: BigDecimal = BigDecimal.ZERO,
         averageExchangeRate: BigDecimal = BigDecimal.ZERO,
+        quantity: BigDecimal = BigDecimal.ZERO,
         status: AccountStatus = AccountStatus.ACTIVE,
     ): V1AccountEntity {
         return V1AccountEntity(
@@ -25,6 +26,7 @@ class V1AccountEntityFixture {
             balance = BigDecimal(balance),
             minRequiredBalance = minRequiredBalance,
             averageExchangeRate = averageExchangeRate,
+            depositQuantity = quantity,
             status = status
         )
     }

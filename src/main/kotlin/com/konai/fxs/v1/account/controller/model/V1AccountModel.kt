@@ -12,5 +12,6 @@ data class V1AccountModel(
     val balance: Long,
     val minRequiredBalance: Long,
     val averageExchangeRate: Double,
+    val quantity: Int,
     val status: AccountStatus
 )

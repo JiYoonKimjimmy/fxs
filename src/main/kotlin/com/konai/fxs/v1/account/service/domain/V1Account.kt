@@ -18,6 +18,7 @@ data class V1Account(
     val balance: BigDecimal = BigDecimal.ZERO,
     val minRequiredBalance: BigDecimal,
     val averageExchangeRate: BigDecimal,
+    val depositQuantity: BigDecimal = BigDecimal.ZERO,
     val status: AccountStatus = ACTIVE
 ) {
 
@@ -37,36 +38,51 @@ data class V1Account(
     }
 
     fun checkCanBeUpdated(): V1Account {
-        if (this.status == DELETED) {
+        if (status == DELETED) {
             throw InternalServiceException(ErrorCode.ACCOUNT_STATUS_IS_DELETED)
         }
         return this
     }
 
     fun checkStatusIsActive(): V1Account {
-        if (this.status != ACTIVE) {
-            throw InternalServiceException(ErrorCode.ACCOUNT_STATUS_IS_INVALID)
+        if (status != ACTIVE) {
+            throw InternalServiceException(ErrorCode.ACCOUNT_STATUS_IS_INVALID, "Account for acquirerId '${acquirer.id}' status is invalid")
         }
         return this
     }
 
     fun checkSufficientBalance(readyAmount: BigDecimal, amount: BigDecimal): V1Account {
-        if (this.balance < (readyAmount + amount)) {
+        if (balance < (readyAmount + amount)) {
             throw InternalServiceException(
                 errorCode =ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT,
-                detailMessage = "balance: ${this.balance} < (readyAmount: $readyAmount + amount: $amount)"
+                detailMessage = "balance: $balance < (readyAmount: $readyAmount + amount: $amount)"
             )
         }
         return this
     }
 
     fun update(predicate: V1AccountPredicate): V1Account {
-        return this.copy(
+        return copy(
             acquirer           = predicate.acquirer?.toDomain().ifNull(acquirer),
             currency           = predicate.currency.ifNull(currency),
             balance            = predicate.balance.ifNull(balance),
             minRequiredBalance = predicate.minRequiredBalance.ifNull(minRequiredBalance),
             status             = predicate.status.ifNull(status)
+        )
+    }
+
+    fun deposit(amount: BigDecimal, quantity: BigDecimal, exchangeRate: BigDecimal): V1Account {
+        /**
+         * 외화 계좌 입금
+         * - 외화 계좌 잔액 증액 처리
+         * - 평단가 계산
+         *   - 평단가 = ((이전 매입 환율 * 수량) + (현재 매입 환율 * 수량)) / (총 매입 수량)
+         */
+        val average = ((averageExchangeRate * depositQuantity) + (exchangeRate * quantity)) / (depositQuantity + quantity)
+        return copy(
+            balance = balance + amount,
+            averageExchangeRate = average,
+            depositQuantity = depositQuantity + quantity
         )
     }
 

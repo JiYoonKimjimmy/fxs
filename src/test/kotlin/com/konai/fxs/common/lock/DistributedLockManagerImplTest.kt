@@ -9,11 +9,10 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
-
 import org.redisson.config.Config
 import java.util.concurrent.TimeUnit
 
-class DistributedLockManagerTest : CustomStringSpec({
+class DistributedLockManagerImplTest : CustomStringSpec({
 
     listeners(EmbeddedRedisTestListener())
 
@@ -30,7 +29,7 @@ class DistributedLockManagerTest : CustomStringSpec({
             }
             .let { Redisson.create(it) }
 
-        distributedLockManager = DistributedLockManager(redissonClient)
+        distributedLockManager = DistributedLockManagerImpl(redissonClient)
     }
 
     afterSpec {

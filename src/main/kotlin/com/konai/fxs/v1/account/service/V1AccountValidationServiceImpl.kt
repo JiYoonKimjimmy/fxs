@@ -22,7 +22,7 @@ class V1AccountValidationServiceImpl(
          */
         return v1AccountFindService.findByAcquirer(acquirer, currency)
             ?.checkStatusIsActive()
-            ?: throw ResourceNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND)
+            ?: throw ResourceNotFoundException(ErrorCode.ACCOUNT_NOT_FOUND, "Account for acquirerId '${acquirer.id}' could not found")
     }
 
     override fun checkLimit(acquirer: V1Acquirer, currency: String, amount: BigDecimal): V1Account {

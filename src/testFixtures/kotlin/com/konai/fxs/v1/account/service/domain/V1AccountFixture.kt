@@ -17,6 +17,7 @@ class V1AccountFixture {
         acquirerName: String = "외화 예치금 계좌",
         currency: String = Currency.USD,
         balance: Long = 0,
+        quantity: Int = 0,
         status: AccountStatus = AccountStatus.ACTIVE
     ): V1Account {
         return V1Account(
@@ -26,6 +27,7 @@ class V1AccountFixture {
             balance = BigDecimal(balance),
             minRequiredBalance = BigDecimal.ZERO,
             averageExchangeRate = BigDecimal.ZERO,
+            depositQuantity = BigDecimal(quantity),
             status = status
         )
     }
