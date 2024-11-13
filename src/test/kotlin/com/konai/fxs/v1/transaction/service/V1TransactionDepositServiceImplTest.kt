@@ -1,16 +1,23 @@
 package com.konai.fxs.v1.transaction.service
 
+import com.konai.fxs.common.Currency
 import com.konai.fxs.common.enumerate.AccountStatus.ACTIVE
 import com.konai.fxs.common.enumerate.AccountStatus.INACTIVE
+import com.konai.fxs.common.enumerate.TransactionChannel
+import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.enumerate.TransactionStatus.COMPLETED
+import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
+import com.konai.fxs.v1.transaction.service.domain.V1TransactionPredicate
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import java.math.BigDecimal
 
 class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
@@ -18,9 +25,12 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
     listeners(EmbeddedRedisTestListener())
 
     val v1TransactionDepositService = dependencies.v1TransactionDepositService
-    val v1TransactionFixture = dependencies.v1TransactionFixture
+
     val v1AccountFixture = dependencies.v1AccountFixture
+    val v1TransactionFixture = dependencies.v1TransactionFixture
+
     val v1AccountRepository = dependencies.fakeV1AccountRepository
+    val v1TransactionRepository = dependencies.fakeV1TransactionRepository
 
     given("외화 계좌 수기 입금 거래 요청되어") {
         var accountInvalid = v1AccountFixture.make()
@@ -93,17 +103,31 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             then("수기 입금 거래 상태 'COMPLETED' 정상 확인한다") {
                 result.status shouldBe COMPLETED
             }
-            
-            val entity = v1AccountRepository.findByPredicate(V1AccountPredicate(id = account.id))!!
 
             then("외화 계좌 잔액 증가 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
-                entity.balance shouldBe BigDecimal(100)
-                entity.averageExchangeRate.toDouble() shouldBe 1300.00
-                entity.depositAmount shouldBe BigDecimal(100)
+                val accountEntity = v1AccountRepository.findByPredicate(V1AccountPredicate(id = account.id))!!
+                accountEntity.balance shouldBe BigDecimal(100)
+                accountEntity.averageExchangeRate.toDouble() shouldBe 1300.00
+                accountEntity.depositAmount shouldBe BigDecimal(100)
             }
 
             then("외화 계좌 수기 입금 거래 내역 생성 정상 확인한다") {
+                val acquirerPredicate = V1AcquirerPredicate(transaction.acquirer.id, transaction.acquirer.type, transaction.acquirer.name)
+                val fromAcquirerPredicate = V1AcquirerPredicate(transaction.fromAcquirer?.id, transaction.fromAcquirer?.type, transaction.fromAcquirer?.name)
+                val predicate = V1TransactionPredicate(acquirer = acquirerPredicate, fromAcquirer = fromAcquirerPredicate)
+                val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
 
+                transactionEntity!! shouldNotBe null
+                transactionEntity.acquirer.id shouldBe account.acquirer.id
+                transactionEntity.fromAcquirer?.id shouldBe fromAccount.acquirer.id
+                transactionEntity.type shouldBe TransactionType.DEPOSIT
+                transactionEntity.purpose shouldBe TransactionPurpose.DEPOSIT
+                transactionEntity.channel shouldBe TransactionChannel.PORTAL
+                transactionEntity.currency shouldBe Currency.USD
+                transactionEntity.amount shouldBe BigDecimal(100)
+                transactionEntity.exchangeRate shouldBe BigDecimal(1300)
+                transactionEntity.transferDate shouldBe transaction.transferDate
+                transactionEntity.status shouldBe COMPLETED
             }
         }
     }

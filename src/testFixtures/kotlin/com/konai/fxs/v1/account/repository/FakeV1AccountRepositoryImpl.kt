@@ -16,7 +16,7 @@ class FakeV1AccountRepositoryImpl(
     override fun save(account: V1Account): V1Account {
         return v1AccountMapper.domainToEntity(account)
             .let { super.save(it) }
-            .let {v1AccountMapper.entityToDomain(it) }
+            .let { v1AccountMapper.entityToDomain(it) }
     }
 
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
