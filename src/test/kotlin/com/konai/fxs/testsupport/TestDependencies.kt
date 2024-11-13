@@ -3,7 +3,6 @@ package com.konai.fxs.testsupport
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
-import com.konai.fxs.common.lock.DistributedLockManagerImpl
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
 import com.konai.fxs.testsupport.redis.RedisTestConfig
 import com.konai.fxs.v1.account.controller.model.V1FindAllAccountRequestFixture
