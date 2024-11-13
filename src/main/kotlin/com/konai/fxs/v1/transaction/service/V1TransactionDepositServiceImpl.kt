@@ -27,7 +27,7 @@ class V1TransactionDepositServiceImpl(
 
         // 외화 계좌 잔액/평균 환율 변경 처리
         distributedLockManager.accountLock(ACCOUNT_LOCK, account) {
-            account.deposit(transaction.amount, transaction.depositQuantity, transaction.exchangeRate).let(v1AccountSaveService::save)
+            account.deposit(transaction.amount, transaction.exchangeRate).let(v1AccountSaveService::save)
         }
 
         return transaction.completed()

@@ -27,7 +27,7 @@ class V1AccountFixture {
             balance = BigDecimal(balance),
             minRequiredBalance = BigDecimal.ZERO,
             averageExchangeRate = BigDecimal.ZERO,
-            depositQuantity = BigDecimal(quantity),
+            depositAmount = BigDecimal(quantity),
             status = status
         )
     }

@@ -54,7 +54,7 @@ class V1AccountMapper {
             balance = domain.balance.toLong(),
             minRequiredBalance = domain.minRequiredBalance.toLong(),
             averageExchangeRate = domain.averageExchangeRate.toDouble(),
-            quantity = domain.depositQuantity.toInt(),
+            quantity = domain.depositAmount.toInt(),
             status = domain.status
         )
     }
@@ -71,7 +71,7 @@ class V1AccountMapper {
             balance = domain.balance,
             minRequiredBalance = domain.minRequiredBalance,
             averageExchangeRate = domain.averageExchangeRate,
-            depositQuantity = domain.depositQuantity,
+            depositAmount = domain.depositAmount,
             status = domain.status
         )
     }
@@ -88,7 +88,7 @@ class V1AccountMapper {
             balance = entity.balance,
             minRequiredBalance = entity.minRequiredBalance,
             averageExchangeRate = entity.averageExchangeRate,
-            depositQuantity = entity.depositQuantity,
+            depositAmount = entity.depositAmount,
             status = entity.status
         )
     }

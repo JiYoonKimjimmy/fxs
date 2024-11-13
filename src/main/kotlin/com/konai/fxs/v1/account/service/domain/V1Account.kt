@@ -10,6 +10,7 @@ import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 data class V1Account(
     val id: Long? = null,
@@ -18,7 +19,7 @@ data class V1Account(
     val balance: BigDecimal = BigDecimal.ZERO,
     val minRequiredBalance: BigDecimal,
     val averageExchangeRate: BigDecimal,
-    val depositQuantity: BigDecimal = BigDecimal.ZERO,
+    val depositAmount: BigDecimal = BigDecimal.ZERO,
     val status: AccountStatus = ACTIVE
 ) {
 
@@ -71,19 +72,26 @@ data class V1Account(
         )
     }
 
-    fun deposit(amount: BigDecimal, quantity: BigDecimal, exchangeRate: BigDecimal): V1Account {
+    fun deposit(amount: BigDecimal, exchangeRate: BigDecimal): V1Account {
         /**
          * 외화 계좌 입금
          * - 외화 계좌 잔액 증액 처리
          * - 평단가 계산
          *   - 평단가 = ((이전 매입 환율 * 수량) + (현재 매입 환율 * 수량)) / (총 매입 수량)
          */
-        val average = ((averageExchangeRate * depositQuantity) + (exchangeRate * quantity)) / (depositQuantity + quantity)
         return copy(
             balance = balance + amount,
-            averageExchangeRate = average,
-            depositQuantity = depositQuantity + quantity
+            averageExchangeRate = calculateAverageExchangeRate(amount, exchangeRate),
+            depositAmount = depositAmount + amount
         )
+    }
+
+    private fun calculateAverageExchangeRate(amount: BigDecimal, exchangeRate: BigDecimal): BigDecimal {
+        val averagePart = averageExchangeRate.multiply(depositAmount)
+        val exchangePart = exchangeRate.multiply(amount)
+        val numerator = averagePart.add(exchangePart)
+        val denominator = depositAmount.add(amount)
+        return numerator.divide(denominator, 2, RoundingMode.HALF_UP)
     }
 
 }

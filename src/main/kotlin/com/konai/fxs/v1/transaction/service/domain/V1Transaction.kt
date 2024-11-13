@@ -16,7 +16,6 @@ data class V1Transaction(
     val currency: String,
     val amount: BigDecimal,
     val exchangeRate: BigDecimal,
-    val depositQuantity: BigDecimal = BigDecimal.ZERO,
     val transferDate: String,
     val requestBy: String = DEFAULT_REQUEST_BY,
     val requestNote: String? = null,

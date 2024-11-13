@@ -25,8 +25,8 @@ class V1AccountEntity(
     val minRequiredBalance: BigDecimal,
     @Column(name = "AVERAGE_EXCHANGE_RATE")
     val averageExchangeRate: BigDecimal,
-    @Column(name = "DEPOSIT_QUANTITY")
-    val depositQuantity: BigDecimal,
+    @Column(name = "DEPOSIT_AMOUNT")
+    val depositAmount: BigDecimal,
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
     val status: AccountStatus

@@ -21,7 +21,6 @@ class V1TransactionFixture {
         currency: String = Currency.USD,
         amount: BigDecimal,
         exchangeRate: BigDecimal,
-        depositQuantity: BigDecimal,
         transferDate: String = LocalDateTime.now().convertPatternOf(),
         requestBy: String = DEFAULT_REQUEST_BY,
         requestNote: String? = null,
@@ -35,7 +34,6 @@ class V1TransactionFixture {
             currency = currency,
             amount = amount,
             exchangeRate = exchangeRate,
-            depositQuantity = depositQuantity,
             transferDate = transferDate,
             requestBy = requestBy,
             requestNote = requestNote,
@@ -46,8 +44,7 @@ class V1TransactionFixture {
         acquirer: V1Acquirer,
         fromAcquirer: V1Acquirer,
         amount: BigDecimal,
-        exchangeRate: BigDecimal,
-        depositQuantity: BigDecimal
+        exchangeRate: BigDecimal
     ): V1Transaction {
         return make(
             acquirer = acquirer,
@@ -56,8 +53,7 @@ class V1TransactionFixture {
             purpose = TransactionPurpose.DEPOSIT,
             channel = TransactionChannel.PORTAL,
             amount = amount,
-            exchangeRate = exchangeRate,
-            depositQuantity = depositQuantity
+            exchangeRate = exchangeRate
         )
     }
 

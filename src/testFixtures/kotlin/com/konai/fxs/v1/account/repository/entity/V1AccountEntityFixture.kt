@@ -26,7 +26,7 @@ class V1AccountEntityFixture {
             balance = BigDecimal(balance),
             minRequiredBalance = minRequiredBalance,
             averageExchangeRate = averageExchangeRate,
-            depositQuantity = quantity,
+            depositAmount = quantity,
             status = status
         )
     }

@@ -29,8 +29,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             acquirer = accountInvalid.acquirer,
             fromAcquirer = fromAccountInvalid.acquirer,
             amount = BigDecimal(100),
-            exchangeRate = BigDecimal(1300.0),
-            depositQuantity = BigDecimal(100)
+            exchangeRate = BigDecimal(1300.0)
         )
 
         `when`("'acquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
@@ -85,8 +84,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             acquirer = account.acquirer,
             fromAcquirer = fromAccount.acquirer,
             amount = BigDecimal(100),
-            exchangeRate = BigDecimal(1300.0),
-            depositQuantity = BigDecimal(100)
+            exchangeRate = BigDecimal(1300.0)
         )
         
         `when`("정상 'account' 수기 입금 거래인 경우") {
@@ -100,8 +98,8 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
 
             then("외화 계좌 잔액 증가 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
                 entity.balance shouldBe BigDecimal(100)
-                entity.averageExchangeRate shouldBe BigDecimal(1300)
-                entity.depositQuantity shouldBe BigDecimal(100)
+                entity.averageExchangeRate.toDouble() shouldBe 1300.00
+                entity.depositAmount shouldBe BigDecimal(100)
             }
 
             then("외화 계좌 수기 입금 거래 내역 생성 정상 확인한다") {
