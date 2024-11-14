@@ -8,8 +8,10 @@ import org.redisson.config.Config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import java.time.Duration
 
+@Profile("!test")
 @Configuration
 class RedissonConfig(
     @Value("\${spring.profiles.active}")
@@ -39,7 +41,6 @@ class RedissonConfig(
         val config = when (environment) {
             "dev", "qa" -> this::useSingleServerConfig
             "prod" -> this::useSentinelServersConfig
-            "test" -> this::useSingleServerTestConfig
             else -> throw InternalServiceException(ErrorCode.UNKNOWN_ENVIRONMENT)
         }
         return Config().apply(config)
@@ -66,16 +67,6 @@ class RedissonConfig(
             .setConnectTimeout(connectTimeout.toMillis().toInt())
             .setMasterConnectionMinimumIdleSize(0)
             .setMasterConnectionPoolSize(30)
-    }
-
-    private fun useSingleServerTestConfig(config: Config) {
-        config
-            .useSingleServer()
-            .setAddress("redis://$host:$port")
-            .setTimeout(timeout.toMillis().toInt())
-            .setConnectTimeout(connectTimeout.toMillis().toInt())
-            .setConnectionMinimumIdleSize(0)
-            .setConnectionPoolSize(30)
     }
 
     private fun List<String>.toRedisSentinelAddresses(): Array<String> {

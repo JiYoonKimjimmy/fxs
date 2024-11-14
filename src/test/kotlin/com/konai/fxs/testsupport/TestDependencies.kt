@@ -33,7 +33,7 @@ object TestDependencies {
 
     // mapper
     private val v1AccountMapper = V1AccountMapper()
-    private val v1TransactionMapper = V1TransactionMapper()
+    val v1TransactionMapper = V1TransactionMapper()
 
     // repository
     val fakeV1AccountRepository = FakeV1AccountRepositoryImpl(v1AccountMapper)
