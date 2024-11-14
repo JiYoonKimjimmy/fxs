@@ -20,6 +20,7 @@ import com.konai.fxs.v1.transaction.repository.FakeV1TransactionRepositoryImpl
 import com.konai.fxs.v1.transaction.repository.cache.TransactionCacheRepositoryImpl
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntityFixture
 import com.konai.fxs.v1.transaction.service.V1TransactionDepositServiceImpl
+import com.konai.fxs.v1.transaction.service.V1TransactionSaveServiceImpl
 import com.konai.fxs.v1.transaction.service.cache.TransactionCacheServiceImpl
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionFixture
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
@@ -40,15 +41,16 @@ object TestDependencies {
     val fakeV1TransactionRepository = FakeV1TransactionRepositoryImpl(v1TransactionMapper)
     val transactionCacheRepository = TransactionCacheRepositoryImpl(numberRedisTemplate)
 
-    // event handler
-    private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, fakeV1TransactionRepository)
-
     // service
     val transactionCacheService = TransactionCacheServiceImpl(transactionCacheRepository)
+
     val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
     private val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
     val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountSaveService, v1AccountFindService)
     val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService, transactionCacheService)
+
+    private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository)
+    private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, v1TransactionSaveService)
     private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, v1TransactionEventHandler)
     val v1TransactionDepositService = V1TransactionDepositServiceImpl(v1AccountValidationService, v1AccountSaveService, v1TransactionEventPublisher, distributedLockManager)
 
