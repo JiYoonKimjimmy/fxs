@@ -12,11 +12,12 @@ import java.math.BigDecimal
 @Table(name = "V1_TRANSACTIONS")
 @Entity(name = "V1Transaction")
 class V1TransactionEntity(
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "V1_TRANSACTIONS_SEQ")
-    @SequenceGenerator(name = "V1_TRANSACTIONS_SEQ", sequenceName = "V1_TRANSACTIONS_SEQ", allocationSize = 1)
     @Column(name = "ID")
-    override var id: Long? = null,
+    override var id: Long?,
+    @Column(name = "TR_REFERENCE_ID")
+    val trReferenceId: String,
     @Embedded
     @AttributeOverrides(
         AttributeOverride(name = "id", column = Column(name = "BASE_ACQUIRER_ID")),
@@ -31,15 +32,15 @@ class V1TransactionEntity(
         AttributeOverride(name = "name", column = Column(name = "TARGET_ACQUIRER_NAME"))
     )
     val fromAcquirer: V1AcquirerEntity?,
-    @Column(name = "Type")
+    @Column(name = "TYPE")
     val type: TransactionType,
-    @Column(name = "Purpose")
+    @Column(name = "PURPOSE")
     val purpose: TransactionPurpose,
-    @Column(name = "Channel")
+    @Column(name = "CHANNEL")
     val channel: TransactionChannel,
-    @Column(name = "Currency")
+    @Column(name = "CURRENCY")
     val currency: String,
-    @Column(name = "Amount")
+    @Column(name = "AMOUNT")
     val amount: BigDecimal,
     @Column(name = "EXCHANGE_RATE")
     val exchangeRate: BigDecimal,
@@ -49,7 +50,7 @@ class V1TransactionEntity(
     val requestBy: String,
     @Column(name = "REQUEST_NOTE")
     val requestNote: String?,
-    @Column(name = "Status")
+    @Column(name = "STATUS")
     val status: TransactionStatus
 
 ) : SequenceBaseEntity()

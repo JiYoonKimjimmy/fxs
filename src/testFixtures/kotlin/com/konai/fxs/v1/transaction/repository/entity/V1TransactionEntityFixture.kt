@@ -8,6 +8,8 @@ import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateAcquirerEntity
+import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
+import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -15,6 +17,8 @@ import java.time.LocalDateTime
 class V1TransactionEntityFixture {
 
     fun make(
+        id: Long = generateSequence(),
+        trReferenceId: String = generateUUID(),
         acquirer: V1AcquirerEntity = generateAcquirerEntity(),
         fromAcquirer: V1AcquirerEntity = generateAcquirerEntity(),
         type: TransactionType = TransactionType.DEPOSIT,
@@ -29,6 +33,8 @@ class V1TransactionEntityFixture {
         status: TransactionStatus = TransactionStatus.CREATED,
     ): V1TransactionEntity {
         return V1TransactionEntity(
+            id = id,
+            trReferenceId = trReferenceId,
             acquirer = acquirer,
             fromAcquirer = fromAcquirer,
             type = type,

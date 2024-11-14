@@ -11,6 +11,8 @@ class V1TransactionMapper {
 
     fun domainToSaveTransactionEvent(domain: V1Transaction): V1SaveTransactionEvent {
         return V1SaveTransactionEvent(
+            id = domain.id,
+            trReferenceId = domain.trReferenceId,
             acquirer = domain.acquirer,
             fromAcquirer = domain.fromAcquirer,
             type = domain.type,
@@ -28,6 +30,8 @@ class V1TransactionMapper {
 
     fun eventToDomain(event: V1SaveTransactionEvent): V1Transaction {
         return V1Transaction(
+            id = event.id,
+            trReferenceId = event.trReferenceId,
             acquirer = event.acquirer,
             fromAcquirer = event.fromAcquirer,
             type = event.type,
@@ -46,6 +50,7 @@ class V1TransactionMapper {
     fun domainToEntity(domain: V1Transaction): V1TransactionEntity {
         return V1TransactionEntity(
             id = domain.id,
+            trReferenceId = domain.trReferenceId,
             acquirer = V1AcquirerEntity(id = domain.acquirer.id, type = domain.acquirer.type, name = domain.acquirer.name),
             fromAcquirer = domain.fromAcquirer?.let { V1AcquirerEntity(id = it.id, type = it.type, name = it.name) },
             type = domain.type,
@@ -63,7 +68,8 @@ class V1TransactionMapper {
 
     fun entityToDomain(entity: V1TransactionEntity): V1Transaction {
         return V1Transaction(
-            id = entity.id,
+            id = entity.id!!,
+            trReferenceId = entity.trReferenceId,
             acquirer = V1Acquirer(id = entity.acquirer.id, type = entity.acquirer.type, name = entity.acquirer.name),
             fromAcquirer = entity.fromAcquirer?.let { V1Acquirer(id = it.id, type = it.type, name = it.name) },
             type = entity.type,

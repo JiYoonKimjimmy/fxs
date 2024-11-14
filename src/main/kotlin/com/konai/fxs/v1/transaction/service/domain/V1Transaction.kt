@@ -1,17 +1,19 @@
 package com.konai.fxs.v1.transaction.service.domain
 
-import com.konai.fxs.common.DEFAULT_REQUEST_BY
-import com.konai.fxs.common.enumerate.*
+import com.konai.fxs.common.enumerate.TransactionChannel
+import com.konai.fxs.common.enumerate.TransactionPurpose
+import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionStatus.COMPLETED
-import com.konai.fxs.common.enumerate.TransactionStatus.CREATED
+import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import java.math.BigDecimal
 
 data class V1Transaction(
-    val id: Long? = null,
+    val id: Long,
+    val trReferenceId: String,
     val acquirer: V1Acquirer,
-    val fromAcquirer: V1Acquirer? = null,
+    val fromAcquirer: V1Acquirer?,
     val type: TransactionType,
     val purpose: TransactionPurpose,
     val channel: TransactionChannel,
@@ -19,9 +21,9 @@ data class V1Transaction(
     val amount: BigDecimal,
     val exchangeRate: BigDecimal,
     val transferDate: String,
-    val requestBy: String = DEFAULT_REQUEST_BY,
-    val requestNote: String? = null,
-    val status: TransactionStatus = CREATED
+    val requestBy: String,
+    val requestNote: String?,
+    val status: TransactionStatus
 ) {
 
     fun checkAcquirers(checkAcquirerStatus: (V1Acquirer, String) -> V1Account): V1Account {
@@ -33,9 +35,7 @@ data class V1Transaction(
     }
 
     fun changeStatusToCompleted(): V1Transaction {
-        return copy(
-            status = COMPLETED
-        )
+        return copy(status = COMPLETED)
     }
 
 }

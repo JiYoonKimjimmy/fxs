@@ -8,6 +8,8 @@ import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import java.math.BigDecimal
 
 data class V1SaveTransactionEvent(
+    val id: Long,
+    val trReferenceId: String,
     val acquirer: V1Acquirer,
     val fromAcquirer: V1Acquirer?,
     val type: TransactionType,
