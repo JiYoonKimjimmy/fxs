@@ -8,6 +8,7 @@ const val ZERO_STR = "0"
 const val DEFAULT_SORT_ORDER = "DESC"
 const val DEFAULT_SORT_BY = "id"
 const val DEFAULT_REQUEST_BY = "FXS_SYSTEM"
+const val DEFAULT_SEQUENCE_DATE = "YYYYMMDD"
 
 const val HEADER_REQUEST_START_TIME = "X-KM-Request-Start-Time"
 
