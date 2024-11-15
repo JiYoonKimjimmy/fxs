@@ -1,6 +1,6 @@
 package com.konai.fxs.common.lock
 
-import com.konai.fxs.common.enumerate.DistributedLockType
+import com.konai.fxs.common.enumerate.SequenceType
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
 import com.konai.fxs.testsupport.redis.EmbeddedRedis
@@ -95,16 +95,28 @@ class DistributedLockManagerImplTest : CustomStringSpec({
 
     "Lock 유지 시간 설정 없이 'accountLock' 정상 확인한다" {
         // given
-        val lockType = DistributedLockType.ACCOUNT_LOCK
         val account = v1AccountFixture.make(id = generateSequence())
 
         // when
-        val result = distributedLockManager.accountLock(lockType, account) {
+        val result = distributedLockManager.accountLock(account) {
             "Hello World, ${account.acquirer.name}"
         }
 
         // then
         result shouldBe "Hello World, 외화 예치금 계좌"
+    }
+
+    "Lock 유지 시간 설정 없이 'sequenceLock' 정상 확인한다" {
+        // given
+        val sequenceType = SequenceType.TRANSACTION_SEQUENCE
+
+        // when
+        val result = distributedLockManager.sequenceLock(sequenceType) {
+            "Hello World, ${sequenceType.name}"
+        }
+
+        // then
+        result shouldBe "Hello World, TRANSACTION_SEQUENCE"
     }
 
 })

@@ -1,6 +1,7 @@
 package com.konai.fxs.common.lock
 
 import com.konai.fxs.common.enumerate.DistributedLockType
+import com.konai.fxs.common.enumerate.SequenceType
 import com.konai.fxs.v1.account.service.domain.V1Account
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
@@ -39,12 +40,13 @@ class DistributedLockManagerImpl(
         }
     }
 
-    override fun <R> accountLock(
-        lockType: DistributedLockType,
-        account: V1Account,
-        block: () -> R
-    ): R {
-        val key = lockType.getKey(account.id.toString())
+    override fun <R> accountLock(account: V1Account, block: () -> R): R {
+        val key = DistributedLockType.ACCOUNT_LOCK.getKey(account.id.toString())
+        return lock(key = key, leaseTime = 0, block = block)
+    }
+
+    override fun <R> sequenceLock(sequenceType: SequenceType, block: () -> R): R {
+        val key = DistributedLockType.SEQUENCE_LOCK.getKey(sequenceType.name)
         return lock(key = key, leaseTime = 0, block = block)
     }
 

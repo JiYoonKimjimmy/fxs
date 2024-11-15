@@ -27,4 +27,8 @@ class FakeV1SequenceGeneratorRepositoryImpl(
             ?: V1SequenceGenerator(type = type, date = DEFAULT_SEQUENCE_DATE, value = 0)
     }
 
+    fun deleteAll() {
+        super.entities.clear()
+    }
+
 }
