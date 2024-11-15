@@ -12,11 +12,11 @@ class V1SequenceGeneratorServiceImplTest : CustomBehaviorSpec({
     val v1SequenceGeneratorRepository = dependencies.fakeV1SequenceGeneratorRepository
     val v1SequenceGeneratorService = dependencies.v1SequenceGeneratorService
 
-    given("신규 Sequence 값 증가 요청하여") {
+    given("신규 Transaction Sequence 값 증가 요청하여") {
         val type = SequenceType.TRANSACTION_SEQUENCE
 
-        `when`("Sequence 정보 신규 생성인 경우") {
-            val result = v1SequenceGeneratorService.next(type)
+        `when`("신규 생성인 경우") {
+            val result = v1SequenceGeneratorService.nextTransactionSequence()
 
             then("결과 '1' 정상 확인한다") {
                 result shouldBe 1
@@ -24,16 +24,14 @@ class V1SequenceGeneratorServiceImplTest : CustomBehaviorSpec({
         }
     }
 
-    given("기존 Sequence 값 증가 요청하여") {
-        val type = SequenceType.TRANSACTION_SEQUENCE
-
+    given("기존 Transaction Sequence 값 증가 요청하여") {
         // Sequence 전체 삭제
         v1SequenceGeneratorRepository.deleteAll()
         // Sequence '1회' 증가 처리
-        v1SequenceGeneratorRepository.next(type)
+        v1SequenceGeneratorService.nextTransactionSequence()
 
-        `when`("Sequence 정보 정상 조회인 경우") {
-            val result = v1SequenceGeneratorService.next(type)
+        `when`("정상 조회하여 증가 처리된 경우") {
+            val result = v1SequenceGeneratorService.nextTransactionSequence()
 
             then("결과 '2' 정상 확인한다") {
                 result shouldBe 2

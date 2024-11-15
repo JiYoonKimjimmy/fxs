@@ -17,7 +17,6 @@ import com.konai.fxs.v1.account.service.V1AccountValidationServiceImpl
 import com.konai.fxs.v1.account.service.domain.V1AccountFixture
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
 import com.konai.fxs.v1.sequence.repository.FakeV1SequenceGeneratorRepositoryImpl
-import com.konai.fxs.v1.sequence.repository.V1SequenceGeneratorRepositoryImpl
 import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorServiceImpl
 import com.konai.fxs.v1.sequence.service.domain.V1SequenceGeneratorMapper
 import com.konai.fxs.v1.transaction.repository.FakeV1TransactionRepositoryImpl
@@ -60,7 +59,13 @@ object TestDependencies {
     private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository)
     private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, v1TransactionSaveService)
     private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, v1TransactionEventHandler)
-    val v1TransactionDepositService = V1TransactionDepositServiceImpl(v1AccountValidationService, v1AccountSaveService, v1TransactionEventPublisher, distributedLockManager)
+    val v1TransactionDepositService = V1TransactionDepositServiceImpl(
+        v1AccountValidationService,
+        v1AccountSaveService,
+        v1SequenceGeneratorService,
+        v1TransactionEventPublisher,
+        distributedLockManager
+    )
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

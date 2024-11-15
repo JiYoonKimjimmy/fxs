@@ -34,8 +34,11 @@ data class V1Transaction(
             }
     }
 
-    fun changeStatusToCompleted(): V1Transaction {
-        return copy(status = COMPLETED)
+    fun changeStatusToCompleted(getNextTransactionId: () -> Long): V1Transaction {
+        return copy(
+            id = getNextTransactionId(),
+            status = COMPLETED
+        )
     }
 
 }

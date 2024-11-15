@@ -16,6 +16,7 @@ import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionPredicate
 import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.matchers.longs.shouldBeGreaterThanOrEqual
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.math.BigDecimal
@@ -101,6 +102,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             val result = v1TransactionDepositService.manualDeposit(transaction)
 
             then("수기 입금 거래 상태 'COMPLETED' 정상 확인한다") {
+                result.id shouldBeGreaterThanOrEqual 1L
                 result.status shouldBe COMPLETED
             }
 
@@ -118,6 +120,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
                 val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
 
                 transactionEntity!! shouldNotBe null
+                transactionEntity.id shouldBe result.id
                 transactionEntity.acquirer.id shouldBe account.acquirer.id
                 transactionEntity.fromAcquirer?.id shouldBe fromAccount.acquirer.id
                 transactionEntity.type shouldBe TransactionType.DEPOSIT

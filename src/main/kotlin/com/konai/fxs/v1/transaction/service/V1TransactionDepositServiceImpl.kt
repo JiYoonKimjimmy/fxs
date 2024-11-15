@@ -1,10 +1,10 @@
 package com.konai.fxs.v1.transaction.service
 
-import com.konai.fxs.common.enumerate.DistributedLockType.ACCOUNT_LOCK
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
 import com.konai.fxs.v1.account.service.domain.V1Account
+import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisher
 import org.springframework.stereotype.Service
@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 class V1TransactionDepositServiceImpl(
     private val v1AccountValidationService: V1AccountValidationService,
     private val v1AccountSaveService: V1AccountSaveService,
+    private val v1SequenceGeneratorService: V1SequenceGeneratorService,
     private val v1TransactionEventPublisher: V1TransactionEventPublisher,
     private val distributedLockManager: DistributedLockManager,
 ) : V1TransactionDepositService {
@@ -28,9 +29,11 @@ class V1TransactionDepositServiceImpl(
          */
         // 외화 계좌 상태 확인
         val account = transaction.checkAcquirers(v1AccountValidationService::checkStatus)
+        // 외화 계좌 거래 내역 ID 생성 함수
+        val transactionId = v1SequenceGeneratorService::nextTransactionSequence
         return transaction
             .depositProc(account)
-            .changeStatusToCompleted()
+            .changeStatusToCompleted(transactionId)
             .publishSaveTransactionEvent()
     }
 
