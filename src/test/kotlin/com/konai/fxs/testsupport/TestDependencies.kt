@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
+import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.testsupport.event.TestV1TransactionEventHandler
 import com.konai.fxs.testsupport.redis.RedisTestConfig
 import com.konai.fxs.v1.account.controller.model.V1FindAllAccountRequestFixture
@@ -33,7 +34,8 @@ object TestDependencies {
 
     // ext-library
     val numberRedisTemplate = RedisTestConfig.numberRedisTemplate
-    private val distributedLockManager = FakeDistributedLockManagerImpl()
+    private val fakeDistributedLockManager = FakeDistributedLockManagerImpl()
+    private val fakeRetryableManager = FakeRetryableManagerImpl()
 
     // mapper
     private val v1AccountMapper = V1AccountMapper()
@@ -54,9 +56,9 @@ object TestDependencies {
     val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountSaveService, v1AccountFindService)
     val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService, transactionCacheService)
 
-    val v1SequenceGeneratorService = V1SequenceGeneratorServiceImpl(fakeV1SequenceGeneratorRepository, distributedLockManager)
+    val v1SequenceGeneratorService = V1SequenceGeneratorServiceImpl(fakeV1SequenceGeneratorRepository, fakeDistributedLockManager)
 
-    private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository)
+    private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository, fakeRetryableManager)
     private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, v1TransactionSaveService)
     private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, v1TransactionEventHandler)
     val v1TransactionDepositService = V1TransactionDepositServiceImpl(
@@ -64,7 +66,7 @@ object TestDependencies {
         v1AccountSaveService,
         v1SequenceGeneratorService,
         v1TransactionEventPublisher,
-        distributedLockManager
+        fakeDistributedLockManager
     )
 
     // fixture

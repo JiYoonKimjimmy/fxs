@@ -19,14 +19,7 @@ class V1TransactionEventListenerImpl(
     @EventListener
     override fun saveTransactionEventHandler(event: V1SaveTransactionEvent) {
         logger.info("[SaveTransactionEvent] EventListener Started")
-        try {
-            v1TransactionMapper.eventToDomain(event)
-                .let { v1TransactionSaveService.save(it) }
-        } catch (e: Exception) {
-            // TODO DBMS 시스템 장애 발생 시, 재시도 처리 필요
-            logger.error("[SaveTransactionEvent] EventListener Error!!")
-            logger.error(e.stackTraceToString())
-        }
+        v1TransactionMapper.eventToDomain(event).let { v1TransactionSaveService.save(it) }
         logger.info("[SaveTransactionEvent] EventListener Completed")
     }
 

@@ -37,7 +37,7 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
                     val predicate = V1TransactionPredicate(acquirer = V1AcquirerPredicate(id = transaction.acquirer.id, type = transaction.acquirer.type))
                     val entity = v1TransactionRepository.findByPredicate(predicate)
                     entity!! shouldNotBe null
-                    entity.id!! shouldBeGreaterThan 0L
+                    entity.id shouldBeGreaterThan 0L
                 }
 
                 then("Event 발행 '1회' 정상 확인한다") {
