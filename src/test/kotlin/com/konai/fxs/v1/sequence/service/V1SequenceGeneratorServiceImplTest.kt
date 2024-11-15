@@ -1,6 +1,5 @@
 package com.konai.fxs.v1.sequence.service
 
-import com.konai.fxs.common.enumerate.SequenceType
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import io.kotest.matchers.shouldBe
@@ -13,7 +12,6 @@ class V1SequenceGeneratorServiceImplTest : CustomBehaviorSpec({
     val v1SequenceGeneratorService = dependencies.v1SequenceGeneratorService
 
     given("신규 Transaction Sequence 값 증가 요청하여") {
-        val type = SequenceType.TRANSACTION_SEQUENCE
 
         `when`("신규 생성인 경우") {
             val result = v1SequenceGeneratorService.nextTransactionSequence()
