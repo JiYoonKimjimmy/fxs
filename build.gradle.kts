@@ -52,6 +52,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j")
 
     implementation("org.redisson:redisson-spring-boot-starter:3.34.1")
+    implementation("org.apache.commons:commons-pool2:2.12.0")
 
     val jdslVersion = "3.5.3"
     implementation("com.linecorp.kotlin-jdsl:jpql-dsl:$jdslVersion")
@@ -73,9 +74,6 @@ dependencies {
     // prometheus
     implementation("io.micrometer:micrometer-registry-prometheus")
 
-    // embedded redis
-    implementation("com.github.codemonstur:embedded-redis:1.4.3")
-
     implementation("commons-io:commons-io:2.14.0")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
@@ -94,6 +92,11 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property:$kotestVersion")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+
+    // embedded-redis
+    testImplementation("com.github.codemonstur:embedded-redis:1.4.3")
+    // rabbitmq-mock
+    testImplementation("com.github.fridujo:rabbitmq-mock:1.2.0")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("com.h2database:h2")

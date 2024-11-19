@@ -58,6 +58,22 @@ spring:
           max-active: 30
           max-wait: 20s
           time-between-eviction-runs: 20s
+#  rabbitmq:
+#    connection-timeout: 5000
+#    cache:
+#      channel:
+#        size: 25
+#      connection:
+#        size: 5
+#    template:
+#      mandatory: true
+#      receive-timeout: 1000
+#      reply-timeout: 5000
+#      retry:
+#        enabled: true
+#        max-attempts: 3
+#        initial-interval: 1000ms
+#        max-interval: 10000ms
 
 # logging
 logging:
