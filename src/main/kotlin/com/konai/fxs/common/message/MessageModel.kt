@@ -9,4 +9,4 @@ open class BaseMessage(
     val correlationId: String = MDC.get(CorrelationLoggingField.CORRELATION_ID_LOG_FIELD.getName()) ?: RequestContext.generateId()
 )
 
-class V1SaveTransactionMessage(val transaction: V1Transaction) : BaseMessage()
+data class V1SaveTransactionMessage(val transaction: V1Transaction) : BaseMessage()

@@ -7,7 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.transaction.annotation.Transactional
 
-@Import(value = [EmbeddedRedisConfig::class, MockRabbitMQConfig::class])
+@Import(value = [
+    EmbeddedRedisConfig::class,
+    MockRabbitMQConfig::class
+])
 @TestDatabaseConfiguration
 @AutoConfigureMockMvc
 @Transactional

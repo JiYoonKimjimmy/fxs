@@ -12,21 +12,23 @@ import kotlin.reflect.KFunction2
 
 object MockRabbitMQ {
 
-    private val connectionFactory: ConnectionFactory by lazy {
+    val connectionFactory: ConnectionFactory by lazy {
         MockConnectionFactoryFactory
             .build()
             .enableConsistentHashPlugin()
             .let(::CachingConnectionFactory)
     }
-
-    private val rabbitAdmin: RabbitAdmin by lazy { RabbitAdmin(connectionFactory) }
-
     val rabbitTemplate: RabbitTemplate by lazy {
         RabbitTemplate(connectionFactory).apply { messageConverter = Jackson2JsonMessageConverter() }
     }
+    private val rabbitAdmin: RabbitAdmin by lazy { RabbitAdmin(connectionFactory) }
 
-    fun binding(exchange: Exchange) {
-        exchange.binding(rabbitAdmin)
+    fun binding(exchange: Exchange? = null) {
+        if (exchange == null) {
+            Exchange.entries.forEach { it.binding(rabbitAdmin) }
+        } else {
+            exchange.binding(rabbitAdmin)
+        }
     }
 
     enum class Exchange(
