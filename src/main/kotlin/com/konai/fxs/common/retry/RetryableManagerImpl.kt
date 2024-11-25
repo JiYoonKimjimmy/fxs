@@ -1,6 +1,9 @@
 package com.konai.fxs.common.retry
 
+import com.konai.fxs.common.message.MessageQueueExchange.*
 import com.konai.fxs.common.error
+import com.konai.fxs.common.message.MessageQueuePublisher
+import com.konai.fxs.common.message.V1SaveTransactionMessage
 import com.konai.fxs.infra.error.exception.BaseException
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import org.slf4j.LoggerFactory
@@ -13,7 +16,9 @@ import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 
 @Component
-class RetryableManagerImpl : RetryableManager {
+class RetryableManagerImpl(
+    private val messageQueuePublisher: MessageQueuePublisher
+) : RetryableManager {
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
@@ -33,8 +38,8 @@ class RetryableManagerImpl : RetryableManager {
 
     @Recover
     fun recoverSaveTransaction(exception: Exception, transaction: V1Transaction, block: (V1Transaction) -> V1Transaction): V1Transaction {
-        // TODO RabbitMQ Dead-Letter 발행 처리
         logger.error(exception)
+        messageQueuePublisher.sendDirectMessage(V1_SAVE_TRANSACTION_EXCHANGE, V1SaveTransactionMessage(transaction))
         return transaction
     }
 

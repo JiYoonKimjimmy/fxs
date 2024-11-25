@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
+import com.konai.fxs.common.message.MessageQueueListener
+import com.konai.fxs.common.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.testsupport.event.TestV1TransactionEventHandler
+import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ
 import com.konai.fxs.testsupport.redis.RedisTestConfig
 import com.konai.fxs.v1.account.controller.model.V1FindAllAccountRequestFixture
 import com.konai.fxs.v1.account.controller.model.V1UpdateAccountRequestFixture
@@ -34,6 +37,8 @@ object TestDependencies {
 
     // ext-library
     val numberRedisTemplate = RedisTestConfig.numberRedisTemplate
+    val rabbitTemplate = MockRabbitMQ.rabbitTemplate
+    val messageQueuePublisher = MessageQueuePublisherImpl(rabbitTemplate)
     private val fakeDistributedLockManager = FakeDistributedLockManagerImpl()
     private val fakeRetryableManager = FakeRetryableManagerImpl()
 
@@ -68,6 +73,9 @@ object TestDependencies {
         v1TransactionEventPublisher,
         fakeDistributedLockManager
     )
+
+    // ext-library
+    val messageQueueListener = MessageQueueListener(v1TransactionSaveService)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

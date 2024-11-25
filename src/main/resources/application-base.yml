@@ -58,22 +58,17 @@ spring:
           max-active: 30
           max-wait: 20s
           time-between-eviction-runs: 20s
-#  rabbitmq:
-#    connection-timeout: 5000
-#    cache:
-#      channel:
-#        size: 25
-#      connection:
-#        size: 5
-#    template:
-#      mandatory: true
-#      receive-timeout: 1000
-#      reply-timeout: 5000
-#      retry:
-#        enabled: true
-#        max-attempts: 3
-#        initial-interval: 1000ms
-#        max-interval: 10000ms
+  rabbitmq:
+    connection-timeout: 5s
+    template:
+      mandatory: true
+      receive-timeout: 1s
+      reply-timeout: 5s
+      retry:
+        enabled: true
+        max-attempts: 3
+        initial-interval: 1s
+        max-interval: 10s
 
 # logging
 logging:
@@ -146,6 +141,6 @@ spring:
       sentinel:
         master: mymaster
         nodes: localhost:26379
-  h2:
-    console:
-      enabled: true
+  # rabbitmq
+  rabbitmq:
+    addresses: localhost:5672

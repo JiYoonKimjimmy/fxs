@@ -29,6 +29,12 @@ enum class MockRabbitMQExchange(
         queueName = "fxs.test.fanout.queue",
         routingKey = EMPTY,
         MockRabbitMQExchange::setupFanoutExchange
+    ),
+    V1_SAVE_TRANSACTION_EXCHANGE(
+        exchangeName = "fxs.v1.save.transaction.exchange",
+        queueName = "fxs.v1.save.transaction.queue",
+        routingKey = "fxs.v1.save.transaction.routingKey",
+        MockRabbitMQExchange::setupDirectExchange
     )
     ;
 

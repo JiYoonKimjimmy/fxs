@@ -21,8 +21,7 @@ object MockRabbitMQ {
     }
 
     val rabbitTemplate: RabbitTemplate by lazy {
-        RabbitTemplate(connectionFactory)
-            .apply { messageConverter = Jackson2JsonMessageConverter() }
+        RabbitTemplate(connectionFactory).apply { messageConverter = Jackson2JsonMessageConverter() }
     }
 
     fun binding(exchange: MockRabbitMQExchange) {
