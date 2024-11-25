@@ -7,9 +7,6 @@ import com.konai.fxs.testsupport.redis.EmbeddedRedis
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
-import org.redisson.Redisson
-import org.redisson.api.RedissonClient
-import org.redisson.config.Config
 import java.util.concurrent.TimeUnit
 
 class DistributedLockManagerImplTest : CustomStringSpec({
@@ -18,23 +15,8 @@ class DistributedLockManagerImplTest : CustomStringSpec({
 
     val v1AccountFixture = dependencies.v1AccountFixture
 
-    lateinit var redissonClient: RedissonClient
-    lateinit var distributedLockManager: DistributedLockManager
-
-    beforeSpec {
-        redissonClient = Config()
-            .apply {
-                this.useSingleServer()
-                    .setAddress("redis://${EmbeddedRedis.REDIS_HOST}:${EmbeddedRedis.REDIS_PORT}")
-            }
-            .let { Redisson.create(it) }
-
-        distributedLockManager = DistributedLockManagerImpl(redissonClient)
-    }
-
-    afterSpec {
-        redissonClient.shutdown()
-    }
+    val redissonClient by lazy { EmbeddedRedis.redissonClient }
+    val distributedLockManager by lazy { DistributedLockManagerImpl(redissonClient) }
 
     "RedissonClient 활용한 Distributed Lock 처리 정상 확인한다" {
         // given

@@ -21,7 +21,7 @@ class EmbeddedRedisConfig {
 
     @Bean
     fun redissonClient(): RedissonClient {
-        return RedisTestConfig.redissonClient
+        return EmbeddedRedis.redissonClient
     }
 
 }

@@ -9,7 +9,7 @@ import com.konai.fxs.common.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.testsupport.event.TestV1TransactionEventHandler
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ
-import com.konai.fxs.testsupport.redis.RedisTestConfig
+import com.konai.fxs.testsupport.redis.EmbeddedRedis
 import com.konai.fxs.v1.account.controller.model.V1FindAllAccountRequestFixture
 import com.konai.fxs.v1.account.controller.model.V1UpdateAccountRequestFixture
 import com.konai.fxs.v1.account.repository.FakeV1AccountRepositoryImpl
@@ -36,7 +36,7 @@ import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisherImp
 object TestDependencies {
 
     // ext-library
-    val numberRedisTemplate = RedisTestConfig.numberRedisTemplate
+    val numberRedisTemplate = EmbeddedRedis.numberRedisTemplate
     val rabbitTemplate = MockRabbitMQ.rabbitTemplate
     val messageQueuePublisher = MessageQueuePublisherImpl(rabbitTemplate)
     private val fakeDistributedLockManager = FakeDistributedLockManagerImpl()
