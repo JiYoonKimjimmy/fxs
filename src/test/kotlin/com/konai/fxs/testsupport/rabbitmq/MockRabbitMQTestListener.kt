@@ -4,11 +4,11 @@ import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.Spec
 
 class MockRabbitMQTestListener(
-    private val mockRabbitMQExchange: MockRabbitMQExchange
+    private vararg val exchanges: MockRabbitMQ.Exchange
 ) : TestListener {
 
     override suspend fun beforeSpec(spec: Spec) {
-        MockRabbitMQ.binding(mockRabbitMQExchange)
+        exchanges.forEach(MockRabbitMQ::binding)
     }
 
 }

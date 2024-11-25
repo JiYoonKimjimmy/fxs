@@ -4,7 +4,7 @@ import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
-import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQExchange
+import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_SAVE_TRANSACTION_EXCHANGE
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQTestListener
 import com.konai.fxs.v1.transaction.repository.V1TransactionRepository
 import com.ninjasquad.springmockk.MockkBean
@@ -20,7 +20,7 @@ class V1TransactionSaveServiceImplTest(
     @MockkBean private val mockV1TransactionRepository: V1TransactionRepository
 ) : CustomBehaviorSpec({
 
-    listeners(MockRabbitMQTestListener(MockRabbitMQExchange.V1_SAVE_TRANSACTION_EXCHANGE))
+    listeners(MockRabbitMQTestListener(V1_SAVE_TRANSACTION_EXCHANGE))
 
     val v1TransactionFixture = dependencies.v1TransactionFixture
 

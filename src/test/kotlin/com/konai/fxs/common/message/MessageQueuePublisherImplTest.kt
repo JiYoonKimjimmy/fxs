@@ -1,14 +1,14 @@
 package com.konai.fxs.common.message
 
 import com.konai.fxs.testsupport.CustomStringSpec
-import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQExchange
+import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_SAVE_TRANSACTION_EXCHANGE
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQTestListener
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
 class MessageQueuePublisherImplTest : CustomStringSpec({
 
-    listeners(MockRabbitMQTestListener(MockRabbitMQExchange.V1_SAVE_TRANSACTION_EXCHANGE))
+    listeners(MockRabbitMQTestListener(V1_SAVE_TRANSACTION_EXCHANGE))
 
     val rabbitTemplate = dependencies.rabbitTemplate
     val messageQueuePublisher = dependencies.messageQueuePublisher
