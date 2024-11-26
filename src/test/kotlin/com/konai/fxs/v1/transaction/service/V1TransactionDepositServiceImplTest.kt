@@ -11,6 +11,7 @@ import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.testsupport.CustomBehaviorSpec
+import com.konai.fxs.testsupport.TestCommonFunctions.saveAccount
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
@@ -53,7 +54,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         }
 
         // 외화 계좌 상태 'INACTIVE' 변경
-        accountInvalid = v1AccountRepository.save(accountInvalid.update(V1AccountPredicate(status = INACTIVE)))
+        accountInvalid = saveAccount(accountInvalid, status = INACTIVE)
 
         `when`("'acquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
             val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
@@ -65,7 +66,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         }
 
         // 외화 계좌 상태 'ACTIVE' 변경
-        v1AccountRepository.save(accountInvalid.update(V1AccountPredicate(status = ACTIVE)))
+        saveAccount(accountInvalid, status = ACTIVE)
 
         `when`("'fromAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
             val exception = shouldThrow<ResourceNotFoundException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
@@ -77,7 +78,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         }
 
         // 외화 계좌 상태 'INACTIVE' 변경
-        v1AccountRepository.save(fromAccountInvalid.update(V1AccountPredicate(status = INACTIVE)))
+        saveAccount(fromAccountInvalid, status = INACTIVE)
         
         `when`("'fromAcquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
             val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
@@ -89,8 +90,8 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         }
 
         // 정상 외화 계좌 정보 생성
-        val account = v1AccountRepository.save(v1AccountFixture.make())
-        val fromAccount = v1AccountRepository.save(v1AccountFixture.make())
+        val account = saveAccount(v1AccountFixture.make())
+        val fromAccount = saveAccount(v1AccountFixture.make())
         val transaction = v1TransactionFixture.manualDepositTransaction(
             acquirer = account.acquirer,
             fromAcquirer = fromAccount.acquirer,

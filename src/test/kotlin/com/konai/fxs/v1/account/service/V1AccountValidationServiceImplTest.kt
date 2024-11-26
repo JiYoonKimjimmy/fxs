@@ -8,9 +8,9 @@ import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.testsupport.CustomBehaviorSpec
+import com.konai.fxs.testsupport.TestCommonFunctions.saveAccount
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
-import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
@@ -21,13 +21,9 @@ class V1AccountValidationServiceImplTest : CustomBehaviorSpec({
     listeners(EmbeddedRedisTestListener())
 
     val v1AccountValidationService = dependencies.v1AccountValidationService
-    val v1AccountSaveService = dependencies.v1AccountSaveService
+
     val v1AccountFixture = dependencies.v1AccountFixture
     val numberRedisTemplate = dependencies.numberRedisTemplate
-
-    fun saveAccount(account: V1Account): V1Account {
-        return v1AccountSaveService.save(account)
-    }
 
     given("외화 계좌 상태 확인 요청하여") {
         val currency = Currency.USD

@@ -60,7 +60,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         }
 
         // 외화 계좌 정보 잔액 변경
-        saveAccount(account.deposit(BigDecimal(100), BigDecimal(1300.00)))
+        saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 수기 출금 요청인 경우") {
             val result = v1TransactionWithdrawalService.manualWithdrawal(transaction)
