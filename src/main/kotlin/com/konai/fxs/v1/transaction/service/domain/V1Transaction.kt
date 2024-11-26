@@ -10,7 +10,7 @@ import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import java.math.BigDecimal
 
 data class V1Transaction(
-    val id: Long,
+    val id: Long? = null,
     val trReferenceId: String,
     val acquirer: V1Acquirer,
     val fromAcquirer: V1Acquirer?,

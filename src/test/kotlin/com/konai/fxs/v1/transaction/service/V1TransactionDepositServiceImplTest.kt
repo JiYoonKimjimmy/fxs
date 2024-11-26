@@ -102,7 +102,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             val result = v1TransactionDepositService.manualDeposit(transaction)
 
             then("수기 입금 거래 상태 'COMPLETED' 정상 확인한다") {
-                result.id shouldBeGreaterThanOrEqual 1L
+                result.id!! shouldBeGreaterThanOrEqual 1L
                 result.status shouldBe COMPLETED
             }
 

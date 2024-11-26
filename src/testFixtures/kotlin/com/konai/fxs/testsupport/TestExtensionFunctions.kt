@@ -2,6 +2,8 @@ package com.konai.fxs.testsupport
 
 import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
+import com.konai.fxs.v1.account.service.domain.V1Account
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import java.util.*
 import java.util.concurrent.atomic.AtomicLong
 
@@ -21,5 +23,13 @@ object TestExtensionFunctions {
         type = AcquirerType.FX_DEPOSIT,
         name = "외화 예치금 계좌"
     )
+
+    fun V1Account.V1Acquirer.toPredicate(): V1AccountPredicate.V1AcquirerPredicate {
+        return V1AccountPredicate.V1AcquirerPredicate(
+            id = this.id,
+            type = this.type,
+            name = this.name
+        )
+    }
 
 }
