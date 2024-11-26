@@ -149,6 +149,14 @@ tasks.jacocoTestReport {
         html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
     }
 
+    classDirectories.setFrom(
+        files(classDirectories.files.map {
+            fileTree(it) {
+                exclude("**/v0/**")
+            }
+        })
+    )
+
     finalizedBy("jacocoTestCoverageVerification")
 }
 

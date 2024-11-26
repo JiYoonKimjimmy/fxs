@@ -106,7 +106,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
                 result.status shouldBe COMPLETED
             }
 
-            then("외화 계좌 잔액 증가 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
+            then("외화 계좌 잔액 증액 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
                 val accountEntity = v1AccountRepository.findByPredicate(V1AccountPredicate(id = account.id))!!
                 accountEntity.balance shouldBe BigDecimal(100)
                 accountEntity.averageExchangeRate.toDouble() shouldBe 1300.00

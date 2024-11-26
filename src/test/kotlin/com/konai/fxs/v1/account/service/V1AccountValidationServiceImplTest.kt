@@ -79,7 +79,7 @@ class V1AccountValidationServiceImplTest : CustomBehaviorSpec({
         // 외화 계좌 DB 저장
         saveAccount(v1AccountFixture.make(acquirerId = acquirer.id, acquirerType = acquirer.type, currency = currency, balance = 100000))
 
-        `when`("'amount' 요청 금액보다 계좌 한도 부족인 경우") {
+        `when`("'amount' 요청 금액보다 계좌 잔액 부족인 경우") {
             val exception = shouldThrow<InternalServiceException> { v1AccountValidationService.checkLimit(acquirer, currency, amount100001) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 확인한다") {

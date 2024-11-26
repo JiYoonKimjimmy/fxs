@@ -94,4 +94,12 @@ data class V1Account(
         return numerator.divide(denominator, 2, RoundingMode.HALF_UP)
     }
 
+    fun withdrawal(amount: BigDecimal): V1Account {
+        /**
+         * 외화 계좌 출금
+         * - 외화 계좌 잔액 감액 처리
+         */
+        return copy(balance = balance - amount)
+    }
+
 }

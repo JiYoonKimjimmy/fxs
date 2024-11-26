@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
-import com.konai.fxs.common.message.MessageQueueListener
 import com.konai.fxs.common.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.testsupport.event.TestV1TransactionEventHandler
@@ -29,6 +28,7 @@ import com.konai.fxs.v1.transaction.repository.cache.TransactionCacheRepositoryI
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntityFixture
 import com.konai.fxs.v1.transaction.service.V1TransactionDepositServiceImpl
 import com.konai.fxs.v1.transaction.service.V1TransactionSaveServiceImpl
+import com.konai.fxs.v1.transaction.service.V1TransactionWithdrawalServiceImpl
 import com.konai.fxs.v1.transaction.service.cache.TransactionCacheServiceImpl
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionFixture
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
@@ -74,9 +74,13 @@ object TestDependencies {
         v1TransactionEventPublisher,
         fakeDistributedLockManager
     )
-
-    // ext-library
-    val messageQueueListener = MessageQueueListener(v1TransactionSaveService)
+    val v1TransactionWithdrawalService = V1TransactionWithdrawalServiceImpl(
+        v1AccountValidationService,
+        v1AccountSaveService,
+        v1SequenceGeneratorService,
+        v1TransactionEventPublisher,
+        fakeDistributedLockManager
+    )
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

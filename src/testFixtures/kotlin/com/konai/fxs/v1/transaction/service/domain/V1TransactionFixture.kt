@@ -20,7 +20,7 @@ class V1TransactionFixture {
         id: Long = generateSequence(),
         trReferenceId: String = generateUUID(),
         acquirer: V1Acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT, "외화 예치금 계좌"),
-        fromAcquirer: V1Acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT, "외화 매입처 계좌"),
+        fromAcquirer: V1Acquirer? = V1Acquirer(generateUUID(), FX_DEPOSIT, "외화 매입처 계좌"),
         type: TransactionType = TransactionType.DEPOSIT,
         purpose: TransactionPurpose = TransactionPurpose.DEPOSIT,
         channel: TransactionChannel = TransactionChannel.PORTAL,
@@ -61,6 +61,24 @@ class V1TransactionFixture {
             fromAcquirer = fromAcquirer,
             type = TransactionType.DEPOSIT,
             purpose = TransactionPurpose.DEPOSIT,
+            channel = TransactionChannel.PORTAL,
+            amount = amount,
+            exchangeRate = exchangeRate
+        )
+    }
+
+    fun manualWithdrawalTransaction(
+        acquirer: V1Acquirer,
+        fromAcquirer: V1Acquirer? = null,
+        purpose: TransactionPurpose = TransactionPurpose.WITHDRAWAL,
+        amount: BigDecimal,
+        exchangeRate: BigDecimal
+    ): V1Transaction {
+        return make(
+            acquirer = acquirer,
+            fromAcquirer = fromAcquirer,
+            type = TransactionType.WITHDRAWAL,
+            purpose = purpose,
             channel = TransactionChannel.PORTAL,
             amount = amount,
             exchangeRate = exchangeRate

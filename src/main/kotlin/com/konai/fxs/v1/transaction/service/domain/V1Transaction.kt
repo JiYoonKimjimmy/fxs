@@ -26,17 +26,19 @@ data class V1Transaction(
     val status: TransactionStatus
 ) {
 
-    fun checkAcquirers(checkAcquirerStatus: (V1Acquirer, String) -> V1Account): V1Account {
-        return checkAcquirerStatus(acquirer, currency)
-            .also {
-                // `fromAcquirer` 정보 잇는 경우, 검증 처리만 진행
-                fromAcquirer?.let { checkAcquirerStatus(it, currency) }
-            }
+    fun checkAcquirerStatus(block: (V1Acquirer, String) -> V1Account): V1Account {
+        return block(acquirer, currency)
+            // `fromAcquirer` 정보 잇는 경우, 검증 처리만 진행
+            .also { fromAcquirer?.let { block(it, currency) } }
     }
 
-    fun changeStatusToCompleted(getNextTransactionId: () -> Long): V1Transaction {
+    fun checkAcquirerLimit(block: (V1Acquirer, String, BigDecimal) -> V1Account): V1Account {
+        return block(acquirer, currency, amount)
+    }
+
+    fun changeStatusToCompleted(transactionId: Long): V1Transaction {
         return copy(
-            id = getNextTransactionId(),
+            id = transactionId,
             status = COMPLETED
         )
     }
