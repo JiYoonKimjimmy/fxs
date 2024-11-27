@@ -98,6 +98,9 @@ dependencies {
     // rabbitmq-mock
     testImplementation("com.github.fridujo:rabbitmq-mock:1.2.0")
 
+    // fixture-monkey
+    testFixturesImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter-kotlin:1.1.2")
+
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("com.h2database:h2")
 }
