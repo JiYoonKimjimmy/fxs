@@ -2,8 +2,13 @@ package com.konai.fxs.testsupport
 
 import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.testsupport.TestDependencies.fakeV1AccountRepository
+import com.konai.fxs.testsupport.TestDependencies.objectMapper
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
+import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActionsDsl
+import org.springframework.test.web.servlet.post
 import java.math.BigDecimal
 
 object TestCommonFunctions {
@@ -20,6 +25,14 @@ object TestCommonFunctions {
             status = status
         )
         return fakeV1AccountRepository.save(account.update(predicate))
+    }
+
+    fun MockMvc.postProc(url: String, request: Any): ResultActionsDsl {
+        return post(url) {
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(request)
+            }
+            .andDo { print() }
     }
 
 }

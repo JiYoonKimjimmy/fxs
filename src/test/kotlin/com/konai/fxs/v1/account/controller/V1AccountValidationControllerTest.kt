@@ -61,10 +61,10 @@ class V1AccountValidationControllerTest(
                 }
                 .andDo { print() }
 
-            then("'404 Not Found - 210_1002_005' 에러 응답 정상 확인한다") {
+            then("'500 Internal server error - 210_1002_005' 에러 응답 정상 확인한다") {
                 result
                     .andExpect {
-                        status { isBadRequest() }
+                        status { isInternalServerError() }
                         content {
                             jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                             jsonPath("result.code", equalTo("210_1002_005"))
@@ -89,10 +89,10 @@ class V1AccountValidationControllerTest(
                 }
                 .andDo { print() }
 
-            then("'404 Not Found - 210_1002_005' 에러 응답 정상 확인한다") {
+            then("'500 Internal server error - 210_1002_005' 에러 응답 정상 확인한다") {
                 result
                     .andExpect {
-                        status { isBadRequest() }
+                        status { isInternalServerError() }
                         content {
                             jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                             jsonPath("result.code", equalTo("210_1002_005"))
