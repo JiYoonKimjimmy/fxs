@@ -7,7 +7,7 @@ import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.testsupport.TestExtensionFunctions.fixtureMonkey
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
-import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
+import com.navercorp.fixturemonkey.kotlin.giveMeKotlinBuilder
 import java.math.BigDecimal
 
 class V1AccountFixture {
@@ -22,15 +22,15 @@ class V1AccountFixture {
         quantity: Int = 0,
         status: AccountStatus = AccountStatus.ACTIVE
     ): V1Account {
-        return fixtureMonkey.giveMeBuilder<V1Account>()
-            .set("id", id)
-            .set("acquirer", V1Acquirer(acquirerId, acquirerType, acquirerName))
-            .set("currency", currency)
-            .set("balance", BigDecimal(balance))
-            .set("minRequiredBalance", BigDecimal.ZERO)
-            .set("averageExchangeRate", BigDecimal.ZERO)
-            .set("depositAmount", BigDecimal(quantity))
-            .set("status", status)
+        return fixtureMonkey.giveMeKotlinBuilder<V1Account>()
+            .setExp(V1Account::id, id)
+            .setExp(V1Account::acquirer, V1Acquirer(acquirerId, acquirerType, acquirerName))
+            .setExp(V1Account::currency, currency)
+            .setExp(V1Account::balance, BigDecimal(balance))
+            .setExp(V1Account::minRequiredBalance, BigDecimal.ZERO)
+            .setExp(V1Account::averageExchangeRate, BigDecimal.ZERO)
+            .setExp(V1Account::depositAmount, BigDecimal(quantity))
+            .setExp(V1Account::status, status)
             .sample()
     }
 

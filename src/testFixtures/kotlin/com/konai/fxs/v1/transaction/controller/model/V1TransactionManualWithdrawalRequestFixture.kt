@@ -8,7 +8,7 @@ import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.testsupport.TestExtensionFunctions.fixtureMonkey
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
-import com.navercorp.fixturemonkey.kotlin.giveMeBuilder
+import com.navercorp.fixturemonkey.kotlin.giveMeKotlinBuilder
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -26,17 +26,17 @@ class V1TransactionManualWithdrawalRequestFixture {
         requestBy: String = "FXS_TEST",
         requestNote: String? = "FXS_TEST",
     ): V1TransactionManualWithdrawalRequest {
-        return fixtureMonkey.giveMeBuilder<V1TransactionManualWithdrawalRequest>()
-            .set("fromAcquirer", fromAcquirer)
-            .set("toAcquirer", toAcquirer)
-            .set("purpose", purpose)
-            .set("channel", channel)
-            .set("currency", currency)
-            .set("amount", amount)
-            .set("exchangeRate", exchangeRate)
-            .set("transferDate", transferDate)
-            .set("requestBy", requestBy)
-            .set("requestNote", requestNote)
+        return fixtureMonkey.giveMeKotlinBuilder<V1TransactionManualWithdrawalRequest>()
+            .setExp(V1TransactionManualWithdrawalRequest::fromAcquirer, fromAcquirer)
+            .setExp(V1TransactionManualWithdrawalRequest::toAcquirer, toAcquirer)
+            .setExp(V1TransactionManualWithdrawalRequest::purpose, purpose)
+            .setExp(V1TransactionManualWithdrawalRequest::channel, channel)
+            .setExp(V1TransactionManualWithdrawalRequest::currency, currency)
+            .setExp(V1TransactionManualWithdrawalRequest::amount, amount)
+            .setExp(V1TransactionManualWithdrawalRequest::exchangeRate, exchangeRate)
+            .setExp(V1TransactionManualWithdrawalRequest::transferDate, transferDate)
+            .setExp(V1TransactionManualWithdrawalRequest::requestBy, requestBy)
+            .setExp(V1TransactionManualWithdrawalRequest::requestNote, requestNote)
             .sample()
     }
 
