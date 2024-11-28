@@ -1,8 +1,9 @@
 package com.konai.fxs.testsupport
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.testsupport.TestDependencies.fakeV1AccountRepository
-import com.konai.fxs.testsupport.TestDependencies.objectMapper
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import org.springframework.http.MediaType
@@ -12,6 +13,8 @@ import org.springframework.test.web.servlet.post
 import java.math.BigDecimal
 
 object TestCommonFunctions {
+
+    private val objectMapper by lazy { jacksonObjectMapper().registerModule(kotlinModule()) }
 
     fun saveAccount(
         account: V1Account,
@@ -29,10 +32,9 @@ object TestCommonFunctions {
 
     fun MockMvc.postProc(url: String, request: Any): ResultActionsDsl {
         return post(url) {
-                contentType = MediaType.APPLICATION_JSON
-                content = objectMapper.writeValueAsString(request)
-            }
-            .andDo { print() }
+            contentType = MediaType.APPLICATION_JSON
+            content = objectMapper.writeValueAsString(request)
+        }.andDo { print() }
     }
 
 }

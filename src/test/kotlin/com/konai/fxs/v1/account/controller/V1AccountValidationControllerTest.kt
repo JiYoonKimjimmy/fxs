@@ -4,14 +4,13 @@ import com.konai.fxs.common.Currency.USD
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.common.enumerate.ResultStatus
 import com.konai.fxs.testsupport.CustomBehaviorSpec
+import com.konai.fxs.testsupport.TestCommonFunctions.postProc
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
 import com.konai.fxs.v1.account.controller.model.V1CheckLimitAccountRequest
 import com.konai.fxs.v1.account.repository.V1AccountJpaRepository
 import org.hamcrest.Matchers.equalTo
-import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.post
 
 @CustomSpringBootTest
 class V1AccountValidationControllerTest(
@@ -19,7 +18,6 @@ class V1AccountValidationControllerTest(
     private val v1AccountJpaRepository: V1AccountJpaRepository
 ) : CustomBehaviorSpec({
 
-    val objectMapper = dependencies.objectMapper
     val v1AccountEntityFixture = dependencies.v1AccountEntityFixture
 
     val transactionCacheRepository = dependencies.transactionCacheRepository
@@ -29,23 +27,17 @@ class V1AccountValidationControllerTest(
 
         `when`("외화 계좌 정보 없는 경우") {
             val request = V1CheckLimitAccountRequest(generateUUID(), FX_DEPOSIT, USD, 10000)
-            val result = mockMvc
-                .post(url) {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(request)
-                }
-                .andDo { print() }
+            val result = mockMvc.postProc(url, request)
 
             then("'404 Not Found - 210_1001_001' 에러 응답 정상 확인한다") {
-                result
-                    .andExpect {
-                        status { isNotFound() }
-                        content {
-                            jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                            jsonPath("result.code", equalTo("210_1002_001"))
-                            jsonPath("result.message", equalTo("Account validation service failed. Account not found."))
-                        }
+                result.andExpect {
+                    status { isNotFound() }
+                    content {
+                        jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                        jsonPath("result.code", equalTo("210_1002_001"))
+                        jsonPath("result.message", equalTo("Account validation service failed. Account not found."))
                     }
+                }
             }
         }
 
@@ -54,24 +46,18 @@ class V1AccountValidationControllerTest(
 
         `when`("외화 계좌 잔액 부족 한도 초과인 경우") {
             val request = V1CheckLimitAccountRequest(noBalanceAccount.acquirer.id, noBalanceAccount.acquirer.type, noBalanceAccount.currency, 10000)
-            val result = mockMvc
-                .post(url) {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(request)
-                }
-                .andDo { print() }
+            val result = mockMvc.postProc(url, request)
 
             then("'500 Internal server error - 210_1002_005' 에러 응답 정상 확인한다") {
-                result
-                    .andExpect {
-                        status { isInternalServerError() }
-                        content {
-                            jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                            jsonPath("result.code", equalTo("210_1002_005"))
-                            jsonPath("result.message", equalTo("Account validation service failed. Account balance is insufficient."))
-                            jsonPath("result.detailMessage", equalTo("balance: 0 < (readyAmount: 0 + amount: 10000)"))
-                        }
+                result.andExpect {
+                    status { isInternalServerError() }
+                    content {
+                        jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                        jsonPath("result.code", equalTo("210_1002_005"))
+                        jsonPath("result.message", equalTo("Account validation service failed. Account balance is insufficient."))
+                        jsonPath("result.detailMessage", equalTo("balance: 0 < (readyAmount: 0 + amount: 10000)"))
                     }
+                }
             }
         }
 
@@ -82,24 +68,18 @@ class V1AccountValidationControllerTest(
 
         `when`("외화 계좌 출금 준비 합계 한도 초과인 경우") {
             val request = V1CheckLimitAccountRequest(account.acquirer.id, account.acquirer.type, account.currency, 10000)
-            val result = mockMvc
-                .post(url) {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(request)
-                }
-                .andDo { print() }
+            val result = mockMvc.postProc(url, request)
 
             then("'500 Internal server error - 210_1002_005' 에러 응답 정상 확인한다") {
-                result
-                    .andExpect {
-                        status { isInternalServerError() }
-                        content {
-                            jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                            jsonPath("result.code", equalTo("210_1002_005"))
-                            jsonPath("result.message", equalTo("Account validation service failed. Account balance is insufficient."))
-                            jsonPath("result.detailMessage", equalTo("balance: 20000 < (readyAmount: 10001 + amount: 10000)"))
-                        }
+                result.andExpect {
+                    status { isInternalServerError() }
+                    content {
+                        jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                        jsonPath("result.code", equalTo("210_1002_005"))
+                        jsonPath("result.message", equalTo("Account validation service failed. Account balance is insufficient."))
+                        jsonPath("result.detailMessage", equalTo("balance: 20000 < (readyAmount: 10001 + amount: 10000)"))
                     }
+                }
             }
         }
 
@@ -108,22 +88,15 @@ class V1AccountValidationControllerTest(
 
         `when`("외화 계좌 한도 확인 결과 정상인 경우") {
             val request = V1CheckLimitAccountRequest(account.acquirer.id, account.acquirer.type, account.currency, 10000)
-            val result = mockMvc
-                .post(url) {
-                    contentType = MediaType.APPLICATION_JSON
-                    content = objectMapper.writeValueAsString(request)
-                }
-                .andDo { print() }
-
+            val result = mockMvc.postProc(url, request)
 
             then("'200 Ok' 성공 응답 정상 확인한다") {
-                result
-                    .andExpect {
-                        status { isOk() }
-                        content {
-                            jsonPath("result.status", equalTo(ResultStatus.SUCCESS.name))
-                        }
+                result.andExpect {
+                    status { isOk() }
+                    content {
+                        jsonPath("result.status", equalTo(ResultStatus.SUCCESS.name))
                     }
+                }
             }
         }
     }

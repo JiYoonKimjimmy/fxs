@@ -1,8 +1,5 @@
 package com.konai.fxs.testsupport
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
 import com.konai.fxs.common.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
@@ -93,8 +90,5 @@ object TestDependencies {
     val v1UpdateAccountRequestFixture = V1UpdateAccountRequestFixture()
     val v1TransactionManualDepositRequestFixture = V1TransactionManualDepositRequestFixture()
     val v1TransactionManualWithdrawalRequestFixture = V1TransactionManualWithdrawalRequestFixture()
-
-    // etc
-    val objectMapper: ObjectMapper = jacksonObjectMapper().registerModule(kotlinModule())
 
 }
