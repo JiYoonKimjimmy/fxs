@@ -10,8 +10,8 @@ class TransactionCacheServiceImpl(
     private val transactionCacheRepository: TransactionCacheRepository
 ) : TransactionCacheService {
 
-    override fun findWithdrawalReadyTotalAmountCache(acquirer: V1Account.V1Acquirer): BigDecimal {
-        return transactionCacheRepository.findWithdrawalReadyTotalAmountCache(acquirer.id, acquirer.type)
+    override fun findPreparedWithdrawalTotalAmountCache(acquirer: V1Account.V1Acquirer): BigDecimal {
+        return transactionCacheRepository.findWithdrawalPreparedTotalAmountCache(acquirer.id, acquirer.type)
             ?.let { BigDecimal(it.toLong()) }
             ?: BigDecimal.ZERO
     }

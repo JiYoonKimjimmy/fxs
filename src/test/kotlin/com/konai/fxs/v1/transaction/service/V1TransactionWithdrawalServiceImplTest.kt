@@ -55,7 +55,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
-                exception.detailMessage shouldBe "balance: 0 < (readyAmount: 0 + amount: 100)"
+                exception.detailMessage shouldBe "balance: 0 < (preparedAmount: 0 + amount: 100)"
             }
         }
 

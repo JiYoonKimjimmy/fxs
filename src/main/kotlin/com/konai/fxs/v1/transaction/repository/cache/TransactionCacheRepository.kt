@@ -4,12 +4,12 @@ import com.konai.fxs.common.enumerate.AcquirerType
 
 interface TransactionCacheRepository {
 
-    fun findWithdrawalReadyTotalAmountCache(acquirerId: String, acquirerType: AcquirerType): Number?
+    fun findWithdrawalPreparedTotalAmountCache(acquirerId: String, acquirerType: AcquirerType): Number?
 
-    fun incrementWithdrawalReadyTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
+    fun incrementWithdrawalPreparedTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
 
-    fun decrementWithdrawalReadyTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
+    fun decrementWithdrawalPreparedTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
 
-    fun clearWithdrawalReadyTotalAmountCache(acquirerId: String, acquirerType: AcquirerType)
+    fun clearWithdrawalPreparedTotalAmountCache(acquirerId: String, acquirerType: AcquirerType)
 
 }

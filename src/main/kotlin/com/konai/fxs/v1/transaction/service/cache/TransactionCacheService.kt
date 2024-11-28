@@ -5,6 +5,6 @@ import java.math.BigDecimal
 
 interface TransactionCacheService {
 
-    fun findWithdrawalReadyTotalAmountCache(acquirer: V1Acquirer): BigDecimal
+    fun findPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer): BigDecimal
 
 }

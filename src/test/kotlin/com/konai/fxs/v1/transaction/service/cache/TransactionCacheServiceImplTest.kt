@@ -1,7 +1,7 @@
 package com.konai.fxs.v1.transaction.service.cache
 
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
-import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_READY_TOTAL_AMOUNT_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
@@ -21,7 +21,7 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
         val acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT)
 
         `when`("Cache 정보 없는 경우") {
-            val result = transactionCacheService.findWithdrawalReadyTotalAmountCache(acquirer)
+            val result = transactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
 
             then("'0' 금액 반환 정상 확인한다") {
                 result.shouldBeZero()
@@ -29,12 +29,12 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
         }
 
         // cache 정보 저장
-        val cacheKey = WITHDRAWAL_READY_TOTAL_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
+        val cacheKey = PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
         val cacheValue = 100000
         numberRedisTemplate.opsForValue().set(cacheKey, cacheValue)
 
         `when`("Cache 정보 있는 경우") {
-            val result = transactionCacheService.findWithdrawalReadyTotalAmountCache(acquirer)
+            val result = transactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
 
             then("'100000' 금액 반환 정상 확인한다") {
                 result.shouldBeEqual(BigDecimal(100000))

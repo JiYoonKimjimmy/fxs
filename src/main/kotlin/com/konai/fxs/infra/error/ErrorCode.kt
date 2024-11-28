@@ -14,7 +14,7 @@ enum class ErrorCode(
     ACCOUNT_STATUS_IS_INVALID(HttpStatus.BAD_REQUEST, "004", "Account status is invalid"),
     ACCOUNT_BALANCE_IS_INSUFFICIENT(HttpStatus.INTERNAL_SERVER_ERROR, "005", "Account balance is insufficient"),
     ACCOUNT_TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "006", "Account transaction not found"),
-    WITHDRAWAL_READY_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "007", "Withdrawal ready transaction not found"),
+    WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "007", "Withdrawal prepared transaction not found"),
     WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "008", "Withdrawal completed transaction not found"),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900", "Internal server error"),
