@@ -8,6 +8,8 @@ import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import io.kotest.matchers.bigdecimal.shouldBeZero
 import io.kotest.matchers.equals.shouldBeEqual
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import java.math.BigDecimal
 
 class TransactionCacheServiceImplTest : CustomBehaviorSpec({
@@ -17,7 +19,9 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
     val transactionCacheService = dependencies.transactionCacheService
     val numberRedisTemplate = dependencies.numberRedisTemplate
 
-    given("외화계좌 출금 준비 금액 합계 Cache 조회 요청되어") {
+    val v1TransactionFixture =dependencies.v1TransactionFixture
+
+    given("외화 계좌 출금 준비 금액 합계 Cache 조회 요청되어") {
         val acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT)
 
         `when`("Cache 정보 없는 경우") {
@@ -38,6 +42,43 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
 
             then("'100000' 금액 반환 정상 확인한다") {
                 result.shouldBeEqual(BigDecimal(100000))
+            }
+        }
+    }
+
+    given("외화 계좌 출금 준비 거래 Cache 저장 요청되어") {
+        val transaction = v1TransactionFixture.make()
+
+        `when`("Cache 저장 성공인 경우") {
+            val result = transactionCacheService.savePreparedWithdrawalTransactionCache(transaction)
+
+            then("처리 결과 정상 확인한다") {
+                result shouldNotBe null
+                result.id shouldBe transaction.id
+            }
+        }
+    }
+    
+    given("외화 계좌 출금 준비 거래 Cache 존재 여부 확인 요청되어") {
+        val transaction = transactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
+        
+        `when`("Cache 정보 존재하는 경우") {
+            val result = transactionCacheService.hasPreparedWithdrawalTransactionCache(transaction)
+            
+            then("'true' 결과 정상 확인한다") {
+                result shouldBe true
+            }
+        }
+    }
+    
+    given("외화 계좌 출금 준비 거래 Cache 삭제 요청되어") {
+        val transaction = transactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
+        
+        `when`("Cache 삭제 성공인 경우") {
+            transactionCacheService.deletePreparedWithdrawalTransactionCache(transaction)
+            
+            then("처리 결과 정상 확인한다") {
+                transactionCacheService.hasPreparedWithdrawalTransactionCache(transaction) shouldBe false
             }
         }
     }
