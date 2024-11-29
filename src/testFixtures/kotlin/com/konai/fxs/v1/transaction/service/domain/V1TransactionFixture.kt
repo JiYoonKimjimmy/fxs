@@ -70,7 +70,6 @@ class V1TransactionFixture {
     fun manualWithdrawalTransaction(
         acquirer: V1Acquirer,
         fromAcquirer: V1Acquirer? = null,
-        purpose: TransactionPurpose = TransactionPurpose.WITHDRAWAL,
         amount: BigDecimal,
         exchangeRate: BigDecimal
     ): V1Transaction {
@@ -78,10 +77,24 @@ class V1TransactionFixture {
             acquirer = acquirer,
             fromAcquirer = fromAcquirer,
             type = TransactionType.WITHDRAWAL,
-            purpose = purpose,
+            purpose = TransactionPurpose.WITHDRAWAL,
             channel = TransactionChannel.PORTAL,
             amount = amount,
             exchangeRate = exchangeRate
+        )
+    }
+
+    fun prepareWithdrawalTransaction(
+        acquirer: V1Acquirer,
+        amount: BigDecimal
+    ): V1Transaction {
+        return make(
+            acquirer = acquirer,
+            trReferenceId = generateUUID(),
+            type = TransactionType.WITHDRAWAL,
+            purpose = TransactionPurpose.WITHDRAWAL,
+            channel = TransactionChannel.ORS,
+            amount = amount
         )
     }
 

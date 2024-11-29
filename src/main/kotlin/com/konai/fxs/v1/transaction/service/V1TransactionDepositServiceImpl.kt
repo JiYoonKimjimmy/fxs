@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.transaction.service
 
+import com.konai.fxs.common.enumerate.TransactionStatus.*
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
@@ -28,12 +29,12 @@ class V1TransactionDepositServiceImpl(
          * 3. 외화 계좌 입금 거래 내역 생성 Event 발행
          */
         // 외화 계좌 상태 확인
-        val account = transaction.checkAcquirerStatus(v1AccountValidationService::checkStatus)
+        val account = transaction.checkAccountStatus(v1AccountValidationService::checkStatus)
         // 외화 계좌 거래 내역 ID 생성 함수
         val transactionId = v1SequenceGeneratorService.nextTransactionSequence()
         return transaction
             .depositProc(account)
-            .changeStatusToCompleted(transactionId)
+            .changeStatus(transactionId, COMPLETED)
             .publishSaveTransactionEvent()
     }
 

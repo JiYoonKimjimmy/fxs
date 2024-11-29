@@ -1,24 +1,32 @@
 package com.konai.fxs.v1.transaction.service.cache
 
+import com.konai.fxs.infra.error.ErrorCode
+import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
-import com.konai.fxs.v1.transaction.repository.cache.TransactionCacheRepository
+import com.konai.fxs.v1.transaction.repository.cache.V1TransactionCacheRepository
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
-class TransactionCacheServiceImpl(
-    private val transactionCacheRepository: TransactionCacheRepository
-) : TransactionCacheService {
+class V1TransactionCacheServiceImpl(
+    private val v1TransactionCacheRepository: V1TransactionCacheRepository
+) : V1TransactionCacheService {
 
     override fun findPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer): BigDecimal {
-        return transactionCacheRepository.findPreparedWithdrawalTotalAmountCache(acquirer.id, acquirer.type)
+        return v1TransactionCacheRepository.findPreparedWithdrawalTotalAmountCache(acquirer.id, acquirer.type)
             ?.let { BigDecimal(it.toLong()) }
             ?: BigDecimal.ZERO
     }
 
+    override fun incrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal {
+        return v1TransactionCacheRepository.incrementPreparedWithdrawalTotalAmountCache(acquirer.id, acquirer.type, amount.toLong())
+            ?.let { BigDecimal(it.toLong()) }
+            ?: throw InternalServiceException(ErrorCode.CACHE_SERVICE_ERROR)
+    }
+
     override fun savePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction {
-        transactionCacheRepository.savePreparedWithdrawalTransactionCache(
+        v1TransactionCacheRepository.savePreparedWithdrawalTransactionCache(
             acquirerId = transaction.acquirer.id,
             acquirerType = transaction.acquirer.type,
             trReferenceId = transaction.trReferenceId,
@@ -28,7 +36,7 @@ class TransactionCacheServiceImpl(
     }
 
     override fun hasPreparedWithdrawalTransactionCache(transaction: V1Transaction): Boolean {
-        return transactionCacheRepository.hasPreparedWithdrawalTransactionCache(
+        return v1TransactionCacheRepository.hasPreparedWithdrawalTransactionCache(
             acquirerId = transaction.acquirer.id,
             acquirerType = transaction.acquirer.type,
             trReferenceId = transaction.trReferenceId
@@ -36,7 +44,7 @@ class TransactionCacheServiceImpl(
     }
 
     override fun deletePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction {
-        transactionCacheRepository.deletePreparedWithdrawalTransactionCache(
+        v1TransactionCacheRepository.deletePreparedWithdrawalTransactionCache(
             acquirerId = transaction.acquirer.id,
             acquirerType = transaction.acquirer.type,
             trReferenceId = transaction.trReferenceId

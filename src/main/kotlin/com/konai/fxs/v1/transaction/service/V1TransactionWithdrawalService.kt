@@ -6,4 +6,6 @@ interface V1TransactionWithdrawalService {
 
     fun manualWithdrawal(transaction: V1Transaction): V1Transaction
 
+    fun prepareWithdrawal(transaction: V1Transaction): V1Transaction
+
 }

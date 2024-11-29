@@ -12,11 +12,11 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.math.BigDecimal
 
-class TransactionCacheServiceImplTest : CustomBehaviorSpec({
+class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
 
     listeners(EmbeddedRedisTestListener())
 
-    val transactionCacheService = dependencies.transactionCacheService
+    val v1TransactionCacheService = dependencies.v1TransactionCacheService
     val numberRedisTemplate = dependencies.numberRedisTemplate
 
     val v1TransactionFixture =dependencies.v1TransactionFixture
@@ -25,7 +25,7 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
         val acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT)
 
         `when`("Cache 정보 없는 경우") {
-            val result = transactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
+            val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
 
             then("'0' 금액 반환 정상 확인한다") {
                 result.shouldBeZero()
@@ -38,7 +38,7 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
         numberRedisTemplate.opsForValue().set(cacheKey, cacheValue)
 
         `when`("Cache 정보 있는 경우") {
-            val result = transactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
+            val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
 
             then("'100000' 금액 반환 정상 확인한다") {
                 result.shouldBeEqual(BigDecimal(100000))
@@ -50,7 +50,7 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
         val transaction = v1TransactionFixture.make()
 
         `when`("Cache 저장 성공인 경우") {
-            val result = transactionCacheService.savePreparedWithdrawalTransactionCache(transaction)
+            val result = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(transaction)
 
             then("처리 결과 정상 확인한다") {
                 result shouldNotBe null
@@ -60,10 +60,10 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
     }
     
     given("외화 계좌 출금 준비 거래 Cache 존재 여부 확인 요청되어") {
-        val transaction = transactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
+        val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
         
         `when`("Cache 정보 존재하는 경우") {
-            val result = transactionCacheService.hasPreparedWithdrawalTransactionCache(transaction)
+            val result = v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(transaction)
             
             then("'true' 결과 정상 확인한다") {
                 result shouldBe true
@@ -72,13 +72,13 @@ class TransactionCacheServiceImplTest : CustomBehaviorSpec({
     }
     
     given("외화 계좌 출금 준비 거래 Cache 삭제 요청되어") {
-        val transaction = transactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
+        val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
         
         `when`("Cache 삭제 성공인 경우") {
-            transactionCacheService.deletePreparedWithdrawalTransactionCache(transaction)
+            v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(transaction)
             
             then("처리 결과 정상 확인한다") {
-                transactionCacheService.hasPreparedWithdrawalTransactionCache(transaction) shouldBe false
+                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(transaction) shouldBe false
             }
         }
     }

@@ -22,12 +22,12 @@ import com.konai.fxs.v1.sequence.service.domain.V1SequenceGeneratorMapper
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositRequestFixture
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdrawalRequestFixture
 import com.konai.fxs.v1.transaction.repository.FakeV1TransactionRepositoryImpl
-import com.konai.fxs.v1.transaction.repository.cache.TransactionCacheRepositoryImpl
+import com.konai.fxs.v1.transaction.repository.cache.V1TransactionCacheRepositoryImpl
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntityFixture
 import com.konai.fxs.v1.transaction.service.V1TransactionDepositServiceImpl
 import com.konai.fxs.v1.transaction.service.V1TransactionSaveServiceImpl
 import com.konai.fxs.v1.transaction.service.V1TransactionWithdrawalServiceImpl
-import com.konai.fxs.v1.transaction.service.cache.TransactionCacheServiceImpl
+import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheServiceImpl
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionFixture
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
 import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisherImpl
@@ -50,15 +50,15 @@ object TestDependencies {
     val fakeV1AccountRepository = FakeV1AccountRepositoryImpl(v1AccountMapper)
     val fakeV1TransactionRepository = FakeV1TransactionRepositoryImpl(v1TransactionMapper)
     val fakeV1SequenceGeneratorRepository = FakeV1SequenceGeneratorRepositoryImpl(v1SequenceGeneratorMapper)
-    val transactionCacheRepository = TransactionCacheRepositoryImpl(numberRedisTemplate)
+    val v1TransactionCacheRepository = V1TransactionCacheRepositoryImpl(numberRedisTemplate)
 
     // service
-    val transactionCacheService = TransactionCacheServiceImpl(transactionCacheRepository)
+    val v1TransactionCacheService = V1TransactionCacheServiceImpl(v1TransactionCacheRepository)
 
     private val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
     private val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
     val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountSaveService, v1AccountFindService)
-    val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService, transactionCacheService)
+    val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService, v1TransactionCacheService)
 
     val v1SequenceGeneratorService = V1SequenceGeneratorServiceImpl(fakeV1SequenceGeneratorRepository, fakeDistributedLockManager)
 
@@ -75,6 +75,7 @@ object TestDependencies {
     val v1TransactionWithdrawalService = V1TransactionWithdrawalServiceImpl(
         v1AccountValidationService,
         v1AccountSaveService,
+        v1TransactionCacheService,
         v1SequenceGeneratorService,
         v1TransactionEventPublisher,
         fakeDistributedLockManager

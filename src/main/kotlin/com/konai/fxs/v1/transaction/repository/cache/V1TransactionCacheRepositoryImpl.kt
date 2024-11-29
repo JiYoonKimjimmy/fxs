@@ -7,9 +7,9 @@ import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 
 @Repository
-class TransactionCacheRepositoryImpl(
+class V1TransactionCacheRepositoryImpl(
     private val numberRedisTemplate: RedisTemplate<String, Number>
-) : TransactionCacheRepository {
+) : V1TransactionCacheRepository {
 
     override fun findPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType): Number? {
         val key = PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)

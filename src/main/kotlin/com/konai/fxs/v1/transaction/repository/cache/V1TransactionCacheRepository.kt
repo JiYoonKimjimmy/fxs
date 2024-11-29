@@ -2,7 +2,7 @@ package com.konai.fxs.v1.transaction.repository.cache
 
 import com.konai.fxs.common.enumerate.AcquirerType
 
-interface TransactionCacheRepository {
+interface V1TransactionCacheRepository {
 
     fun findPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType): Number?
 

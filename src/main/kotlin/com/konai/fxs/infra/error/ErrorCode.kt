@@ -22,6 +22,7 @@ enum class ErrorCode(
     EXTERNAL_URL_PROPERTY_NOT_DEFINED(HttpStatus.INTERNAL_SERVER_ERROR, "902", "External url property is not defined"),
     UNKNOWN_ENVIRONMENT(HttpStatus.INTERNAL_SERVER_ERROR, "904", "Unknown environment of project"),
     ARGUMENT_NOT_VALID_ERROR(HttpStatus.BAD_REQUEST, "905", "Argument not valid"),
+    CACHE_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "906", "Cache service error"),
 
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "999", "Unknown error"),
 

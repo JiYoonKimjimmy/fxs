@@ -6,7 +6,7 @@ import io.kotest.matchers.shouldBe
 import org.springframework.data.redis.core.RedisTemplate
 
 @CustomSpringBootTest
-class TransactionCacheRepositoryImplTest(
+class V1TransactionCacheRepositoryImplTest(
     private val numberRedisTemplate: RedisTemplate<String, Number>
 ) : CustomStringSpec({
 
@@ -43,7 +43,7 @@ class TransactionCacheRepositoryImplTest(
         numberRedisTemplate.opsForValue().set(key, value)
 
         // when
-        val result = numberRedisTemplate.delete(key)
+        numberRedisTemplate.delete(key)
 
         // then
         numberRedisTemplate.hasKey(key) shouldBe false

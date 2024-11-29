@@ -4,14 +4,14 @@ import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
-import com.konai.fxs.v1.transaction.service.cache.TransactionCacheService
+import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheService
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
 @Service
 class V1AccountValidationServiceImpl(
     private val v1AccountFindService: V1AccountFindService,
-    private val transactionCacheService: TransactionCacheService
+    private val v1TransactionCacheService: V1TransactionCacheService
 ) : V1AccountValidationService {
 
     override fun checkStatus(acquirer: V1Acquirer, currency: String): V1Account {
@@ -34,7 +34,7 @@ class V1AccountValidationServiceImpl(
          *  - 계좌 잔액 < (요청 거래 금액 + 출금 준비 금액 합계)
          */
         return with(checkStatus(acquirer, currency)) {
-            transactionCacheService.findPreparedWithdrawalTotalAmountCache(this.acquirer)
+            v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(this.acquirer)
                 .let { this.checkSufficientBalance(preparedAmount = it, amount = amount) }
         }
     }

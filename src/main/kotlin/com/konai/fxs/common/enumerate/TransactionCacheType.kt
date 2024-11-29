@@ -11,7 +11,7 @@ enum class TransactionCacheType(
     ),
     PREPARED_WITHDRAWAL_TRANSACTION_CACHE(
         note = "출금 준비 거래 Cache 정보",
-        keySpec = "fxs:{acquirerId}:{acquirerType}:prepared:withdrawal:transaction:{transactionId}"
+        keySpec = "fxs:{acquirerId}:{acquirerType}:prepared:withdrawal:transaction:{trReferenceId}"
     )
     ;
 
@@ -26,7 +26,7 @@ enum class TransactionCacheType(
                 this.keySpec
                     .replace("{acquirerId}", args[0])
                     .replace("{acquirerType}", args[1])
-                    .replace("{transactionId}", args[2])
+                    .replace("{trReferenceId}", args[2])
             }
         }
     }
