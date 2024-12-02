@@ -37,7 +37,7 @@ class V1TransactionWithdrawalServiceImpl(
         val transactionId = v1SequenceGeneratorService.nextTransactionSequence()
         return transaction
             .withdrawal(account)
-            .changeStatus(transactionId, COMPLETED)
+            .changeStatusToCompleted(transactionId)
             .publishSaveTransactionEvent()
     }
 
@@ -55,7 +55,7 @@ class V1TransactionWithdrawalServiceImpl(
         // 외화 계좌 거래 내역 ID 생성 함수
         val transactionId = v1SequenceGeneratorService.nextTransactionSequence()
         return transaction
-            .changeStatus(transactionId, PREPARED)
+            .changeStatusToPrepared(transactionId)
             .savePreparedTransactionCache()
             .incrementPreparedTransactionAmountCache()
             .publishSaveTransactionEvent()

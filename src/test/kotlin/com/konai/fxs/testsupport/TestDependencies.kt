@@ -63,7 +63,7 @@ object TestDependencies {
     val v1SequenceGeneratorService = V1SequenceGeneratorServiceImpl(fakeV1SequenceGeneratorRepository, fakeDistributedLockManager)
 
     private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository, fakeRetryableManager)
-    private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, v1TransactionSaveService)
+    private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, v1TransactionSaveService, messageQueuePublisher)
     private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, v1TransactionEventHandler)
     val v1TransactionDepositService = V1TransactionDepositServiceImpl(
         v1AccountValidationService,

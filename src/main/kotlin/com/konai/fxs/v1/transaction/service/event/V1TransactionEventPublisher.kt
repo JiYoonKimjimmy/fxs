@@ -6,4 +6,6 @@ interface V1TransactionEventPublisher {
 
     fun saveTransaction(transaction: V1Transaction)
 
+    fun expirePreparedTransaction(transaction: V1Transaction)
+
 }

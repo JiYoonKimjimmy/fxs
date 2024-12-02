@@ -34,7 +34,7 @@ class V1TransactionDepositServiceImpl(
         val transactionId = v1SequenceGeneratorService.nextTransactionSequence()
         return transaction
             .depositProc(account)
-            .changeStatus(transactionId, COMPLETED)
+            .changeStatusToCompleted(transactionId)
             .publishSaveTransactionEvent()
     }
 

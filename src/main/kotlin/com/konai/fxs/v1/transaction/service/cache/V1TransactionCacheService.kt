@@ -10,6 +10,8 @@ interface V1TransactionCacheService {
 
     fun incrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal
 
+    fun decrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal
+
     fun savePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction
 
     fun hasPreparedWithdrawalTransactionCache(transaction: V1Transaction): Boolean

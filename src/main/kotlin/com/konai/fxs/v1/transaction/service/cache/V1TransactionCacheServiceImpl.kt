@@ -25,6 +25,12 @@ class V1TransactionCacheServiceImpl(
             ?: throw InternalServiceException(ErrorCode.CACHE_SERVICE_ERROR)
     }
 
+    override fun decrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal {
+        return v1TransactionCacheRepository.decrementPreparedWithdrawalTotalAmountCache(acquirer.id, acquirer.type, amount.toLong())
+            ?.let { BigDecimal(it.toLong()) }
+            ?: throw InternalServiceException(ErrorCode.CACHE_SERVICE_ERROR)
+    }
+
     override fun savePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction {
         v1TransactionCacheRepository.savePreparedWithdrawalTransactionCache(
             acquirerId = transaction.acquirer.id,

@@ -16,6 +16,7 @@ enum class ErrorCode(
     ACCOUNT_TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "006", "Account transaction not found"),
     WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "007", "Withdrawal prepared transaction not found"),
     WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "008", "Withdrawal completed transaction not found"),
+    WITHDRAWAL_PREPARED_TRANSACTION_IS_COMPLETED(HttpStatus.BAD_REQUEST, "009", "Withdrawal prepared transaction is already completed"),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900", "Internal server error"),
     EXTERNAL_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901", "External API service error"),

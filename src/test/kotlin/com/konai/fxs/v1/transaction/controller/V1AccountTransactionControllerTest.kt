@@ -89,7 +89,7 @@ class V1AccountTransactionControllerTest(
             then("외화 계좌 '수기 입금' 거래 내역 저장 정보 정상 확인한다") {
                 val transactionId = JsonPath.read<Int>(result.andReturn().response.contentAsString, "transactionId")
                 val predicate = V1TransactionPredicate(id = transactionId.toLong())
-                val transaction = v1TransactionFindService.findByPredicate(predicate)
+                val transaction = v1TransactionFindService.findByPredicate(predicate)!!
                 transaction.type shouldBe TransactionType.DEPOSIT
                 transaction.purpose shouldBe TransactionPurpose.DEPOSIT
                 transaction.status shouldBe TransactionStatus.COMPLETED
@@ -143,7 +143,7 @@ class V1AccountTransactionControllerTest(
             then("외화 계좌 '수기 출금' 거래 내역 저장 정보 정상 확인한다") {
                 val transactionId = JsonPath.read<Int>(result.andReturn().response.contentAsString, "transactionId")
                 val predicate = V1TransactionPredicate(id = transactionId.toLong())
-                val transaction = v1TransactionFindService.findByPredicate(predicate)
+                val transaction = v1TransactionFindService.findByPredicate(predicate)!!
                 transaction.type shouldBe TransactionType.WITHDRAWAL
                 transaction.purpose shouldBe TransactionPurpose.WITHDRAWAL
                 transaction.status shouldBe TransactionStatus.COMPLETED

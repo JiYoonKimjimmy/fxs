@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.transaction.service.event
 
+import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
 import org.springframework.context.ApplicationEventPublisher
@@ -14,6 +15,13 @@ class V1TransactionEventPublisherImpl(
     override fun saveTransaction(transaction: V1Transaction) {
         v1TransactionMapper.domainToSaveTransactionEvent(transaction)
             .let { eventPublisher.publishEvent(it) }
+    }
+
+    override fun expirePreparedTransaction(transaction: V1Transaction) {
+        if (transaction.status == TransactionStatus.PREPARED) {
+            v1TransactionMapper.domainToExpirePreparedTransactionEvent(transaction)
+                .let { eventPublisher.publishEvent(it) }
+        }
     }
 
 }

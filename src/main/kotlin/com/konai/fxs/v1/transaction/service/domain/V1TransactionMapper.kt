@@ -2,6 +2,7 @@ package com.konai.fxs.v1.transaction.service.domain
 
 import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionType
+import com.konai.fxs.common.message.V1ExpirePreparedTransactionMessage
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
@@ -9,6 +10,7 @@ import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositRequest
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdrawalRequest
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntity
+import com.konai.fxs.v1.transaction.service.event.V1ExpirePreparedTransactionEvent
 import com.konai.fxs.v1.transaction.service.event.V1SaveTransactionEvent
 import com.konasl.commonlib.springweb.correlation.core.ContextField
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
@@ -54,40 +56,36 @@ class V1TransactionMapper {
     }
 
     fun domainToSaveTransactionEvent(domain: V1Transaction): V1SaveTransactionEvent {
-        return V1SaveTransactionEvent(
-            id = domain.id!!,
-            trReferenceId = domain.trReferenceId,
-            acquirer = domain.acquirer,
-            fromAcquirer = domain.fromAcquirer,
-            type = domain.type,
-            purpose = domain.purpose,
-            channel = domain.channel,
-            currency = domain.currency,
-            amount = domain.amount,
-            exchangeRate = domain.exchangeRate,
-            transferDate = domain.transferDate,
-            requestBy = domain.requestBy,
-            requestNote = domain.requestNote,
-            status = domain.status
-        )
+        return V1SaveTransactionEvent(transaction = domain)
+    }
+
+    fun domainToExpirePreparedTransactionEvent(domain: V1Transaction): V1ExpirePreparedTransactionEvent {
+        return V1ExpirePreparedTransactionEvent(transaction = domain)
     }
 
     fun eventToDomain(event: V1SaveTransactionEvent): V1Transaction {
         return V1Transaction(
-            id = event.id,
-            trReferenceId = event.trReferenceId,
-            acquirer = event.acquirer,
-            fromAcquirer = event.fromAcquirer,
-            type = event.type,
-            purpose = event.purpose,
-            channel = event.channel,
-            currency = event.currency,
-            amount = event.amount,
-            exchangeRate = event.exchangeRate,
-            transferDate = event.transferDate,
-            requestBy = event.requestBy,
-            requestNote = event.requestNote,
-            status = event.status
+            id = event.transaction.id,
+            trReferenceId = event.transaction.trReferenceId,
+            acquirer = event.transaction.acquirer,
+            fromAcquirer = event.transaction.fromAcquirer,
+            type = event.transaction.type,
+            purpose = event.transaction.purpose,
+            channel = event.transaction.channel,
+            currency = event.transaction.currency,
+            amount = event.transaction.amount,
+            exchangeRate = event.transaction.exchangeRate,
+            transferDate = event.transaction.transferDate,
+            requestBy = event.transaction.requestBy,
+            requestNote = event.transaction.requestNote,
+            status = event.transaction.status
+        )
+    }
+
+    fun eventToMessage(event: V1ExpirePreparedTransactionEvent): V1ExpirePreparedTransactionMessage {
+        return V1ExpirePreparedTransactionMessage(
+            transactionId = event.transaction.id!!,
+            amount = event.transaction.amount.toLong()
         )
     }
 

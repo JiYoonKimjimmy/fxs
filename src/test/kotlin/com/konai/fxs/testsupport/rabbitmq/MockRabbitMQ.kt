@@ -35,34 +35,47 @@ object MockRabbitMQ {
         val exchangeName: String,
         val queueName: String,
         val routingKey: String,
-        private val bindingFunction: KFunction2<Exchange, RabbitAdmin, Unit>
+        private val bindingFunction: KFunction2<Exchange, RabbitAdmin, Unit>,
+        private val dlx: Exchange? = null
     ) {
 
         TEST_DIRECT_EXCHANGE(
             exchangeName = "fxs.test.direct.exchange",
             queueName = "fxs.test.direct.queue",
             routingKey = "fxs.test.direct.routing.key",
-            Exchange::setupDirectExchange
+            bindingFunction = Exchange::setupDirectExchange
         ),
         TEST_TOPIC_EXCHANGE(
             exchangeName = "fxs.test.topic.exchange",
             queueName = "fxs.test.topic.queue",
             routingKey = "fxs.test.topic.routing.key",
-            Exchange::setupTopicExchange
+            bindingFunction = Exchange::setupTopicExchange
         ),
         TEST_FANOUT_EXCHANGE(
             exchangeName = "fxs.test.fanout.exchange",
             queueName = "fxs.test.fanout.queue",
             routingKey = EMPTY,
-            Exchange::setupFanoutExchange
+            bindingFunction = Exchange::setupFanoutExchange
         ),
         V1_SAVE_TRANSACTION_EXCHANGE(
             exchangeName = "fxs.v1.save.transaction.exchange",
             queueName = "fxs.v1.save.transaction.queue",
             routingKey = "fxs.v1.save.transaction.routingKey",
+            bindingFunction = Exchange::setupDirectExchange
+        ),
+        V1_EXPIRE_PREPARED_TRANSACTION_DL_EXCHANGE(
+            exchangeName = "fxs.v1.expire.prepared.transaction.dl.exchange",
+            queueName = "fxs.v1.expire.prepared.transaction.dl.queue",
+            routingKey = "fxs.v1.expire.prepared.transaction.dl.routingKey",
             Exchange::setupDirectExchange
-        )
-        ;
+        ),
+        V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE(
+            exchangeName = "fxs.v1.expire.prepared.transaction.exchange",
+            queueName = "fxs.v1.expire.prepared.transaction.queue",
+            routingKey = "fxs.v1.expire.prepared.transaction.routingKey",
+            bindingFunction = Exchange::setupDeadLetterExchange,
+            dlx = V1_EXPIRE_PREPARED_TRANSACTION_DL_EXCHANGE
+        );
 
         fun binding(rabbitAdmin: RabbitAdmin) {
             bindingFunction.invoke(this, rabbitAdmin)
@@ -90,6 +103,18 @@ object MockRabbitMQ {
             rabbitAdmin.declareExchange(exchange)
             rabbitAdmin.declareQueue(queue)
             rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange))
+        }
+
+        private fun setupDeadLetterExchange(rabbitAdmin: RabbitAdmin) {
+            val exchange = DirectExchange(exchangeName)
+            val queue = QueueBuilder.nonDurable(queueName)
+                .withArgument("x-dead-letter-exchange", dlx?.exchangeName)
+                .withArgument("x-dead-letter-routing-key", dlx?.routingKey)
+                .withArgument("x-message-ttl", 500)
+                .build()
+            rabbitAdmin.declareExchange(exchange)
+            rabbitAdmin.declareQueue(queue)
+            rabbitAdmin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(routingKey))
         }
 
     }
