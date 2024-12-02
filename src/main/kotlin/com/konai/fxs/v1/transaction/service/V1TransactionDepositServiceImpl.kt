@@ -1,6 +1,5 @@
 package com.konai.fxs.v1.transaction.service
 
-import com.konai.fxs.common.enumerate.TransactionStatus.*
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService

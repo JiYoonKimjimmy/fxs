@@ -5,7 +5,6 @@ import com.konai.fxs.common.message.MessageQueuePublisher
 import com.konai.fxs.v1.transaction.service.V1TransactionSaveService
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
 import org.slf4j.LoggerFactory
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
