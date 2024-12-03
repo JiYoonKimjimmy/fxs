@@ -27,13 +27,11 @@ class V1TransactionDepositServiceImpl(
          * 2. 외화 계좌 잔액/평균 환율 변경 처리
          * 3. 외화 계좌 입금 거래 내역 생성 Event 발행
          */
-        // 외화 계좌 상태 확인
         val account = transaction.checkAccountStatus(v1AccountValidationService::checkStatus)
-        // 외화 계좌 거래 내역 ID 생성 함수
-        val transactionId = v1SequenceGeneratorService.nextTransactionSequence()
         return transaction
+            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .depositProc(account)
-            .changeStatusToCompleted(transactionId)
+            .changeStatusToCompleted()
             .publishSaveTransactionEvent()
     }
 

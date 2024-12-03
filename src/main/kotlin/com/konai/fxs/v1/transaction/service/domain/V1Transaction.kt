@@ -12,7 +12,7 @@ import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import java.math.BigDecimal
 
 data class V1Transaction(
-    val id: Long? = null,
+    var id: Long? = null,
     val trReferenceId: String,
     val acquirer: V1Acquirer,
     val fromAcquirer: V1Acquirer?,
@@ -25,7 +25,7 @@ data class V1Transaction(
     val transferDate: String,
     val requestBy: String,
     val requestNote: String?,
-    val status: TransactionStatus
+    var status: TransactionStatus
 ) {
 
     fun checkAccountStatus(block: (V1Acquirer, String) -> V1Account): V1Account {
@@ -45,16 +45,20 @@ data class V1Transaction(
         return this
     }
 
-    fun changeStatusToPrepared(transactionId: Long): V1Transaction {
-        return copy(id = transactionId, status = PREPARED)
+    fun applyTransactionId(block: () -> Long): V1Transaction {
+        return apply { id = block() }
     }
 
-    fun changeStatusToCompleted(transactionId: Long): V1Transaction {
-        return copy(id = transactionId, status = COMPLETED)
+    fun changeStatusToPrepared(): V1Transaction {
+        return apply { status = PREPARED }
+    }
+
+    fun changeStatusToCompleted(): V1Transaction {
+        return apply { status = COMPLETED }
     }
 
     fun changeStatusToExpired(): V1Transaction {
-        return copy(status = EXPIRED)
+        return apply { status = EXPIRED }
     }
 
 }

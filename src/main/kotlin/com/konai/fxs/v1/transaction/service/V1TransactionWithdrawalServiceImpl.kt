@@ -8,6 +8,9 @@ import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorService
 import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -31,11 +34,10 @@ class V1TransactionWithdrawalServiceImpl(
          */
         // 외화 계좌 출금 한도 확인
         val account = transaction.checkAccountLimit(v1AccountValidationService::checkLimit)
-        // 외화 계좌 거래 내역 ID 생성 함수
-        val transactionId = v1SequenceGeneratorService.nextTransactionSequence()
         return transaction
+            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .withdrawal(account)
-            .changeStatusToCompleted(transactionId)
+            .changeStatusToCompleted()
             .publishSaveTransactionEvent()
     }
 
@@ -50,20 +52,27 @@ class V1TransactionWithdrawalServiceImpl(
          */
         // 외화 계좌 출금 한도 확인
         transaction.checkAccountLimit(v1AccountValidationService::checkLimit)
-        // 외화 계좌 거래 내역 ID 생성 함수
-        val transactionId = v1SequenceGeneratorService.nextTransactionSequence()
         return transaction
-            .changeStatusToPrepared(transactionId)
-            .savePreparedTransactionCache()
-            .incrementPreparedTransactionAmountCache()
+            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
+            .changeStatusToPrepared()
+            .preparedTransactionCacheProc()
             .publishSaveTransactionEvent()
     }
 
-    private fun V1Transaction.savePreparedTransactionCache(): V1Transaction {
+    private fun V1Transaction.preparedTransactionCacheProc(): V1Transaction {
+        return this.also {
+            runBlocking {
+                launch(Dispatchers.IO) { it.savePreparedTransactionCache() }
+                launch(Dispatchers.IO) { it.incrementPreparedTransactionAmountCache() }
+            }
+        }
+    }
+
+    private suspend fun V1Transaction.savePreparedTransactionCache(): V1Transaction {
         return v1TransactionCacheService.savePreparedWithdrawalTransactionCache(this)
     }
 
-    private fun V1Transaction.incrementPreparedTransactionAmountCache(): V1Transaction {
+    private suspend fun V1Transaction.incrementPreparedTransactionAmountCache(): V1Transaction {
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
         return this
     }
