@@ -6,7 +6,6 @@ import com.konai.fxs.common.enumerate.TransactionCacheType.PREPARED_WITHDRAWAL_T
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
-import kotlin.math.log
 
 @Repository
 class V1TransactionCacheRepositoryImpl(

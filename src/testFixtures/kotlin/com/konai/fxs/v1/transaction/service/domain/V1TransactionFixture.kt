@@ -99,18 +99,4 @@ class V1TransactionFixture {
         )
     }
 
-    fun completeWithdrawalTransaction(
-        acquirer: V1Acquirer,
-        amount: BigDecimal
-    ): V1Transaction {
-        return make(
-            acquirer = acquirer,
-            trReferenceId = generateUUID(),
-            type = TransactionType.WITHDRAWAL,
-            purpose = TransactionPurpose.WITHDRAWAL,
-            channel = TransactionChannel.ORS,
-            amount = amount
-        )
-    }
-
 }

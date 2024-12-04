@@ -18,7 +18,6 @@ import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionPredicate
 import io.kotest.assertions.throwables.shouldThrow
-import io.kotest.matchers.bigdecimal.shouldBeLessThanOrEquals
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import java.math.BigDecimal
