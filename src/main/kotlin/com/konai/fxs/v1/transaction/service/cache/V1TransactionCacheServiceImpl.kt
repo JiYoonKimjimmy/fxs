@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.transaction.service.cache
 
+import com.konai.fxs.common.enumerate.TransactionChannel
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
@@ -33,20 +34,23 @@ class V1TransactionCacheServiceImpl(
 
     override fun savePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction {
         v1TransactionCacheRepository.savePreparedWithdrawalTransactionCache(
-            acquirerId = transaction.acquirer.id,
-            acquirerType = transaction.acquirer.type,
             trReferenceId = transaction.trReferenceId,
+            channel = transaction.channel,
             transactionId = transaction.id!!
         )
         return transaction
     }
 
-    override fun hasPreparedWithdrawalTransactionCache(acquirer: V1Acquirer, trReferenceId: String): Boolean {
-        return v1TransactionCacheRepository.hasPreparedWithdrawalTransactionCache(acquirer.id, acquirer.type, trReferenceId)
+    override fun findPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long? {
+        return v1TransactionCacheRepository.findPreparedWithdrawalTransactionCache(trReferenceId, channel)
     }
 
-    override fun deletePreparedWithdrawalTransactionCache(acquirer: V1Acquirer, trReferenceId: String) {
-        v1TransactionCacheRepository.deletePreparedWithdrawalTransactionCache(acquirer.id, acquirer.type, trReferenceId)
+    override fun hasPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
+        return v1TransactionCacheRepository.hasPreparedWithdrawalTransactionCache(trReferenceId, channel)
+    }
+
+    override fun deletePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel) {
+        v1TransactionCacheRepository.deletePreparedWithdrawalTransactionCache(trReferenceId, channel)
     }
 
 }

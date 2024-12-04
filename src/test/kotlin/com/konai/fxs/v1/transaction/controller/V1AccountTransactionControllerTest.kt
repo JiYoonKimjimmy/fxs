@@ -1,12 +1,9 @@
 package com.konai.fxs.v1.transaction.controller
 
 import com.jayway.jsonpath.JsonPath
+import com.konai.fxs.common.enumerate.*
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.common.enumerate.AcquirerType.FX_PURCHASER
-import com.konai.fxs.common.enumerate.ResultStatus
-import com.konai.fxs.common.enumerate.TransactionPurpose
-import com.konai.fxs.common.enumerate.TransactionStatus
-import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestCommonFunctions.postProc
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
@@ -196,9 +193,9 @@ class V1AccountTransactionControllerTest(
             }
 
             then("외화 계좌 출금 준비 거래 Cache 정보 생성 정상 확인한다") {
-                val acquirer = account.acquirer
                 val trReferenceId = request.trReferenceId
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId) shouldBe true
+                val channel = request.channel
+                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe true
             }
 
             then("외화 계좌 출금 준비 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {
@@ -222,7 +219,8 @@ class V1AccountTransactionControllerTest(
         val account = saveAccount(v1AccountFixture.make(acquirerType = FX_DEPOSIT, balance = 100))
         val acquirer = account.acquirer
         val trReferenceId = generateUUID()
-        val request = v1TransactionWithdrawalCompleteRequestFixture.make(acquirer, trReferenceId)
+        val channel = TransactionChannel.ORS
+        val request = v1TransactionWithdrawalCompleteRequestFixture.make(trReferenceId, channel)
 
         `when`("외화 계좌 출금 준비 거래가 없는 경우") {
             val result = mockMvc.postProc(url, request)
@@ -276,7 +274,7 @@ class V1AccountTransactionControllerTest(
             }
 
             then("외화 계좌 출금 준비 거래 Cache 정보 삭제 정상 확인한다") {
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId) shouldBe false
+                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
             then("외화 계좌 출금 준비 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {

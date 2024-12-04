@@ -1,6 +1,7 @@
 package com.konai.fxs.v1.transaction.repository.cache
 
 import com.konai.fxs.common.enumerate.AcquirerType
+import com.konai.fxs.common.enumerate.TransactionChannel
 
 interface V1TransactionCacheRepository {
 
@@ -12,10 +13,12 @@ interface V1TransactionCacheRepository {
 
     fun clearPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType)
 
-    fun savePreparedWithdrawalTransactionCache(acquirerId: String, acquirerType: AcquirerType, trReferenceId: String, transactionId: Long)
+    fun savePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel, transactionId: Long)
 
-    fun hasPreparedWithdrawalTransactionCache(acquirerId: String, acquirerType: AcquirerType, trReferenceId: String): Boolean
+    fun findPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long?
 
-    fun deletePreparedWithdrawalTransactionCache(acquirerId: String, acquirerType: AcquirerType, trReferenceId: String)
+    fun hasPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean
+
+    fun deletePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel)
 
 }

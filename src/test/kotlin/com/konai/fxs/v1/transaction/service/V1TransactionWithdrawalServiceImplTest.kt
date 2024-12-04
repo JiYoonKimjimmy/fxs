@@ -154,9 +154,9 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 출금 준비 거래 Cache 정보 저장 정상 확인한다") {
-                val acquirer = transaction.acquirer
                 val trReferenceId = transaction.trReferenceId
-                val key = PREPARED_WITHDRAWAL_TRANSACTION_CACHE.getKey(acquirer.id, acquirer.type.name, trReferenceId)
+                val channel = transaction.channel.name
+                val key = PREPARED_WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel)
 
                 numberRedisTemplate.opsForValue().get(key) shouldBe result.id
             }
@@ -175,9 +175,10 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         val account = v1AccountFixture.make(id = generateSequence())
         val acquirer = account.acquirer
         val trReferenceId = generateUUID()
+        val channel = TransactionChannel.ORS
 
         `when`("요청 'trReferenceId' 기준 출금 준비 거래 정보 없는 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(acquirer, trReferenceId) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel) }
 
             then("'WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND
@@ -195,7 +196,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))
 
         `when`("요청 'amount' 금액보다 외화 계좌 잔액 부족인 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(acquirer, trReferenceId) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
@@ -207,7 +208,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account, balance = BigDecimal(1000), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 출금 완료 요청인 경우") {
-            val result = v1TransactionWithdrawalService.completeWithdrawal(acquirer, trReferenceId)
+            val result = v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel)
 
             then("출금 준비 거래 상태 'COMPLETED' 정상 확인한다") {
                 result.status shouldBe TransactionStatus.COMPLETED
@@ -231,7 +232,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 출금 준비 거래 Cache 정보 삭제 정상 확인한다") {
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId) shouldBe false
+                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
             then("외화 계좌 출금 준비 거래 금액 합계 Cache 정보 감액 처리 정상 확인한다") {

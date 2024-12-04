@@ -1,12 +1,11 @@
 package com.konai.fxs.v1.transaction.service
 
+import com.konai.fxs.common.enumerate.TransactionChannel
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
-import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
-import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorService
 import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
@@ -63,7 +62,7 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     @Transactional
-    override fun completeWithdrawal(acquirer: V1Acquirer, trReferenceId: String): V1Transaction {
+    override fun completeWithdrawal(trReferenceId: String, channel: TransactionChannel): V1Transaction {
         /**
          * 외화 계좌 출금 완료 처리
          * 1. 외화 계좌 출금 준비 거래 Cache 정보 조회
@@ -73,7 +72,7 @@ class V1TransactionWithdrawalServiceImpl(
          * 5. 외화 계좌 출금 준비 거래 합계 Cache 감액 업데이트
          * 6. 외화 계좌 출금 거래 내역 생성 Event 발행
          */
-        return checkHasPreparedTransactionCache(acquirer, trReferenceId)
+        return findPreparedTransactionCache(trReferenceId, channel)
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .withdrawalTransaction()
             .changeStatusToCompleted()
@@ -113,7 +112,7 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     private suspend fun V1Transaction.deletePreparedTransactionCache(): V1Transaction {
-        v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(this.acquirer, this.trReferenceId)
+        v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(this.trReferenceId, this.channel)
         return this
     }
 
@@ -135,15 +134,11 @@ class V1TransactionWithdrawalServiceImpl(
         return this
     }
 
-    private fun checkHasPreparedTransactionCache(acquirer: V1Acquirer, trReferenceId: String): V1Transaction {
-        if (v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId).not()) {
-            // 출금 준비 거래 Cache 정보 없는 경우
-            throw InternalServiceException(ErrorCode.WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND, "Withdrawal transaction not found in Redis")
-        }
-
-        // 출금 준비 거래 DB 정보 조회
-        return V1TransactionPredicate(acquirer = V1AcquirerPredicate(acquirer), trReferenceId = trReferenceId)
-            .let { v1TransactionFindService.findByPredicate(it) }
+    private fun findPreparedTransactionCache(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+        // 출금 준비 거래 Cache 정보 조회
+        return v1TransactionCacheService.findPreparedWithdrawalTransactionCache(trReferenceId, channel)
+            // 출금 준비 거래 Cache 정보 기준 외화 계좌 거래 내역 조회
+            ?.let { v1TransactionFindService.findByPredicate(V1TransactionPredicate(id = it)) }
             ?: throw InternalServiceException(ErrorCode.WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND)
     }
 

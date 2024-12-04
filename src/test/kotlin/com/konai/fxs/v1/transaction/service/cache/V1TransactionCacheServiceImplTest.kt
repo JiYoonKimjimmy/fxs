@@ -61,11 +61,11 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
 
     given("외화 계좌 출금 준비 거래 Cache 존재 여부 확인 요청되어") {
         val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
-        val acquirer = transaction.acquirer
         val trReferenceId = transaction.trReferenceId
+        val channel = transaction.channel
 
         `when`("Cache 정보 존재하는 경우") {
-            val result = v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId)
+            val result = v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel)
 
             then("'true' 결과 정상 확인한다") {
                 result shouldBe true
@@ -75,14 +75,14 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
 
     given("외화 계좌 출금 준비 거래 Cache 삭제 요청되어") {
         val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
-        val acquirer = transaction.acquirer
         val trReferenceId = transaction.trReferenceId
+        val channel = transaction.channel
 
         `when`("Cache 삭제 성공인 경우") {
-            v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(acquirer, trReferenceId)
+            v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(trReferenceId, channel)
 
             then("처리 결과 정상 확인한다") {
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId) shouldBe false
+                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
         }
     }

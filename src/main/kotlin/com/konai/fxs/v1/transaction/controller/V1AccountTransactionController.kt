@@ -46,8 +46,8 @@ class V1AccountTransactionController(
     @PostMapping("/withdrawal/complete")
     fun prepareWithdrawal(@RequestBody request: V1TransactionWithdrawalCompleteRequest): ResponseEntity<V1TransactionWithdrawalCompleteResponse> {
         return v1TransactionWithdrawalService.completeWithdrawal(
-                acquirer = request.acquirer.toDomain(),
-                trReferenceId = request.trReferenceId
+                trReferenceId = request.trReferenceId,
+                channel = request.channel
             )
             .let { V1TransactionWithdrawalCompleteResponse(it.trReferenceId) }
             .success(HttpStatus.OK)
