@@ -26,6 +26,7 @@ import com.konai.fxs.v1.transaction.repository.FakeV1TransactionRepositoryImpl
 import com.konai.fxs.v1.transaction.repository.cache.V1TransactionCacheRepositoryImpl
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntityFixture
 import com.konai.fxs.v1.transaction.service.V1TransactionDepositServiceImpl
+import com.konai.fxs.v1.transaction.service.V1TransactionFindServiceImpl
 import com.konai.fxs.v1.transaction.service.V1TransactionSaveServiceImpl
 import com.konai.fxs.v1.transaction.service.V1TransactionWithdrawalServiceImpl
 import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheServiceImpl
@@ -63,6 +64,7 @@ object TestDependencies {
 
     val v1SequenceGeneratorService = V1SequenceGeneratorServiceImpl(fakeV1SequenceGeneratorRepository, fakeDistributedLockManager)
 
+    private val v1TransactionFindService = V1TransactionFindServiceImpl(fakeV1TransactionRepository)
     private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository, fakeRetryableManager)
     private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, v1TransactionSaveService, messageQueuePublisher)
     private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, v1TransactionEventHandler)
@@ -76,9 +78,10 @@ object TestDependencies {
     val v1TransactionWithdrawalService = V1TransactionWithdrawalServiceImpl(
         v1AccountValidationService,
         v1AccountSaveService,
+        v1TransactionFindService,
         v1TransactionCacheService,
-        v1SequenceGeneratorService,
         v1TransactionEventPublisher,
+        v1SequenceGeneratorService,
         fakeDistributedLockManager
     )
 

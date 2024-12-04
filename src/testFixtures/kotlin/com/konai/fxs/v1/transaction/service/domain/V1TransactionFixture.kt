@@ -86,6 +86,21 @@ class V1TransactionFixture {
 
     fun prepareWithdrawalTransaction(
         acquirer: V1Acquirer,
+        trReferenceId: String = generateUUID(),
+        amount: BigDecimal
+    ): V1Transaction {
+        return make(
+            acquirer = acquirer,
+            trReferenceId = trReferenceId,
+            type = TransactionType.WITHDRAWAL,
+            purpose = TransactionPurpose.WITHDRAWAL,
+            channel = TransactionChannel.ORS,
+            amount = amount
+        )
+    }
+
+    fun completeWithdrawalTransaction(
+        acquirer: V1Acquirer,
         amount: BigDecimal
     ): V1Transaction {
         return make(

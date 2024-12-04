@@ -3,7 +3,6 @@ package com.konai.fxs.v1.transaction.service
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
-import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisher
@@ -27,18 +26,18 @@ class V1TransactionDepositServiceImpl(
          * 2. 외화 계좌 잔액/평균 환율 변경 처리
          * 3. 외화 계좌 입금 거래 내역 생성 Event 발행
          */
-        val account = transaction.checkAccountStatus(v1AccountValidationService::checkStatus)
         return transaction
+            .checkAccountStatus(v1AccountValidationService::checkStatus)
             .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
-            .depositProc(account)
+            .depositTransaction()
             .changeStatusToCompleted()
             .publishSaveTransactionEvent()
     }
 
-    private fun V1Transaction.depositProc(account: V1Account): V1Transaction {
+    private fun V1Transaction.depositTransaction(): V1Transaction {
         // 외화 계좌 잔액/평균 환율 변경 처리
-        distributedLockManager.accountLock(account) {
-            account.deposit(this.amount, this.exchangeRate).let(v1AccountSaveService::save)
+        distributedLockManager.accountLock(this.account) {
+            this.account.deposit(this.amount, this.exchangeRate).let(v1AccountSaveService::save)
         }
         return this
     }

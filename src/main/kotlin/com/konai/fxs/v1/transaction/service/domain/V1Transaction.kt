@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.transaction.service.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.konai.fxs.common.enumerate.TransactionChannel
 import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.enumerate.TransactionStatus
@@ -27,15 +28,23 @@ data class V1Transaction(
     val requestNote: String?,
     var status: TransactionStatus
 ) {
+    @field:JsonIgnore
+    lateinit var account: V1Account
 
-    fun checkAccountStatus(block: (V1Acquirer, String) -> V1Account): V1Account {
-        return block(acquirer, currency)
-            // `fromAcquirer` 정보 잇는 경우, 검증 처리만 진행
-            .also { fromAcquirer?.let { block(it, currency) } }
+    fun checkAccountStatus(block: (V1Acquirer, String) -> V1Account): V1Transaction {
+        return apply {
+            account = block(acquirer, currency)
+                .also {
+                    // `fromAcquirer` 정보 잇는 경우, 검증 처리만 진행
+                    fromAcquirer?.let { block(it, currency) }
+                }
+        }
     }
 
-    fun checkAccountLimit(block: (V1Acquirer, String, BigDecimal) -> V1Account): V1Account {
-        return block(acquirer, currency, amount)
+    fun checkAccountLimit(block: (V1Acquirer, String, BigDecimal) -> V1Account): V1Transaction {
+        return apply {
+            account = block(acquirer, currency, if (status == PREPARED) BigDecimal.ZERO else amount)
+        }
     }
 
     fun checkCanBeExpired(): V1Transaction {
