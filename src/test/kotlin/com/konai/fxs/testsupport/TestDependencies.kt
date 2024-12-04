@@ -21,6 +21,7 @@ import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorServiceImpl
 import com.konai.fxs.v1.sequence.service.domain.V1SequenceGeneratorMapper
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositRequestFixture
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdrawalRequestFixture
+import com.konai.fxs.v1.transaction.controller.model.V1TransactionWithdrawalPrepareRequestFixture
 import com.konai.fxs.v1.transaction.repository.FakeV1TransactionRepositoryImpl
 import com.konai.fxs.v1.transaction.repository.cache.V1TransactionCacheRepositoryImpl
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntityFixture
@@ -91,5 +92,6 @@ object TestDependencies {
     val v1UpdateAccountRequestFixture = V1UpdateAccountRequestFixture()
     val v1TransactionManualDepositRequestFixture = V1TransactionManualDepositRequestFixture()
     val v1TransactionManualWithdrawalRequestFixture = V1TransactionManualWithdrawalRequestFixture()
+    val v1TransactionWithdrawalPrepareRequestFixture = V1TransactionWithdrawalPrepareRequestFixture()
 
 }

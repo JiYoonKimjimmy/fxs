@@ -14,8 +14,8 @@ interface V1TransactionCacheService {
 
     fun savePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction
 
-    fun hasPreparedWithdrawalTransactionCache(transaction: V1Transaction): Boolean
+    fun hasPreparedWithdrawalTransactionCache(acquirer: V1Acquirer, trReferenceId: String): Boolean
 
-    fun deletePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction
+    fun deletePreparedWithdrawalTransactionCache(acquirer: V1Acquirer, trReferenceId: String)
 
 }

@@ -19,7 +19,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
     val v1TransactionCacheService = dependencies.v1TransactionCacheService
     val numberRedisTemplate = dependencies.numberRedisTemplate
 
-    val v1TransactionFixture =dependencies.v1TransactionFixture
+    val v1TransactionFixture = dependencies.v1TransactionFixture
 
     given("외화 계좌 출금 준비 금액 합계 Cache 조회 요청되어") {
         val acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT)
@@ -58,27 +58,31 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
             }
         }
     }
-    
+
     given("외화 계좌 출금 준비 거래 Cache 존재 여부 확인 요청되어") {
         val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
-        
+        val acquirer = transaction.acquirer
+        val trReferenceId = transaction.trReferenceId
+
         `when`("Cache 정보 존재하는 경우") {
-            val result = v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(transaction)
-            
+            val result = v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId)
+
             then("'true' 결과 정상 확인한다") {
                 result shouldBe true
             }
         }
     }
-    
+
     given("외화 계좌 출금 준비 거래 Cache 삭제 요청되어") {
         val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
-        
+        val acquirer = transaction.acquirer
+        val trReferenceId = transaction.trReferenceId
+
         `when`("Cache 삭제 성공인 경우") {
-            v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(transaction)
-            
+            v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(acquirer, trReferenceId)
+
             then("처리 결과 정상 확인한다") {
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(transaction) shouldBe false
+                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId) shouldBe false
             }
         }
     }

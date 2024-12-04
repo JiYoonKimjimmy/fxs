@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.transaction.service.cache
 
+import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
@@ -41,21 +42,12 @@ class V1TransactionCacheServiceImpl(
         return transaction
     }
 
-    override fun hasPreparedWithdrawalTransactionCache(transaction: V1Transaction): Boolean {
-        return v1TransactionCacheRepository.hasPreparedWithdrawalTransactionCache(
-            acquirerId = transaction.acquirer.id,
-            acquirerType = transaction.acquirer.type,
-            trReferenceId = transaction.trReferenceId
-        )
+    override fun hasPreparedWithdrawalTransactionCache(acquirer: V1Acquirer, trReferenceId: String): Boolean {
+        return v1TransactionCacheRepository.hasPreparedWithdrawalTransactionCache(acquirer.id, acquirer.type, trReferenceId)
     }
 
-    override fun deletePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction {
-        v1TransactionCacheRepository.deletePreparedWithdrawalTransactionCache(
-            acquirerId = transaction.acquirer.id,
-            acquirerType = transaction.acquirer.type,
-            trReferenceId = transaction.trReferenceId
-        )
-        return transaction
+    override fun deletePreparedWithdrawalTransactionCache(acquirer: V1Acquirer, trReferenceId: String) {
+        v1TransactionCacheRepository.deletePreparedWithdrawalTransactionCache(acquirer.id, acquirer.type, trReferenceId)
     }
 
 }

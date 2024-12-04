@@ -3,18 +3,21 @@ package com.konai.fxs.v1.transaction.service.domain
 import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.common.message.V1ExpirePreparedTransactionMessage
+import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositRequest
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdrawalRequest
+import com.konai.fxs.v1.transaction.controller.model.V1TransactionWithdrawalPrepareRequest
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntity
 import com.konai.fxs.v1.transaction.service.event.V1ExpirePreparedTransactionEvent
 import com.konai.fxs.v1.transaction.service.event.V1SaveTransactionEvent
 import com.konasl.commonlib.springweb.correlation.core.ContextField
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 class V1TransactionMapper {
@@ -51,6 +54,24 @@ class V1TransactionMapper {
             transferDate = request.transferDate,
             requestBy = request.requestBy,
             requestNote = request.requestNote,
+            status = TransactionStatus.CREATED
+        )
+    }
+
+    fun requestToDomain(request: V1TransactionWithdrawalPrepareRequest): V1Transaction {
+        return V1Transaction(
+            trReferenceId = request.trReferenceId,
+            acquirer = request.acquirer.toDomain() ?: throw InternalServiceException(ErrorCode.ARGUMENT_NOT_VALID_ERROR),
+            fromAcquirer = null,
+            type = TransactionType.WITHDRAWAL,
+            purpose = request.purpose,
+            channel = request.channel,
+            currency = request.currency,
+            amount = request.amount,
+            exchangeRate = request.exchangeRate,
+            transferDate = LocalDateTime.now().convertPatternOf(),
+            requestBy = request.channel.name,
+            requestNote = request.channel.note,
             status = TransactionStatus.CREATED
         )
     }

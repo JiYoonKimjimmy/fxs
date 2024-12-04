@@ -1,9 +1,6 @@
 package com.konai.fxs.v1.transaction.controller
 
-import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositRequest
-import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositResponse
-import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdrawalRequest
-import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdrawalResponse
+import com.konai.fxs.v1.transaction.controller.model.*
 import com.konai.fxs.v1.transaction.service.V1TransactionDepositService
 import com.konai.fxs.v1.transaction.service.V1TransactionWithdrawalService
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
@@ -35,6 +32,14 @@ class V1AccountTransactionController(
         return v1TransactionMapper.requestToDomain(request)
             .let { v1TransactionWithdrawalService.manualWithdrawal(it) }
             .let { V1TransactionManualWithdrawalResponse(it.id!!) }
+            .success(HttpStatus.OK)
+    }
+
+    @PostMapping("/withdrawal/prepare")
+    fun prepareWithdrawal(@RequestBody request: V1TransactionWithdrawalPrepareRequest): ResponseEntity<V1TransactionWithdrawalPrepareResponse> {
+        return v1TransactionMapper.requestToDomain(request)
+            .let { v1TransactionWithdrawalService.prepareWithdrawal(it) }
+            .let { V1TransactionWithdrawalPrepareResponse(it.trReferenceId) }
             .success(HttpStatus.OK)
     }
 

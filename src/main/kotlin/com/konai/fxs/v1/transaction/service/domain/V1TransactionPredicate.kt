@@ -9,6 +9,7 @@ import java.math.BigDecimal
 
 data class V1TransactionPredicate(
     val id: Long? = null,
+    val trReferenceId: String? = null,
     val acquirer: V1AcquirerPredicate? = null,
     val fromAcquirer: V1AcquirerPredicate? = null,
     val type: TransactionType? = null,
