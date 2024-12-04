@@ -3,8 +3,8 @@ package com.konai.fxs.v1.transaction.service
 import com.konai.fxs.common.retry.RetryableManager
 import com.konai.fxs.v1.transaction.repository.V1TransactionRepository
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
-import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class V1TransactionSaveServiceImpl(

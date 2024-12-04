@@ -184,10 +184,12 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
         }
 
+        // 외화 계좌 잔액 변경
         saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
         // 출금 준비 거래 정보 저장
-        val preparedTransaction = v1TransactionWithdrawalService.prepareWithdrawal(v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100)))
+        val preparedTransaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
+        v1TransactionWithdrawalService.prepareWithdrawal(preparedTransaction)
 
         // 출금 준비 거래 금액 합계 추가분 증액
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))

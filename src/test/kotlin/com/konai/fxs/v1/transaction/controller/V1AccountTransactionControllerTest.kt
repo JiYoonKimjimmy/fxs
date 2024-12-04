@@ -9,6 +9,7 @@ import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestCommonFunctions.postProc
+import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.testsupport.TestExtensionFunctions.toPredicate
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
 import com.konai.fxs.v1.account.service.V1AccountFindService
@@ -16,6 +17,7 @@ import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import com.konai.fxs.v1.transaction.service.V1TransactionFindService
+import com.konai.fxs.v1.transaction.service.V1TransactionWithdrawalService
 import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheService
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionPredicate
 import io.kotest.matchers.bigdecimal.shouldBeGreaterThanOrEquals
@@ -32,16 +34,19 @@ class V1AccountTransactionControllerTest(
     private val v1AccountSaveService: V1AccountSaveService,
     private val v1AccountFindService: V1AccountFindService,
     private val v1TransactionFindService: V1TransactionFindService,
-    private val v1TransactionCacheService: V1TransactionCacheService
+    private val v1TransactionCacheService: V1TransactionCacheService,
+    private val v1TransactionWithdrawalService: V1TransactionWithdrawalService
 ) : CustomBehaviorSpec({
 
+    val v1AccountFixture = dependencies.v1AccountFixture
+    val v1TransactionFixture = dependencies.v1TransactionFixture
     val v1TransactionManualDepositRequestFixture = dependencies.v1TransactionManualDepositRequestFixture
     val v1TransactionManualWithdrawalRequestFixture = dependencies.v1TransactionManualWithdrawalRequestFixture
     val v1TransactionWithdrawalPrepareRequestFixture = dependencies.v1TransactionWithdrawalPrepareRequestFixture
-    val v1AccountFixture = dependencies.v1AccountFixture
+    val v1TransactionWithdrawalCompleteRequestFixture = dependencies.v1TransactionWithdrawalCompleteRequestFixture
 
-    fun saveAccount(account: V1Account): V1Account {
-        return v1AccountSaveService.save(account)
+    fun saveAccount(account: V1Account, balance: BigDecimal = account.balance): V1Account {
+        return v1AccountSaveService.save(account.update(V1AccountPredicate(balance = balance)))
     }
 
     given("외화 걔좌 '수기 입금' 거래 API 요청하여") {
@@ -124,7 +129,7 @@ class V1AccountTransactionControllerTest(
             }
         }
 
-        saveAccount(fromAccount.update(V1AccountPredicate(balance = BigDecimal(100))))
+        saveAccount(fromAccount, balance = BigDecimal(100))
 
         `when`("'USD 100' 수기 출금 처리 결과 성공인 경우") {
             val result = mockMvc.postProc(url, request)
@@ -176,7 +181,7 @@ class V1AccountTransactionControllerTest(
             }
         }
 
-        saveAccount(account.update(V1AccountPredicate(balance = BigDecimal(100))))
+        saveAccount(account, balance = BigDecimal(100))
 
         `when`("'USD 100' 출금 준비 요청 처리 결과 성공인 경우") {
             val result = mockMvc.postProc(url, request)
@@ -208,6 +213,74 @@ class V1AccountTransactionControllerTest(
                 transaction.type shouldBe TransactionType.WITHDRAWAL
                 transaction.purpose shouldBe TransactionPurpose.WITHDRAWAL
                 transaction.status shouldBe TransactionStatus.PREPARED
+            }
+        }
+    }
+
+    given("외화 계좌 '출금 완료' 거래 API 요청하여 ") {
+        val url = "/api/v1/account/transaction/withdrawal/complete"
+        val account = saveAccount(v1AccountFixture.make(acquirerType = FX_DEPOSIT, balance = 100))
+        val acquirer = account.acquirer
+        val trReferenceId = generateUUID()
+        val request = v1TransactionWithdrawalCompleteRequestFixture.make(acquirer, trReferenceId)
+
+        `when`("외화 계좌 출금 준비 거래가 없는 경우") {
+            val result = mockMvc.postProc(url, request)
+
+            then("'400 Bad Request - 210_2001_007' 에러 응답 정상 확인한다") {
+                result.andExpect {
+                    status { isBadRequest() }
+                    content {
+                        jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                        jsonPath("result.code", equalTo("210_2001_007"))
+                        jsonPath("result.message", equalTo("Account transaction service failed. Withdrawal prepared transaction not found."))
+                    }
+                }
+            }
+        }
+
+        // 출금 준비 거래 정보 저장
+        val preparedTransaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
+        v1TransactionWithdrawalService.prepareWithdrawal(preparedTransaction)
+
+        // 출금 준비 거래 금액 합계 추가분 증액
+        v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))
+
+        `when`("외화 계좌 잔액 부족한 경우") {
+            val result = mockMvc.postProc(url, request)
+
+            then("'500 Internal Server Error - 210_2001_005' 에러 응답 정상 확인한다") {
+                result.andExpect {
+                    status { isInternalServerError() }
+                    content {
+                        jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                        jsonPath("result.code", equalTo("210_2001_005"))
+                        jsonPath("result.message", equalTo("Account transaction service failed. Account balance is insufficient."))
+                    }
+                }
+            }
+        }
+
+        saveAccount(account, balance = BigDecimal(1000))
+
+        `when`("'USD 100' 출금 완료 요청 처리 결과 성공인 경우") {
+            val result = mockMvc.postProc(url, request)
+
+            then("'200 OK' 성공 응답 정상 확인한다") {
+                result.andExpect {
+                    status { isOk() }
+                    content {
+                        jsonPath("trReferenceId", equalTo(request.trReferenceId))
+                    }
+                }
+            }
+
+            then("외화 계좌 출금 준비 거래 Cache 정보 삭제 정상 확인한다") {
+                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(acquirer, trReferenceId) shouldBe false
+            }
+
+            then("외화 계좌 출금 준비 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {
+                v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
             }
         }
     }
