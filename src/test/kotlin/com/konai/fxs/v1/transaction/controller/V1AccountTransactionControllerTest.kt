@@ -10,7 +10,7 @@ import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestCommonFunctions.postProc
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
-import com.konai.fxs.testsupport.TestExtensionFunctions.toPredicate
+import com.konai.fxs.testsupport.TestExtensionFunctions.toModel
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
 import com.konai.fxs.v1.account.service.V1AccountFindService
 import com.konai.fxs.v1.account.service.V1AccountSaveService
@@ -72,8 +72,8 @@ class V1AccountTransactionControllerTest(
         val fromAccount = saveAccount(v1AccountFixture.make(acquirerType = FX_PURCHASER))
         val toAccount = saveAccount(v1AccountFixture.make(acquirerType = FX_DEPOSIT))
 
-        val fromAcquirer = fromAccount.acquirer.toPredicate()
-        val toAcquirer = toAccount.acquirer.toPredicate()
+        val fromAcquirer = fromAccount.acquirer.toModel()
+        val toAcquirer = toAccount.acquirer.toModel()
         val request = v1TransactionManualDepositRequestFixture.make(fromAcquirer, toAcquirer)
 
         `when`("'USD 100' 수기 입금 처리 결과 성공인 경우") {
@@ -112,7 +112,7 @@ class V1AccountTransactionControllerTest(
         // 외화 계좌 정보 저장
         val fromAccount = saveAccount(v1AccountFixture.make(acquirerType = FX_DEPOSIT))
         val amount = BigDecimal(100)
-        val request = v1TransactionManualWithdrawalRequestFixture.make(fromAcquirer = fromAccount.acquirer.toPredicate(), amount = amount)
+        val request = v1TransactionManualWithdrawalRequestFixture.make(fromAcquirer = fromAccount.acquirer.toModel(), amount = amount)
 
         `when`("출금 요청 금액보다 외화 계좌 잔액 부족한 경우") {
             val result = mockMvc.postProc(url, request)
@@ -164,7 +164,7 @@ class V1AccountTransactionControllerTest(
         val url = "/api/v1/account/transaction/withdrawal/prepare"
         val account = saveAccount(v1AccountFixture.make(acquirerType = FX_DEPOSIT))
         val amount = BigDecimal(100)
-        val request = v1TransactionWithdrawalPrepareRequestFixture.make(acquirer = account.acquirer.toPredicate(), amount = amount)
+        val request = v1TransactionWithdrawalPrepareRequestFixture.make(acquirer = account.acquirer.toModel(), amount = amount)
 
         `when`("출금 준비 요청 금액보다 외화 계좌 잔액 부족한 경우") {
             val result = mockMvc.postProc(url, request)

@@ -28,7 +28,7 @@ data class V1Transaction(
     val requestNote: String?,
     var status: TransactionStatus
 ) {
-    @field:JsonIgnore
+    @get:JsonIgnore
     lateinit var account: V1Account
 
     fun checkAccountStatus(block: (V1Acquirer, String) -> V1Account): V1Transaction {

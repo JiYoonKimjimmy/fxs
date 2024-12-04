@@ -4,8 +4,6 @@ import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.common.message.V1ExpirePreparedTransactionMessage
 import com.konai.fxs.common.util.convertPatternOf
-import com.konai.fxs.infra.error.ErrorCode
-import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositRequest
@@ -25,7 +23,7 @@ class V1TransactionMapper {
     fun requestToDomain(request: V1TransactionManualDepositRequest): V1Transaction {
         return V1Transaction(
             trReferenceId = RequestContext.get(ContextField.CORRELATION_ID),
-            acquirer = request.toAcquirer.toDomain() ?: throw InternalServiceException(ErrorCode.ARGUMENT_NOT_VALID_ERROR),
+            acquirer = request.toAcquirer.toDomain(),
             fromAcquirer = request.fromAcquirer.toDomain(),
             type = TransactionType.DEPOSIT,
             purpose = request.purpose,
@@ -43,7 +41,7 @@ class V1TransactionMapper {
     fun requestToDomain(request: V1TransactionManualWithdrawalRequest): V1Transaction {
         return V1Transaction(
             trReferenceId = RequestContext.get(ContextField.CORRELATION_ID),
-            acquirer = request.fromAcquirer.toDomain() ?: throw InternalServiceException(ErrorCode.ARGUMENT_NOT_VALID_ERROR),
+            acquirer = request.fromAcquirer.toDomain(),
             fromAcquirer = request.toAcquirer?.toDomain(),
             type = TransactionType.WITHDRAWAL,
             purpose = request.purpose,
@@ -61,7 +59,7 @@ class V1TransactionMapper {
     fun requestToDomain(request: V1TransactionWithdrawalPrepareRequest): V1Transaction {
         return V1Transaction(
             trReferenceId = request.trReferenceId,
-            acquirer = request.acquirer.toDomain() ?: throw InternalServiceException(ErrorCode.ARGUMENT_NOT_VALID_ERROR),
+            acquirer = request.acquirer.toDomain(),
             fromAcquirer = null,
             type = TransactionType.WITHDRAWAL,
             purpose = request.purpose,

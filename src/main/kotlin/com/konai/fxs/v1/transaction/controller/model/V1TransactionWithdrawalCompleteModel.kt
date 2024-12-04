@@ -1,12 +1,12 @@
 package com.konai.fxs.v1.transaction.controller.model
 
 import com.konai.fxs.common.model.BaseResponse
-import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
+import com.konai.fxs.v1.account.controller.model.V1AcquirerModel
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
 data class V1TransactionWithdrawalCompleteRequest(
-    val acquirer: V1AcquirerPredicate,
+    val acquirer: V1AcquirerModel,
     val trReferenceId: String
 )
 

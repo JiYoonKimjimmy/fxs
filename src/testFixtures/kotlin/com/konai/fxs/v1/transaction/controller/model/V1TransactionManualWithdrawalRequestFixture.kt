@@ -7,7 +7,7 @@ import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.testsupport.TestExtensionFunctions.fixtureMonkey
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
-import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
+import com.konai.fxs.v1.account.controller.model.V1AcquirerModel
 import com.navercorp.fixturemonkey.kotlin.giveMeKotlinBuilder
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -15,8 +15,8 @@ import java.time.LocalDateTime
 class V1TransactionManualWithdrawalRequestFixture {
 
     fun make(
-        fromAcquirer: V1AcquirerPredicate = V1AcquirerPredicate(generateUUID(), FX_DEPOSIT, "외화 예치금 계좌"),
-        toAcquirer: V1AcquirerPredicate? = null,
+        fromAcquirer: V1AcquirerModel = V1AcquirerModel(generateUUID(), FX_DEPOSIT, "외화 예치금 계좌"),
+        toAcquirer: V1AcquirerModel? = null,
         purpose: TransactionPurpose = TransactionPurpose.WITHDRAWAL,
         channel: TransactionChannel = TransactionChannel.PORTAL,
         currency: String = Currency.USD,
