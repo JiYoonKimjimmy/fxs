@@ -34,7 +34,7 @@ class V1AccountValidationServiceImpl(
          *  - 계좌 잔액 < (출금 금액 합계 + 요청 거래 금액)
          */
         return with(checkStatus(acquirer, currency)) {
-            v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(this.acquirer)
+            v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(this.acquirer)
                 .let { this.checkSufficientBalance(pendingAmount = it, amount = amount) }
         }
     }

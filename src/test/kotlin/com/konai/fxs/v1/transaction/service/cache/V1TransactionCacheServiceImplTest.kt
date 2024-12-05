@@ -25,7 +25,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
         val acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT)
 
         `when`("Cache 정보 없는 경우") {
-            val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
+            val result = v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer)
 
             then("'0' 금액 반환 정상 확인한다") {
                 result.shouldBeZero()
@@ -38,7 +38,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
         numberRedisTemplate.opsForValue().set(cacheKey, cacheValue)
 
         `when`("Cache 정보 있는 경우") {
-            val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer)
+            val result = v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer)
 
             then("'100000' 금액 반환 정상 확인한다") {
                 result.shouldBeEqual(BigDecimal(100000))
@@ -50,7 +50,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
         val transaction = v1TransactionFixture.make()
 
         `when`("Cache 저장 성공인 경우") {
-            val result = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(transaction)
+            val result = v1TransactionCacheService.saveWithdrawalTransactionCache(transaction)
 
             then("처리 결과 정상 확인한다") {
                 result shouldNotBe null
@@ -60,12 +60,12 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
     }
 
     given("출금 거래 대기 금액 Cache 존재 여부 확인 요청되어") {
-        val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
+        val transaction = v1TransactionCacheService.saveWithdrawalTransactionCache(v1TransactionFixture.make())
         val trReferenceId = transaction.trReferenceId
         val channel = transaction.channel
 
         `when`("Cache 정보 존재하는 경우") {
-            val result = v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel)
+            val result = v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel)
 
             then("'true' 결과 정상 확인한다") {
                 result shouldBe true
@@ -74,15 +74,15 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
     }
 
     given("출금 거래 대기 금액 Cache 삭제 요청되어") {
-        val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
+        val transaction = v1TransactionCacheService.saveWithdrawalTransactionCache(v1TransactionFixture.make())
         val trReferenceId = transaction.trReferenceId
         val channel = transaction.channel
 
         `when`("Cache 삭제 성공인 경우") {
-            v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(trReferenceId, channel)
+            v1TransactionCacheService.deleteWithdrawalTransactionCache(trReferenceId, channel)
 
             then("처리 결과 정상 확인한다") {
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
+                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
         }
     }

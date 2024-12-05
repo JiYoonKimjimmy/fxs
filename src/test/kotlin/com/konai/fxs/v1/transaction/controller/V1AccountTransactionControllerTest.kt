@@ -195,12 +195,12 @@ class V1AccountTransactionControllerTest(
             then("외화 계좌 출금 거래 Cache 정보 생성 정상 확인한다") {
                 val trReferenceId = request.trReferenceId
                 val channel = request.channel
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe true
+                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe true
             }
 
             then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {
                 val acquirer = account.acquirer
-                v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
+                v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
             }
 
             then("외화 계좌 출금 거래 내역 저장 정보 정상 확인한다") {
@@ -242,7 +242,7 @@ class V1AccountTransactionControllerTest(
         v1TransactionWithdrawalService.withdrawal(transaction)
 
         // 출금 거래 대기 금액 추가분 증액
-        v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))
+        v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(acquirer, BigDecimal(100))
 
         `when`("외화 계좌 잔액 부족한 경우") {
             val result = mockMvc.postProc(url, request)
@@ -274,11 +274,11 @@ class V1AccountTransactionControllerTest(
             }
 
             then("외화 계좌 출금 거래 Cache 정보 삭제 정상 확인한다") {
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
+                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
             then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {
-                v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
+                v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
             }
         }
     }

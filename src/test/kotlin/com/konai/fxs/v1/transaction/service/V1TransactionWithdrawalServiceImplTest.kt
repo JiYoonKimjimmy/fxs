@@ -193,7 +193,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         v1TransactionWithdrawalService.withdrawal(transaction)
 
         // 출금 거래 대기 금액 추가분 증액
-        v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))
+        v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(acquirer, BigDecimal(100))
 
         `when`("요청 'amount' 금액보다 외화 계좌 잔액 부족인 경우") {
             val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel) }
@@ -232,11 +232,11 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("'출금 거래 Cache' 삭제 정상 확인한다") {
-                v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
+                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
             then("'출금 거래 대기 금액 Cache' 감액 처리 정상 확인한다") {
-                v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBe BigDecimal(100)
+                v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer) shouldBe BigDecimal(100)
             }
         }
     }

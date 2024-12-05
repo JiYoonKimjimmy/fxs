@@ -54,7 +54,7 @@ class MessageQueueListenerTest(
         val message = V1ExpireTransactionMessage(transactionId = transaction.id!!, amount = transaction.amount.toLong())
 
         // 출금 거래 대기 금액 Cache 정보 생성
-        v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(transaction.acquirer, transaction.amount)
+        v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(transaction.acquirer, transaction.amount)
 
         `when`("성공인 경우") {
             defaultRabbitTemplate.convertAndSend(exchange, routingKey, message)
@@ -71,7 +71,7 @@ class MessageQueueListenerTest(
                 }
 
                 then("외화 계좌 출금 거래 대기 금액 감액 처리 결과 정상 확인한다") {
-                    val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(transaction.acquirer)
+                    val result = v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(transaction.acquirer)
                     result.toLong() shouldBe 0
                 }
             }

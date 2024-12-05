@@ -92,12 +92,12 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     private suspend fun V1Transaction.saveWithdrawalTransactionCache(): V1Transaction {
-        return v1TransactionCacheService.savePreparedWithdrawalTransactionCache(this)
+        return v1TransactionCacheService.saveWithdrawalTransactionCache(this)
     }
 
     private suspend fun V1Transaction.incrementWithdrawalTransactionAmountCache(): V1Transaction {
         distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
-            v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
+            v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(this.acquirer, this.amount)
         }
         return this
     }
@@ -113,13 +113,13 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     private suspend fun V1Transaction.deleteWithdrawalTransactionCache(): V1Transaction {
-        v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(this.trReferenceId, this.channel)
+        v1TransactionCacheService.deleteWithdrawalTransactionCache(this.trReferenceId, this.channel)
         return this
     }
 
     private suspend fun V1Transaction.decrementWithdrawalTransactionAmountCache(): V1Transaction {
         distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
-            v1TransactionCacheService.decrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
+            v1TransactionCacheService.decrementWithdrawalTransactionPendingAmountCache(this.acquirer, this.amount)
         }
         return this
     }
@@ -139,7 +139,7 @@ class V1TransactionWithdrawalServiceImpl(
 
     private fun findWithdrawalTransaction(trReferenceId: String, channel: TransactionChannel): V1Transaction {
         // 출금 거래 Cache 정보 조회
-        return v1TransactionCacheService.findPreparedWithdrawalTransactionCache(trReferenceId, channel)
+        return v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel)
             // 외화 계좌 거래 내역 DB 조회
             ?.let { v1TransactionFindService.findByPredicate(V1TransactionPredicate(id = it)) }
             ?: throw InternalServiceException(ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND)

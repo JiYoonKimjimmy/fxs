@@ -33,7 +33,7 @@ class V1TransactionExpireServiceImpl(
                 // 출금 거래 내역 상태 'EXPIRED` 변경 처리
                 ?.let { v1TransactionSaveService.save(it.changeStatusToExpired()) }
                 // 출금 거램 금액 합계 Cache 정보 감액 처리
-                ?.let { v1TransactionCacheService.decrementPreparedWithdrawalTotalAmountCache(it.acquirer, it.amount) }
+                ?.let { v1TransactionCacheService.decrementWithdrawalTransactionPendingAmountCache(it.acquirer, it.amount) }
                 ?: throw ResourceNotFoundException(ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND)
         } catch (e: Exception) {
             logger.error(e)

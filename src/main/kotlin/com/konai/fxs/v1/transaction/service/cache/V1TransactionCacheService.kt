@@ -7,18 +7,18 @@ import java.math.BigDecimal
 
 interface V1TransactionCacheService {
 
-    fun savePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction
+    fun saveWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction
 
-    fun findPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long?
+    fun findWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long?
 
-    fun hasPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean
+    fun hasWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean
 
-    fun deletePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel)
+    fun deleteWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel)
 
-    fun findPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer): BigDecimal
+    fun findWithdrawalTransactionPendingAmountCache(acquirer: V1Acquirer): BigDecimal
 
-    fun incrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal
+    fun incrementWithdrawalTransactionPendingAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal
 
-    fun decrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal
+    fun decrementWithdrawalTransactionPendingAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal
 
 }

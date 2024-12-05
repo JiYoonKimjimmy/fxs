@@ -14,7 +14,7 @@ class V1TransactionCacheServiceImpl(
     private val v1TransactionCacheRepository: V1TransactionCacheRepository
 ) : V1TransactionCacheService {
 
-    override fun savePreparedWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction {
+    override fun saveWithdrawalTransactionCache(transaction: V1Transaction): V1Transaction {
         v1TransactionCacheRepository.saveWithdrawalTransactionCache(
             trReferenceId = transaction.trReferenceId,
             channel = transaction.channel,
@@ -23,31 +23,31 @@ class V1TransactionCacheServiceImpl(
         return transaction
     }
 
-    override fun findPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long? {
+    override fun findWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long? {
         return v1TransactionCacheRepository.findWithdrawalTransactionCache(trReferenceId, channel)
     }
 
-    override fun hasPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
+    override fun hasWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
         return v1TransactionCacheRepository.hasWithdrawalTransactionCache(trReferenceId, channel)
     }
 
-    override fun deletePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel) {
+    override fun deleteWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel) {
         v1TransactionCacheRepository.deleteWithdrawalTransactionCache(trReferenceId, channel)
     }
 
-    override fun findPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer): BigDecimal {
+    override fun findWithdrawalTransactionPendingAmountCache(acquirer: V1Acquirer): BigDecimal {
         return v1TransactionCacheRepository.findWithdrawalTransactionPendingAmountCache(acquirer.id, acquirer.type)
             ?.let { BigDecimal(it.toLong()) }
             ?: BigDecimal.ZERO
     }
 
-    override fun incrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal {
+    override fun incrementWithdrawalTransactionPendingAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal {
         return v1TransactionCacheRepository.incrementWithdrawalTransactionPendingAmountCache(acquirer.id, acquirer.type, amount.toLong())
             ?.let { BigDecimal(it.toLong()) }
             ?: throw InternalServiceException(ErrorCode.CACHE_SERVICE_ERROR)
     }
 
-    override fun decrementPreparedWithdrawalTotalAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal {
+    override fun decrementWithdrawalTransactionPendingAmountCache(acquirer: V1Acquirer, amount: BigDecimal): BigDecimal {
         return v1TransactionCacheRepository.decrementWithdrawalTransactionPendingAmountCache(acquirer.id, acquirer.type, amount.toLong())
             ?.let { BigDecimal(it.toLong()) }
             ?: throw InternalServiceException(ErrorCode.CACHE_SERVICE_ERROR)
