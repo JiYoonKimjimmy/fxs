@@ -27,10 +27,6 @@ class V1TransactionCacheServiceImpl(
         return v1TransactionCacheRepository.findWithdrawalTransactionCache(trReferenceId, channel)
     }
 
-    override fun hasWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
-        return v1TransactionCacheRepository.hasWithdrawalTransactionCache(trReferenceId, channel)
-    }
-
     override fun deleteWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel) {
         v1TransactionCacheRepository.deleteWithdrawalTransactionCache(trReferenceId, channel)
     }

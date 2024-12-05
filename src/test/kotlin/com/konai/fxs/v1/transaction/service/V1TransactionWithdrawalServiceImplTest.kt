@@ -232,7 +232,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("'출금 거래 Cache' 삭제 정상 확인한다") {
-                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
+                v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel) shouldBe null
             }
 
             then("'출금 거래 대기 금액 Cache' 감액 처리 정상 확인한다") {

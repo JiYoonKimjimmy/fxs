@@ -195,7 +195,7 @@ class V1AccountTransactionControllerTest(
             then("외화 계좌 출금 거래 Cache 정보 생성 정상 확인한다") {
                 val trReferenceId = request.trReferenceId
                 val channel = request.channel
-                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe true
+                v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel) shouldNotBe null
             }
 
             then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {
@@ -274,7 +274,7 @@ class V1AccountTransactionControllerTest(
             }
 
             then("외화 계좌 출금 거래 Cache 정보 삭제 정상 확인한다") {
-                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
+                v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel) shouldBe null
             }
 
             then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {

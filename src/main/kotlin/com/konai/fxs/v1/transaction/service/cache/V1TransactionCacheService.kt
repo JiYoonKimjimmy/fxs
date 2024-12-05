@@ -11,8 +11,6 @@ interface V1TransactionCacheService {
 
     fun findWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long?
 
-    fun hasWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean
-
     fun deleteWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel)
 
     fun findWithdrawalTransactionPendingAmountCache(acquirer: V1Acquirer): BigDecimal

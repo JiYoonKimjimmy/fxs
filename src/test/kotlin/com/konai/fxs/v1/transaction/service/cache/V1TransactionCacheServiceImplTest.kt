@@ -65,10 +65,10 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
         val channel = transaction.channel
 
         `when`("Cache 정보 존재하는 경우") {
-            val result = v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel)
+            val result = v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel) shouldNotBe null
 
             then("'true' 결과 정상 확인한다") {
-                result shouldBe true
+                result shouldNotBe null
             }
         }
     }
@@ -82,7 +82,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
             v1TransactionCacheService.deleteWithdrawalTransactionCache(trReferenceId, channel)
 
             then("처리 결과 정상 확인한다") {
-                v1TransactionCacheService.hasWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
+                v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel) shouldBe null
             }
         }
     }
