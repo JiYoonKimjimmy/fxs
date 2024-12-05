@@ -15,51 +15,51 @@ class V1TransactionCacheRepositoryImpl(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun savePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel, transactionId: Long) {
+    override fun savePendingTransactionCache(trReferenceId: String, channel: TransactionChannel, transactionId: Long) {
         val key = PENDING_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
-        logger.info("savePreparedWithdrawalTransactionCache : [$key]")
+        logger.info("savePendingTransactionCache : [$key]")
         numberRedisTemplate.opsForValue().set(key, transactionId)
     }
 
-    override fun findPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long? {
+    override fun findPendingTransactionCache(trReferenceId: String, channel: TransactionChannel): Long? {
         val key = PENDING_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
-        logger.info("findPreparedWithdrawalTransactionCache : [$key]")
+        logger.info("findPendingTransactionCache : [$key]")
         return numberRedisTemplate.opsForValue().get(key)?.toLong()
     }
 
-    override fun hasPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
+    override fun hasPendingTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
         val key = PENDING_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
-        logger.info("hasPreparedWithdrawalTransactionCache : [$key]")
+        logger.info("hasPendingTransactionCache : [$key]")
         return numberRedisTemplate.hasKey(key)
     }
 
-    override fun deletePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel) {
+    override fun deletePendingTransactionCache(trReferenceId: String, channel: TransactionChannel) {
         val key = PENDING_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
-        logger.info("deletePreparedWithdrawalTransactionCache : [$key]")
+        logger.info("deletePendingTransactionCache : [$key]")
         numberRedisTemplate.delete(key)
     }
 
-    override fun findPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType): Number? {
+    override fun findPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType): Number? {
         val key = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
-        logger.info("findPreparedWithdrawalTotalAmountCache : [$key]")
+        logger.info("findPendingTransactionAmountCache : [$key]")
         return numberRedisTemplate.opsForValue().get(key)
     }
 
-    override fun incrementPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
+    override fun incrementPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
         val key = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
-        logger.info("incrementPreparedWithdrawalTotalAmountCache : [$key]")
+        logger.info("incrementPendingTransactionAmountCache : [$key]")
         return numberRedisTemplate.opsForValue().increment(key, amount)
     }
 
-    override fun decrementPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
+    override fun decrementPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
         val key = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
-        logger.info("decrementPreparedWithdrawalTotalAmountCache : [$key]")
+        logger.info("decrementPendingTransactionAmountCache : [$key]")
         return numberRedisTemplate.opsForValue().decrement(key, amount)
     }
 
-    override fun clearPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType) {
+    override fun clearPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType) {
         val key = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
-        logger.info("clearPreparedWithdrawalTotalAmountCache : [$key]")
+        logger.info("clearPendingTransactionAmountCache : [$key]")
         numberRedisTemplate.delete(key)
     }
 

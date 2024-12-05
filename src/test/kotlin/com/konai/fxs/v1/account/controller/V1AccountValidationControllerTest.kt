@@ -64,7 +64,7 @@ class V1AccountValidationControllerTest(
         // 외화 계좌 DB 저장
         val account = v1AccountJpaRepository.save(v1AccountEntityFixture.make(balance = 20000))
         // 출금 합계 Cache 저장
-        v1TransactionCacheRepository.incrementPreparedWithdrawalTotalAmountCache(account.acquirer.id, account.acquirer.type, 10001)
+        v1TransactionCacheRepository.incrementPendingTransactionAmountCache(account.acquirer.id, account.acquirer.type, 10001)
 
         `when`("외화 계좌 출금 합계 한도 초과인 경우") {
             val request = V1CheckLimitAccountRequest(account.acquirer.id, account.acquirer.type, account.currency, 10000)
@@ -84,7 +84,7 @@ class V1AccountValidationControllerTest(
         }
 
         // 출금 합계 Cache 초기화
-        v1TransactionCacheRepository.clearPreparedWithdrawalTotalAmountCache(account.acquirer.id, account.acquirer.type)
+        v1TransactionCacheRepository.clearPendingTransactionAmountCache(account.acquirer.id, account.acquirer.type)
 
         `when`("외화 계좌 한도 확인 결과 정상인 경우") {
             val request = V1CheckLimitAccountRequest(account.acquirer.id, account.acquirer.type, account.currency, 10000)

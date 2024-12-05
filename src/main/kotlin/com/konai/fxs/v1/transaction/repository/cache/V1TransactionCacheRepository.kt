@@ -5,20 +5,20 @@ import com.konai.fxs.common.enumerate.TransactionChannel
 
 interface V1TransactionCacheRepository {
 
-    fun savePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel, transactionId: Long)
+    fun savePendingTransactionCache(trReferenceId: String, channel: TransactionChannel, transactionId: Long)
 
-    fun findPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long?
+    fun findPendingTransactionCache(trReferenceId: String, channel: TransactionChannel): Long?
 
-    fun hasPreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean
+    fun hasPendingTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean
 
-    fun deletePreparedWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel)
+    fun deletePendingTransactionCache(trReferenceId: String, channel: TransactionChannel)
 
-    fun findPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType): Number?
+    fun findPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType): Number?
 
-    fun incrementPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
+    fun incrementPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
 
-    fun decrementPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
+    fun decrementPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number?
 
-    fun clearPreparedWithdrawalTotalAmountCache(acquirerId: String, acquirerType: AcquirerType)
+    fun clearPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType)
 
 }
