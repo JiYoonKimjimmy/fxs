@@ -96,7 +96,9 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     private suspend fun V1Transaction.incrementPreparedTransactionAmountCache(): V1Transaction {
-        v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
+        distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
+            v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
+        }
         return this
     }
 
@@ -117,7 +119,9 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     private suspend fun V1Transaction.decrementPreparedTransactionAmountCache(): V1Transaction {
-        v1TransactionCacheService.decrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
+        distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
+            v1TransactionCacheService.decrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
+        }
         return this
     }
 

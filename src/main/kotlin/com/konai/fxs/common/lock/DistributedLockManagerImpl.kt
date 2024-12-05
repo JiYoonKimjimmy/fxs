@@ -40,13 +40,18 @@ class DistributedLockManagerImpl(
         }
     }
 
+    override fun <R> sequenceLock(sequenceType: SequenceType, block: () -> R): R {
+        val key = DistributedLockType.SEQUENCE_LOCK.getKey(sequenceType.name)
+        return lock(key = key, leaseTime = 0, block = block)
+    }
+
     override fun <R> accountLock(account: V1Account, block: () -> R): R {
         val key = DistributedLockType.ACCOUNT_LOCK.getKey(account.id.toString())
         return lock(key = key, leaseTime = 0, block = block)
     }
 
-    override fun <R> sequenceLock(sequenceType: SequenceType, block: () -> R): R {
-        val key = DistributedLockType.SEQUENCE_LOCK.getKey(sequenceType.name)
+    override fun <R> prepareWithdrawalTransactionLick(account: V1Account, block: () -> R): R {
+        val key = DistributedLockType.PREPARE_WITHDRAWAL_TRANSACTION_LOCK.getKey(account.id.toString())
         return lock(key = key, leaseTime = 0, block = block)
     }
 

@@ -14,8 +14,10 @@ interface DistributedLockManager {
         block: () -> R
     ): R
 
+    fun <R> sequenceLock(sequenceType: SequenceType, block: () -> R): R
+
     fun <R> accountLock(account: V1Account, block: () -> R): R
 
-    fun <R> sequenceLock(sequenceType: SequenceType, block: () -> R): R
+    fun <R> prepareWithdrawalTransactionLick(account: V1Account, block: () -> R): R
 
 }
