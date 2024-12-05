@@ -3,7 +3,7 @@ package com.konai.fxs.v1.account.service
 import com.konai.fxs.common.Currency
 import com.konai.fxs.common.enumerate.AccountStatus
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
-import com.konai.fxs.common.enumerate.TransactionCacheType.PENDING_TRANSACTION_AMOUNT_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
@@ -93,8 +93,8 @@ class V1AccountValidationServiceImplTest : CustomBehaviorSpec({
             }
         }
 
-        // 보류 거래 금액 Cache 저장
-        val cacheKey = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
+        // 출금 거래 대기 금액 Cache 저장
+        val cacheKey = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
         val cacheValue11 = 11
         numberRedisTemplate.opsForValue().set(cacheKey, cacheValue11)
 

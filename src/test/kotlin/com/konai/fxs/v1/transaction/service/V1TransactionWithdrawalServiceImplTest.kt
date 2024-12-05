@@ -1,8 +1,8 @@
 package com.konai.fxs.v1.transaction.service
 
 import com.konai.fxs.common.Currency
-import com.konai.fxs.common.enumerate.TransactionCacheType.PENDING_TRANSACTION_AMOUNT_CACHE
-import com.konai.fxs.common.enumerate.TransactionCacheType.PENDING_TRANSACTION_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_TRANSACTION_CACHE
 import com.konai.fxs.common.enumerate.TransactionChannel
 import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.enumerate.TransactionStatus
@@ -153,17 +153,17 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.status shouldBe TransactionStatus.PENDING
             }
 
-            then("'보류 거래 Cache 정보' 저장 정상 확인한다") {
+            then("'출금 거래 Cache 정보' 저장 정상 확인한다") {
                 val trReferenceId = transaction.trReferenceId
                 val channel = transaction.channel.name
-                val key = PENDING_TRANSACTION_CACHE.getKey(trReferenceId, channel)
+                val key = WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel)
 
                 numberRedisTemplate.opsForValue().get(key) shouldBe result.id
             }
 
-            then("'보류 거래 금액 Cache 정보' 업데이트 정상 확인한다") {
+            then("'출금 거래 대기 금액 Cache 정보' 업데이트 정상 확인한다") {
                 val acquirer = transaction.acquirer
-                val key = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
+                val key = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
 
                 numberRedisTemplate.opsForValue().get(key) shouldBe transaction.amount.toLong()
             }
@@ -192,7 +192,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         val transaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
         v1TransactionWithdrawalService.withdrawal(transaction)
 
-        // 출금 거래 금액 합계 추가분 증액
+        // 출금 거래 대기 금액 추가분 증액
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))
 
         `when`("요청 'amount' 금액보다 외화 계좌 잔액 부족인 경우") {
@@ -204,7 +204,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
         }
 
-        // 출금 거래 금액 합계 추가분 감액
+        // 출금 거래 대기 금액 추가분 감액
         saveAccount(account, balance = BigDecimal(1000), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 출금 완료 요청인 경우") {
@@ -231,11 +231,11 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.status shouldBe TransactionStatus.COMPLETED
             }
 
-            then("'보류 거래 Cache' 삭제 정상 확인한다") {
+            then("'출금 거래 Cache' 삭제 정상 확인한다") {
                 v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
-            then("'보류 거래 금액 Cache' 감액 처리 정상 확인한다") {
+            then("'출금 거래 대기 금액 Cache' 감액 처리 정상 확인한다") {
                 v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBe BigDecimal(100)
             }
         }

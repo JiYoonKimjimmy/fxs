@@ -53,7 +53,7 @@ class MessageQueueListenerTest(
         val routingKey = V1_EXPIRE_TRANSACTION_EXCHANGE.routingKey
         val message = V1ExpireTransactionMessage(transactionId = transaction.id!!, amount = transaction.amount.toLong())
 
-        // 출금 거래 금액 합계 Cache 정보 생성
+        // 출금 거래 대기 금액 Cache 정보 생성
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(transaction.acquirer, transaction.amount)
 
         `when`("성공인 경우") {
@@ -70,7 +70,7 @@ class MessageQueueListenerTest(
                     result.status shouldBe EXPIRED
                 }
 
-                then("외화 계좌 출금 거래 금액 합계 감액 처리 결과 정상 확인한다") {
+                then("외화 계좌 출금 거래 대기 금액 감액 처리 결과 정상 확인한다") {
                     val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(transaction.acquirer)
                     result.toLong() shouldBe 0
                 }

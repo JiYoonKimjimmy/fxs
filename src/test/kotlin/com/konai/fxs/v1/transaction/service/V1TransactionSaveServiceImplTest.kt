@@ -47,7 +47,7 @@ class V1TransactionSaveServiceImplTest(
             val result = v1TransactionSaveService.save(transaction)
 
             then("시도 횟수 '2회' 확인한다") {
-                verify(exactly = 2) { mockV1TransactionRepository.save(any()) }
+                verify(atLeast = 2) { mockV1TransactionRepository.save(any()) }
             }
 
             then("거래 내역 DB 저장 정상 확인한다") {

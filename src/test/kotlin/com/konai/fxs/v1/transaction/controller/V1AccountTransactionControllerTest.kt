@@ -198,7 +198,7 @@ class V1AccountTransactionControllerTest(
                 v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe true
             }
 
-            then("외화 계좌 출금 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {
+            then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {
                 val acquirer = account.acquirer
                 v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
             }
@@ -241,7 +241,7 @@ class V1AccountTransactionControllerTest(
         val transaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
         v1TransactionWithdrawalService.withdrawal(transaction)
 
-        // 출금 거래 금액 합계 추가분 증액
+        // 출금 거래 대기 금액 추가분 증액
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))
 
         `when`("외화 계좌 잔액 부족한 경우") {
@@ -277,7 +277,7 @@ class V1AccountTransactionControllerTest(
                 v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
-            then("외화 계좌 출금 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {
+            then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {
                 v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
             }
         }

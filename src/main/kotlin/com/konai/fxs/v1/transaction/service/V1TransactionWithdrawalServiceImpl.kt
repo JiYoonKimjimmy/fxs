@@ -85,7 +85,7 @@ class V1TransactionWithdrawalServiceImpl(
         runBlocking {
             // 출금 거래 Cache 생성
             launch(Dispatchers.IO) { this@withdrawalTransactionCacheProc.saveWithdrawalTransactionCache() }
-            // 출금 거래 금액 합계 Cache 증액 업데이트
+            // 출금 거래 대기 금액 Cache 증액 업데이트
             launch(Dispatchers.IO) { this@withdrawalTransactionCacheProc.incrementWithdrawalTransactionAmountCache() }
         }
         return this
@@ -106,7 +106,7 @@ class V1TransactionWithdrawalServiceImpl(
         runBlocking {
             // 출금 거래 Cache 삭제
             launch(Dispatchers.IO) { this@completedWithdrawalTransactionCacheProc.deleteWithdrawalTransactionCache() }
-            // 출금 거래 금액 합계 Cache 감액 업데이트
+            // 출금 거래 대기 금액 Cache 감액 업데이트
             launch(Dispatchers.IO) { this@completedWithdrawalTransactionCacheProc.decrementWithdrawalTransactionAmountCache() }
         }
         return this
