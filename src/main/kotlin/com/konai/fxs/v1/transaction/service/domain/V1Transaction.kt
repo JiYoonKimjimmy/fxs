@@ -49,7 +49,7 @@ data class V1Transaction(
 
     fun checkCanBeExpired(): V1Transaction {
         if (status == COMPLETED) {
-            throw InternalServiceException(ErrorCode.WITHDRAWAL_PREPARED_TRANSACTION_IS_COMPLETED)
+            throw InternalServiceException(ErrorCode.WITHDRAWAL_TRANSACTION_IS_COMPLETED)
         }
         return this
     }

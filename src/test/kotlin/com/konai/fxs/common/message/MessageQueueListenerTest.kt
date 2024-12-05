@@ -29,7 +29,7 @@ class MessageQueueListenerTest(
     lateinit var transaction: V1Transaction
 
     beforeSpec {
-        // 외화 계좌 출금 준비 거래 DB 정보 저장
+        // 외화 계좌 출금 대기 거래 DB 정보 저장
         transaction = v1TransactionRepository.save(v1TransactionFixture.make(status = PENDING))
     }
 

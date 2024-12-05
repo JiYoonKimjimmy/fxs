@@ -7,16 +7,16 @@ enum class DistributedLockType(
 
     SEQUENCE_LOCK(
         note = "Sequence 생성 Lock",
-        keySpec = "fxs:sequence:{sequenceType}:lock"
+        keySpec = "fxs:{sequenceType}:sequence:lock"
     )
     ,
     ACCOUNT_LOCK(
         note = "외화 계좌 정보 변경 Lock",
-        keySpec = "fxs:account:{accountId}:lock"
+        keySpec = "fxs:{accountId}:account:lock"
     ),
-    PREPARE_WITHDRAWAL_TRANSACTION_LOCK(
-        note = "외화 계좌 출금 준비 금액 합계 변경 Lock",
-        keySpec = "fxs:prepare:withdrawal:transaction:{accountId}:lock"
+    WITHDRAWAL_TRANSACTION_AMOUNT_LOCK(
+        note = "외화 계좌 출금 거래 대기 금액 변경 Lock",
+        keySpec = "fxs:{accountId}:withdrawal:transaction:lock"
     );
 
     fun getKey(vararg args: String): String {
@@ -27,7 +27,7 @@ enum class DistributedLockType(
             ACCOUNT_LOCK -> {
                 this.keySpec.replace("{accountId}", args[0])
             }
-            PREPARE_WITHDRAWAL_TRANSACTION_LOCK -> {
+            WITHDRAWAL_TRANSACTION_AMOUNT_LOCK -> {
                 this.keySpec.replace("{accountId}", args[0])
             }
         }

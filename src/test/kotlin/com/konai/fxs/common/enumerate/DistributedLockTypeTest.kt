@@ -15,7 +15,7 @@ class DistributedLockTypeTest : CustomStringSpec({
         val result = ACCOUNT_LOCK.getKey(accountId)
 
         // then
-        result shouldBe "fxs:account:$accountId:lock"
+        result shouldBe "fxs:$accountId:account:lock"
     }
 
 })

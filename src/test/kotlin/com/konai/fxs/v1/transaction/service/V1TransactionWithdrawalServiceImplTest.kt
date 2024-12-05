@@ -101,7 +101,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
     
     given("외화 계좌 출금 거래 요청되어") {
         val account = v1AccountFixture.make(id = generateSequence())
-        val transaction = v1TransactionFixture.prepareWithdrawalTransaction(
+        val transaction = v1TransactionFixture.withdrawalTransaction(
             acquirer = account.acquirer,
             amount = BigDecimal(100)
         )
@@ -189,7 +189,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
         // 출금 거래 정보 저장
-        val transaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
+        val transaction = v1TransactionFixture.withdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
         v1TransactionWithdrawalService.withdrawal(transaction)
 
         // 출금 거래 대기 금액 추가분 증액

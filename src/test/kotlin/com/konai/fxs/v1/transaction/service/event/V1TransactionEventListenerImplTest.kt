@@ -61,7 +61,7 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
             }
         }
 
-        this.given("외화 계좌 거래 내역 'PREPARED' 정보 저장 Event 발행 요청하여") {
+        this.given("외화 계좌 거래 내역 'PENDING' 정보 저장 Event 발행 요청하여") {
             val transaction = v1TransactionFixture.make(status = PENDING)
             val event = v1TransactionMapper.domainToSaveTransactionEvent(transaction)
 

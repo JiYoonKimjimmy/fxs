@@ -41,8 +41,8 @@ class FakeDistributedLockManagerImpl : DistributedLockManager {
         return lock(key = key, leaseTime = 0, block = block)
     }
 
-    override fun <R> prepareWithdrawalTransactionLick(account: V1Account, block: () -> R): R {
-        val key = DistributedLockType.PREPARE_WITHDRAWAL_TRANSACTION_LOCK.getKey(account.id.toString())
+    override fun <R> withdrawalTransactionAmountLick(account: V1Account, block: () -> R): R {
+        val key = DistributedLockType.WITHDRAWAL_TRANSACTION_AMOUNT_LOCK.getKey(account.id.toString())
         return lock(key = key, leaseTime = 0, block = block)
     }
 

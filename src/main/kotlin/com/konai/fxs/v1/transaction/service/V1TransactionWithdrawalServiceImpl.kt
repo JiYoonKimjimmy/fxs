@@ -58,7 +58,7 @@ class V1TransactionWithdrawalServiceImpl(
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .changeStatusToPending()
-            .withdrawalTransactionCacheProc()
+            .cachingProcessPending()
             .publishSaveTransactionEvent()
     }
 
@@ -66,62 +66,59 @@ class V1TransactionWithdrawalServiceImpl(
     override fun completeWithdrawal(trReferenceId: String, channel: TransactionChannel): V1Transaction {
         /**
          * 외화 계좌 출금 완료 처리
-         * 1. 외화 계좌 출금 준비 거래 Cache 정보 조회
+         * 1. 외화 계좌 출금 거래 Cache 정보 조회
          * 2. 외화 계촤 출금 한도 확인
          * 3. 외화 계좌 잔액 변경 처리
-         * 4. 외화 계좌 출금 준비 거래 Cache 정보 삭제
-         * 5. 외화 계좌 출금 준비 거래 합계 Cache 감액 업데이트
+         * 4. 외화 계좌 출금 거래 Cache 정보 삭제
+         * 5. 외화 계좌 출금 거래 대기 금액 Cache 감액 업데이트
          * 6. 외화 계좌 출금 거래 내역 생성 Event 발행
          */
         return findWithdrawalTransaction(trReferenceId, channel)
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .withdrawalTransaction()
             .changeStatusToCompleted()
-            .completedWithdrawalTransactionCacheProc()
+            .cachingProcessCompleted()
             .publishSaveTransactionEvent()
     }
 
-    private fun V1Transaction.withdrawalTransactionCacheProc(): V1Transaction {
+    private fun V1Transaction.cachingProcessPending(): V1Transaction {
         runBlocking {
             // 출금 거래 Cache 생성
-            launch(Dispatchers.IO) { this@withdrawalTransactionCacheProc.saveWithdrawalTransactionCache() }
+            launch(Dispatchers.IO) { this@cachingProcessPending.saveWithdrawalTransaction() }
             // 출금 거래 대기 금액 Cache 증액 업데이트
-            launch(Dispatchers.IO) { this@withdrawalTransactionCacheProc.incrementWithdrawalTransactionAmountCache() }
+            launch(Dispatchers.IO) { this@cachingProcessPending.incrementWithdrawalTransactionPendingAmount() }
         }
         return this
     }
 
-    private suspend fun V1Transaction.saveWithdrawalTransactionCache(): V1Transaction {
-        return v1TransactionCacheService.saveWithdrawalTransactionCache(this)
+    private suspend fun V1Transaction.saveWithdrawalTransaction() {
+        v1TransactionCacheService.saveWithdrawalTransactionCache(this)
     }
 
-    private suspend fun V1Transaction.incrementWithdrawalTransactionAmountCache(): V1Transaction {
-        distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
+    private suspend fun V1Transaction.incrementWithdrawalTransactionPendingAmount() {
+        distributedLockManager.withdrawalTransactionAmountLick(this.account) {
             v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(this.acquirer, this.amount)
         }
-        return this
     }
 
-    private fun V1Transaction.completedWithdrawalTransactionCacheProc(): V1Transaction {
+    private fun V1Transaction.cachingProcessCompleted(): V1Transaction {
         runBlocking {
             // 출금 거래 Cache 삭제
-            launch(Dispatchers.IO) { this@completedWithdrawalTransactionCacheProc.deleteWithdrawalTransactionCache() }
+            launch(Dispatchers.IO) { this@cachingProcessCompleted.deleteWithdrawalTransaction() }
             // 출금 거래 대기 금액 Cache 감액 업데이트
-            launch(Dispatchers.IO) { this@completedWithdrawalTransactionCacheProc.decrementWithdrawalTransactionAmountCache() }
+            launch(Dispatchers.IO) { this@cachingProcessCompleted.decrementWithdrawalTransactionPendingAmount() }
         }
         return this
     }
 
-    private suspend fun V1Transaction.deleteWithdrawalTransactionCache(): V1Transaction {
+    private suspend fun V1Transaction.deleteWithdrawalTransaction() {
         v1TransactionCacheService.deleteWithdrawalTransactionCache(this.trReferenceId, this.channel)
-        return this
     }
 
-    private suspend fun V1Transaction.decrementWithdrawalTransactionAmountCache(): V1Transaction {
-        distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
+    private suspend fun V1Transaction.decrementWithdrawalTransactionPendingAmount() {
+        distributedLockManager.withdrawalTransactionAmountLick(this.account) {
             v1TransactionCacheService.decrementWithdrawalTransactionPendingAmountCache(this.acquirer, this.amount)
         }
-        return this
     }
 
     private fun V1Transaction.withdrawalTransaction(): V1Transaction {

@@ -238,7 +238,7 @@ class V1AccountTransactionControllerTest(
         }
 
         // 출금 거래 정보 저장
-        val transaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
+        val transaction = v1TransactionFixture.withdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
         v1TransactionWithdrawalService.withdrawal(transaction)
 
         // 출금 거래 대기 금액 추가분 증액

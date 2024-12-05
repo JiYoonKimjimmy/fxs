@@ -84,7 +84,7 @@ class V1TransactionFixture {
         )
     }
 
-    fun prepareWithdrawalTransaction(
+    fun withdrawalTransaction(
         acquirer: V1Acquirer,
         trReferenceId: String = generateUUID(),
         amount: BigDecimal

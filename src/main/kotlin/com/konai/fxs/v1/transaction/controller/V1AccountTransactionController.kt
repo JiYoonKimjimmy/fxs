@@ -44,7 +44,7 @@ class V1AccountTransactionController(
     }
 
     @PostMapping("/withdrawal/complete")
-    fun prepareWithdrawal(@RequestBody request: V1TransactionWithdrawalCompleteRequest): ResponseEntity<V1TransactionWithdrawalCompleteResponse> {
+    fun completeWithdrawal(@RequestBody request: V1TransactionWithdrawalCompleteRequest): ResponseEntity<V1TransactionWithdrawalCompleteResponse> {
         return v1TransactionWithdrawalService.completeWithdrawal(
                 trReferenceId = request.trReferenceId,
                 channel = request.channel

@@ -98,7 +98,7 @@ class V1AccountValidationServiceImplTest : CustomBehaviorSpec({
         val cacheValue11 = 11
         numberRedisTemplate.opsForValue().set(cacheKey, cacheValue11)
 
-        `when`("계좌 잔액은 충분하지만, (요청 금액 + 출금 준비 합계) 한도 초과인 경우") {
+        `when`("계좌 잔액은 충분하지만, (요청 금액 + 출금 거래 대기 금액) 한도 초과인 경우") {
             val exception = shouldThrow<InternalServiceException> { v1AccountValidationService.checkLimit(acquirer, currency, amount99990) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 확인한다") {
@@ -109,7 +109,7 @@ class V1AccountValidationServiceImplTest : CustomBehaviorSpec({
         val cacheValue10 = 10
         numberRedisTemplate.opsForValue().set(cacheKey, cacheValue10)
 
-        `when`("계좌 잔액 충분 & (요청 금액 + 출금 준비 합계) 한도 확인 결과 정상인 경우") {
+        `when`("계좌 잔액 충분 & (요청 금액 + 출금 거래 대기 금액) 한도 확인 결과 정상인 경우") {
             val result = v1AccountValidationService.checkLimit(acquirer, currency, amount99990)
 
             then("예외 발생 없이 정상 확인한다") {

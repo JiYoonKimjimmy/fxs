@@ -18,6 +18,6 @@ interface DistributedLockManager {
 
     fun <R> accountLock(account: V1Account, block: () -> R): R
 
-    fun <R> prepareWithdrawalTransactionLick(account: V1Account, block: () -> R): R
+    fun <R> withdrawalTransactionAmountLick(account: V1Account, block: () -> R): R
 
 }
