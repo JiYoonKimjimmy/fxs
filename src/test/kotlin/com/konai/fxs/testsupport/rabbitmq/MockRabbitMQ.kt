@@ -63,18 +63,18 @@ object MockRabbitMQ {
             routingKey = "fxs.v1.save.transaction.routingKey",
             bindingFunction = Exchange::setupDirectExchange
         ),
-        V1_EXPIRE_PREPARED_TRANSACTION_DL_EXCHANGE(
-            exchangeName = "fxs.v1.expire.prepared.transaction.dl.exchange",
-            queueName = "fxs.v1.expire.prepared.transaction.dl.queue",
-            routingKey = "fxs.v1.expire.prepared.transaction.dl.routingKey",
+        V1_EXPIRE_TRANSACTION_DL_EXCHANGE(
+            exchangeName = "fxs.v1.expire.transaction.dl.exchange",
+            queueName = "fxs.v1.expire.transaction.dl.queue",
+            routingKey = "fxs.v1.expire.transaction.dl.routingKey",
             Exchange::setupDirectExchange
         ),
-        V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE(
-            exchangeName = "fxs.v1.expire.prepared.transaction.exchange",
-            queueName = "fxs.v1.expire.prepared.transaction.queue",
-            routingKey = "fxs.v1.expire.prepared.transaction.routingKey",
+        V1_EXPIRE_TRANSACTION_EXCHANGE(
+            exchangeName = "fxs.v1.expire.transaction.exchange",
+            queueName = "fxs.v1.expire.transaction.queue",
+            routingKey = "fxs.v1.expire.transaction.routingKey",
             bindingFunction = Exchange::setupDeadLetterExchange,
-            dlx = V1_EXPIRE_PREPARED_TRANSACTION_DL_EXCHANGE
+            dlx = V1_EXPIRE_TRANSACTION_DL_EXCHANGE
         );
 
         fun binding(rabbitAdmin: RabbitAdmin) {

@@ -24,10 +24,10 @@ class MessageQueueListener(
         v1TransactionSaveService.save(message.transaction)
     }
 
-    @RabbitListener(queues = [MessageQueue.V1_EXPIRE_PREPARED_TRANSACTION_DL_QUEUE])
-    fun receiveMessage(message: V1ExpirePreparedTransactionMessage) {
-        logging(message, MessageQueue.V1_EXPIRE_PREPARED_TRANSACTION_DL_QUEUE)
-        v1TransactionExpireService.expirePreparedTransaction(message.transactionId, message.amount)
+    @RabbitListener(queues = [MessageQueue.V1_EXPIRE_TRANSACTION_DL_QUEUE])
+    fun receiveMessage(message: V1ExpireTransactionMessage) {
+        logging(message, MessageQueue.V1_EXPIRE_TRANSACTION_DL_QUEUE)
+        v1TransactionExpireService.expireTransaction(message.transactionId, message.amount)
     }
 
 }

@@ -19,20 +19,20 @@ class V1TransactionExpireServiceImpl(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Transactional
-    override fun expirePreparedTransaction(transactionId: Long, amount: Long) {
+    override fun expireTransaction(transactionId: Long, amount: Long) {
         /**
-         * 외화 계좌 출금 준비 거래 만료 처리
-         * 1. 출금 중비 거래 내역 조회
-         * 2. 출금 준비 거래 내역 상태 'EXPIRED` 변경 처리
-         * 3. 출금 준비 거램 금액 합계 Cache 정보 감액 처리
+         * 외화 계좌 출금 거래 만료 처리
+         * 1. 출금 거래 내역 조회
+         * 2. 출금 거래 내역 상태 'EXPIRED` 변경 처리
+         * 3. 출금 거램 금액 합계 Cache 정보 감액 처리
          */
         try {
             // 출금 중비 거래 내역 조회
             v1TransactionFindService.findByPredicate(V1TransactionPredicate(id = transactionId))
                 ?.checkCanBeExpired()
-                // 출금 준비 거래 내역 상태 'EXPIRED` 변경 처리
+                // 출금 거래 내역 상태 'EXPIRED` 변경 처리
                 ?.let { v1TransactionSaveService.save(it.changeStatusToExpired()) }
-                // 출금 준비 거램 금액 합계 Cache 정보 감액 처리
+                // 출금 거램 금액 합계 Cache 정보 감액 처리
                 ?.let { v1TransactionCacheService.decrementPreparedWithdrawalTotalAmountCache(it.acquirer, it.amount) }
                 ?: throw ResourceNotFoundException(ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND)
         } catch (e: Exception) {

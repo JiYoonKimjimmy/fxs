@@ -6,6 +6,6 @@ data class V1SaveTransactionEvent(
     val transaction: V1Transaction
 )
 
-data class V1ExpirePreparedTransactionEvent(
+data class V1ExpireTransactionEvent(
     val transaction: V1Transaction
 )

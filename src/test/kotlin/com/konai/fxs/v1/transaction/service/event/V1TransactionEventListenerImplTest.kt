@@ -48,15 +48,15 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
             }
         }
 
-        this.given("외화 계좌 출금 준비 거래 만료 Event 발행 요청하여") {
+        this.given("외화 계좌 출금 거래 만료 Event 발행 요청하여") {
             val transaction = v1TransactionFixture.make(status = PENDING)
-            val event = v1TransactionMapper.domainToExpirePreparedTransactionEvent(transaction)
+            val event = v1TransactionMapper.domainToExpireTransactionEvent(transaction)
 
-            `when`("출금 준비 거래 만료 Event 정상 발행된 경우") {
+            `when`("출금 거래 만료 Event 정상 발행된 경우") {
                 applicationEventPublisher.publishEvent(event)
 
                 then("Event 발행 '1회' 정상 확인한다") {
-                    applicationEvents.stream(V1ExpirePreparedTransactionEvent::class.java).count() shouldBe 1
+                    applicationEvents.stream(V1ExpireTransactionEvent::class.java).count() shouldBe 1
                 }
             }
         }
@@ -80,8 +80,8 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
                     applicationEvents.stream(V1SaveTransactionEvent::class.java).count() shouldBe 1
                 }
 
-                then("출금 준비 거래 만료 Event 발행 '1회' 정상 확인한다") {
-                    applicationEvents.stream(V1ExpirePreparedTransactionEvent::class.java).count() shouldBe 1
+                then("출금 거래 만료 Event 발행 '1회' 정상 확인한다") {
+                    applicationEvents.stream(V1ExpireTransactionEvent::class.java).count() shouldBe 1
                 }
             }
         }

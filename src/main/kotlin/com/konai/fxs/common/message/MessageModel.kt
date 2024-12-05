@@ -13,7 +13,7 @@ data class V1SaveTransactionMessage(
     val transaction: V1Transaction
 ) : BaseMessage()
 
-data class V1ExpirePreparedTransactionMessage(
+data class V1ExpireTransactionMessage(
     val transactionId: Long,
     val amount: Long
 ) : BaseMessage()

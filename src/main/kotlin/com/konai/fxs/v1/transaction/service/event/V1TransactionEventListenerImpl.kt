@@ -1,6 +1,6 @@
 package com.konai.fxs.v1.transaction.service.event
 
-import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE
+import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_TRANSACTION_EXCHANGE
 import com.konai.fxs.common.message.MessageQueuePublisher
 import com.konai.fxs.v1.transaction.service.V1TransactionSaveService
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
@@ -26,16 +26,16 @@ class V1TransactionEventListenerImpl(
         logger.info("[SaveTransactionEvent] EventListener Started.")
         v1TransactionMapper.eventToDomain(event)
             .let { v1TransactionSaveService.save(it) }
-            .let { v1TransactionEventPublisher.expirePreparedTransaction(it) }
+            .let { v1TransactionEventPublisher.expireTransaction(it) }
         logger.info("[SaveTransactionEvent] EventListener Completed.")
     }
 
     @TransactionalEventListener
-    override fun expirePreparedTransactionEventHandler(event: V1ExpirePreparedTransactionEvent) {
-        logger.info("[ExpirePreparedTransactionEvent] EventListener Started.")
+    override fun expireTransactionEventHandler(event: V1ExpireTransactionEvent) {
+        logger.info("[ExpireTransactionEventHandler] EventListener Started.")
         v1TransactionMapper.eventToMessage(event)
-            .let { messageQueuePublisher.sendDirectMessage(V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE, it) }
-        logger.info("[ExpirePreparedTransactionEvent] EventListener Completed.")
+            .let { messageQueuePublisher.sendDirectMessage(V1_EXPIRE_TRANSACTION_EXCHANGE, it) }
+        logger.info("[ExpireTransactionEventHandler] EventListener Completed.")
     }
 
 }

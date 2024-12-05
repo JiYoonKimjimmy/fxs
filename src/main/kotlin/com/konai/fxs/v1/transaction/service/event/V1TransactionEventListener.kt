@@ -4,6 +4,6 @@ interface V1TransactionEventListener {
 
     fun saveTransactionEventHandler(event: V1SaveTransactionEvent)
 
-    fun expirePreparedTransactionEventHandler(event: V1ExpirePreparedTransactionEvent)
+    fun expireTransactionEventHandler(event: V1ExpireTransactionEvent)
 
 }

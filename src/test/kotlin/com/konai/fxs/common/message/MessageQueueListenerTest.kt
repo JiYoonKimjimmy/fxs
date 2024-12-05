@@ -2,7 +2,7 @@ package com.konai.fxs.common.message
 
 import com.konai.fxs.common.enumerate.TransactionStatus.EXPIRED
 import com.konai.fxs.common.enumerate.TransactionStatus.PENDING
-import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE
+import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_TRANSACTION_EXCHANGE
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_SAVE_TRANSACTION_EXCHANGE
@@ -49,11 +49,11 @@ class MessageQueueListenerTest(
     }
 
     given("외화 계좌 출금 거래 만료 Message 수신하여") {
-        val exchange = V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE.exchangeName
-        val routingKey = V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE.routingKey
-        val message = V1ExpirePreparedTransactionMessage(transactionId = transaction.id!!, amount = transaction.amount.toLong())
+        val exchange = V1_EXPIRE_TRANSACTION_EXCHANGE.exchangeName
+        val routingKey = V1_EXPIRE_TRANSACTION_EXCHANGE.routingKey
+        val message = V1ExpireTransactionMessage(transactionId = transaction.id!!, amount = transaction.amount.toLong())
 
-        // 출금 준기 거래 금액 합계 Cache 정보 생성
+        // 출금 거래 금액 합계 Cache 정보 생성
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(transaction.acquirer, transaction.amount)
 
         `when`("성공인 경우") {
