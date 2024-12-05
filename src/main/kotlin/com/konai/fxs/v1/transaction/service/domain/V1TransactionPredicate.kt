@@ -20,5 +20,6 @@ data class V1TransactionPredicate(
     val exchangeRate: BigDecimal? = null,
     val transferDate: String? = null,
     val requestBy: String? = null,
-    val status: TransactionStatus? = null
+    val status: TransactionStatus? = null,
+    val orgTrReferenceId: String? = null,
 )

@@ -1,11 +1,14 @@
 package com.konai.fxs.v1.transaction.service
 
 import com.konai.fxs.common.Currency
-import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE
 import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_TRANSACTION_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE
 import com.konai.fxs.common.enumerate.TransactionChannel
+import com.konai.fxs.common.enumerate.TransactionChannel.ORS
 import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.enumerate.TransactionStatus
+import com.konai.fxs.common.enumerate.TransactionStatus.CANCELED
+import com.konai.fxs.common.enumerate.TransactionStatus.COMPLETED
 import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
@@ -72,7 +75,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             val result = v1TransactionWithdrawalService.manualWithdrawal(transaction)
 
             then("수기 출금 거래 상태 'COMPLETED' 정상 확인한다") {
-                result.status shouldBe TransactionStatus.COMPLETED
+                result.status shouldBe COMPLETED
             }
 
             then("외화 계좌 잔액 감액 변경 정상 확인한다") {
@@ -94,7 +97,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
                 transactionEntity.transferDate shouldBe transaction.transferDate
-                transactionEntity.status shouldBe TransactionStatus.COMPLETED
+                transactionEntity.status shouldBe COMPLETED
             }
         }
     }
@@ -144,8 +147,8 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.id shouldBe result.id
                 transactionEntity.acquirer.id shouldBe account.acquirer.id
                 transactionEntity.type shouldBe TransactionType.WITHDRAWAL
-                transactionEntity.purpose shouldBe TransactionPurpose.WITHDRAWAL
-                transactionEntity.channel shouldBe TransactionChannel.ORS
+                transactionEntity.purpose shouldBe TransactionPurpose.REMITTANCE
+                transactionEntity.channel shouldBe ORS
                 transactionEntity.currency shouldBe Currency.USD
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
@@ -175,10 +178,10 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         val account = v1AccountFixture.make(id = generateSequence())
         val acquirer = account.acquirer
         val trReferenceId = generateUUID()
-        val channel = TransactionChannel.ORS
+        val channel = ORS
 
         `when`("요청 'trReferenceId' 기준 출금 거래 정보 없는 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawalComplete(trReferenceId, channel) }
 
             then("'WITHDRAWAL_TRANSACTION_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND
@@ -196,7 +199,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(acquirer, BigDecimal(100))
 
         `when`("요청 'amount' 금액보다 외화 계좌 잔액 부족인 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.withdrawalComplete(trReferenceId, channel) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
@@ -204,14 +207,14 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
         }
 
-        // 출금 거래 대기 금액 추가분 감액
+        // 외화 계좌 잔액 업데이트
         saveAccount(account, balance = BigDecimal(1000), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 출금 완료 요청인 경우") {
-            val result = v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel)
+            val result = v1TransactionWithdrawalService.withdrawalComplete(trReferenceId, channel)
 
             then("출금 거래 상태 'COMPLETED' 정상 확인한다") {
-                result.status shouldBe TransactionStatus.COMPLETED
+                result.status shouldBe COMPLETED
             }
 
             then("외화 계좌 출금 거래 내역 생성 정상 확인한다") {
@@ -222,13 +225,13 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.id shouldBe result.id
                 transactionEntity.acquirer.id shouldBe account.acquirer.id
                 transactionEntity.type shouldBe TransactionType.WITHDRAWAL
-                transactionEntity.purpose shouldBe TransactionPurpose.WITHDRAWAL
-                transactionEntity.channel shouldBe TransactionChannel.ORS
+                transactionEntity.purpose shouldBe TransactionPurpose.REMITTANCE
+                transactionEntity.channel shouldBe ORS
                 transactionEntity.currency shouldBe Currency.USD
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
                 transactionEntity.transferDate shouldBe transaction.transferDate
-                transactionEntity.status shouldBe TransactionStatus.COMPLETED
+                transactionEntity.status shouldBe COMPLETED
             }
 
             then("'출금 거래 Cache' 삭제 정상 확인한다") {
@@ -237,6 +240,59 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("'출금 거래 대기 금액 Cache' 감액 처리 정상 확인한다") {
                 v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer) shouldBe BigDecimal(100)
+            }
+        }
+    }
+    
+    given("외화 계좌 출금 취소 거래 요청되어") {
+
+        `when`("'orgTrReferenceId' 요청 정보 기준 출금 완료 거래 없는 경우") {
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawalCancel(generateUUID(), generateUUID(), ORS) }
+            
+            then("'WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND' 예외 발생 정상 확인한다") {
+                exception.errorCode shouldBe ErrorCode.WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND
+            }
+        }
+
+        // 외화 계좌 정보 저장
+        val account = v1AccountFixture.make(id = generateSequence(), balance = 1000)
+        saveAccount(account)
+
+        // 출금 거래 정보 저장
+        val transaction = v1TransactionFixture.withdrawalTransaction(account.acquirer, generateUUID(), BigDecimal(100))
+        v1TransactionWithdrawalService.withdrawal(transaction)
+
+        // 출금 거래 완료 처리
+        v1TransactionWithdrawalService.withdrawalComplete(transaction.trReferenceId, transaction.channel)
+
+        val trReferenceId = generateUUID()
+        val orgTrReferenceId = transaction.trReferenceId
+        val channel = transaction.channel
+
+        `when`("정상 출금 취소 거래 요청인 경우") {
+            val result = v1TransactionWithdrawalService.withdrawalCancel(trReferenceId, orgTrReferenceId, channel)
+
+            then("출금 취소 거래 완료 처리 정상 확인한다") {
+                result.trReferenceId shouldBe trReferenceId
+                result.orgTrReferenceId shouldBe orgTrReferenceId
+                result.status shouldBe COMPLETED
+            }
+
+            then("외화 계좌 잔액 변경 정상 확인한다") {
+                val entity = v1AccountRepository.findByPredicate(V1AccountPredicate(account.id))!!
+                entity.balance shouldBe BigDecimal(1000)
+            }
+
+            then("출금 완료 거래 'CANCELED' 상태 변경 정상 확인한다") {
+                val entity = v1TransactionRepository.findByPredicate(V1TransactionPredicate(trReferenceId = orgTrReferenceId))!!
+                entity.status shouldBe CANCELED
+                entity.cancelDate shouldNotBe null
+            }
+
+            then("출금 취소 거래 내역 생성 정상 확인한다") {
+                val entity = v1TransactionRepository.findByPredicate(V1TransactionPredicate(trReferenceId = trReferenceId))!!
+                entity.status shouldBe COMPLETED
+                entity.orgTrReferenceId shouldBe orgTrReferenceId
             }
         }
     }

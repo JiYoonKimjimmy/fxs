@@ -6,11 +6,13 @@ import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionStatus.*
 import com.konai.fxs.common.enumerate.TransactionType
+import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import java.math.BigDecimal
+import java.time.LocalDateTime
 
 data class V1Transaction(
     var id: Long? = null,
@@ -24,6 +26,9 @@ data class V1Transaction(
     val amount: BigDecimal,
     val exchangeRate: BigDecimal,
     val transferDate: String,
+    var cancelDate: String?,
+    val orgTransactionId: Long?,
+    val orgTrReferenceId: String?,
     val requestBy: String,
     val requestNote: String?,
     var status: TransactionStatus
@@ -66,8 +71,31 @@ data class V1Transaction(
         return apply { status = COMPLETED }
     }
 
+    fun changeStatusToCanceled(): V1Transaction {
+        return apply {
+            status = CANCELED
+            cancelDate = LocalDateTime.now().convertPatternOf()
+        }
+    }
+
     fun changeStatusToExpired(): V1Transaction {
         return apply { status = EXPIRED }
+    }
+
+    fun toCanceled(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+        return this.copy(
+            id = null,
+            trReferenceId = trReferenceId,
+            type = this.type.cancelType(),
+            purpose = this.purpose.cancelPurpose(),
+            channel = channel,
+            transferDate = LocalDateTime.now().convertPatternOf(),
+            cancelDate = null,
+            orgTransactionId = this.id,
+            orgTrReferenceId = this.trReferenceId,
+            requestBy = channel.name,
+            status = COMPLETED
+        )
     }
 
 }

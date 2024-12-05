@@ -51,6 +51,12 @@ class V1TransactionEntity(
     @Column(name = "REQUEST_NOTE")
     val requestNote: String?,
     @Column(name = "STATUS")
-    val status: TransactionStatus
+    val status: TransactionStatus,
+    @Column(name = "CANCEL_DATE")
+    val cancelDate: String?,
+    @Column(name = "ORG_TRANSACTION_ID")
+    val orgTransactionId: Long?,
+    @Column(name = "ORG_TR_REFERENCE_ID")
+    val orgTrReferenceId: String?,
 
 ) : SequenceBaseEntity()

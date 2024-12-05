@@ -17,15 +17,14 @@ class TestV1TransactionEventHandler(
 ) : ApplicationEventPublisher, V1TransactionEventListener {
 
     override fun publishEvent(event: Any) {
-        when(event) {
+        when (event) {
             is V1SaveTransactionEvent -> saveTransactionEventHandler(event)
             is V1ExpireTransactionEvent -> expireTransactionEventHandler(event)
         }
     }
 
     override fun saveTransactionEventHandler(event: V1SaveTransactionEvent) {
-        v1TransactionMapper.eventToDomain(event)
-            .let { v1TransactionSaveService.save(it) }
+        v1TransactionSaveService.save(event.transaction)
     }
 
     override fun expireTransactionEventHandler(event: V1ExpireTransactionEvent) {

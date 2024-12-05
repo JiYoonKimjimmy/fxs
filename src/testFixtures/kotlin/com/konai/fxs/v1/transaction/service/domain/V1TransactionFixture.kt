@@ -30,7 +30,10 @@ class V1TransactionFixture {
         transferDate: String = LocalDateTime.now().convertPatternOf(),
         requestBy: String = DEFAULT_REQUEST_BY,
         requestNote: String? = null,
-        status: TransactionStatus = TransactionStatus.CREATED
+        status: TransactionStatus = TransactionStatus.CREATED,
+        cancelDate: String? = null,
+        orgTransactionId: Long? = null,
+        orgTrReferenceId: String? = null,
     ): V1Transaction {
         return V1Transaction(
             id = id,
@@ -46,7 +49,10 @@ class V1TransactionFixture {
             transferDate = transferDate,
             requestBy = requestBy,
             requestNote = requestNote,
-            status = status
+            status = status,
+            cancelDate = cancelDate,
+            orgTransactionId = orgTransactionId,
+            orgTrReferenceId = orgTrReferenceId,
         )
     }
 
@@ -91,9 +97,10 @@ class V1TransactionFixture {
     ): V1Transaction {
         return make(
             acquirer = acquirer,
+            fromAcquirer = null,
             trReferenceId = trReferenceId,
             type = TransactionType.WITHDRAWAL,
-            purpose = TransactionPurpose.WITHDRAWAL,
+            purpose = TransactionPurpose.REMITTANCE,
             channel = TransactionChannel.ORS,
             amount = amount
         )

@@ -9,6 +9,8 @@ interface V1TransactionWithdrawalService {
 
     fun withdrawal(transaction: V1Transaction): V1Transaction
 
-    fun completeWithdrawal(trReferenceId: String, channel: TransactionChannel): V1Transaction
+    fun withdrawalComplete(trReferenceId: String, channel: TransactionChannel): V1Transaction
+
+    fun withdrawalCancel(trReferenceId: String, orgTrReferenceId: String, channel: TransactionChannel): V1Transaction
 
 }

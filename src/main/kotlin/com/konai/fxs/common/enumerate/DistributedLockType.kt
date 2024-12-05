@@ -20,7 +20,7 @@ enum class DistributedLockType(
     );
 
     fun getKey(vararg args: String): String {
-        return when(this) {
+        return when (this) {
             SEQUENCE_LOCK -> {
                 this.keySpec.replace("{sequenceType}", args[0])
             }

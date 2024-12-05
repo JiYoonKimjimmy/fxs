@@ -24,8 +24,7 @@ class V1TransactionEventListenerImpl(
     @EventListener
     override fun saveTransactionEventHandler(event: V1SaveTransactionEvent) {
         logger.info("[SaveTransactionEvent] EventListener Started.")
-        v1TransactionMapper.eventToDomain(event)
-            .let { v1TransactionSaveService.save(it) }
+        v1TransactionSaveService.save(event.transaction)
             .let { v1TransactionEventPublisher.expireTransaction(it) }
         logger.info("[SaveTransactionEvent] EventListener Completed.")
     }

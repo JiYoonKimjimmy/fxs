@@ -30,6 +30,7 @@ class FakeV1TransactionRepositoryImpl(
                 && predicate.fromAcquirer?.id.ifNotNullEquals(entity.fromAcquirer?.id)
                 && predicate.fromAcquirer?.type.ifNotNullEquals(entity.fromAcquirer?.type)
                 && predicate.fromAcquirer?.name.ifNotNullEquals(entity.fromAcquirer?.name)
+                && predicate.trReferenceId.ifNotNullEquals(entity.trReferenceId)
                 && predicate.type.ifNotNullEquals(entity.type)
                 && predicate.purpose.ifNotNullEquals(entity.purpose)
                 && predicate.channel.ifNotNullEquals(entity.channel)
@@ -39,6 +40,7 @@ class FakeV1TransactionRepositoryImpl(
                 && predicate.transferDate.ifNotNullEquals(entity.transferDate)
                 && predicate.requestBy.ifNotNullEquals(entity.requestBy)
                 && predicate.status.ifNotNullEquals(entity.status)
+                && predicate.orgTrReferenceId.ifNotNullEquals(entity.orgTrReferenceId)
     }
 
 }

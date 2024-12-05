@@ -31,6 +31,9 @@ class V1TransactionEntityFixture {
         requestBy: String = DEFAULT_REQUEST_BY,
         requestNote: String? = null,
         status: TransactionStatus = TransactionStatus.CREATED,
+        cancelDate: String? = null,
+        orgTransactionId: Long? = null,
+        orgTrReferenceId: String? = null,
     ): V1TransactionEntity {
         return V1TransactionEntity(
             id = id,
@@ -46,7 +49,10 @@ class V1TransactionEntityFixture {
             transferDate = transferDate,
             requestBy = requestBy,
             requestNote = requestNote,
-            status = status
+            status = status,
+            cancelDate = cancelDate,
+            orgTransactionId = orgTransactionId,
+            orgTrReferenceId = orgTrReferenceId
         )
     }
 

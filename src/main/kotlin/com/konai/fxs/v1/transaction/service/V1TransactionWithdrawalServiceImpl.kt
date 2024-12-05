@@ -1,9 +1,11 @@
 package com.konai.fxs.v1.transaction.service
 
 import com.konai.fxs.common.enumerate.TransactionChannel
+import com.konai.fxs.common.enumerate.TransactionStatus.COMPLETED
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
+import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
 import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorService
@@ -33,7 +35,7 @@ class V1TransactionWithdrawalServiceImpl(
         /**
          * 외화 계좌 수기 출금 처리
          * 1. 외화 계좌 출금 한도 확인
-         * 2. 외화 계좌 잔액 변경 처리
+         * 2. 외화 계좌 잔액 출금 처리
          * 3. 외화 계좌 출금 거래 내역 생성 Event 발행
          */
         return transaction
@@ -49,10 +51,10 @@ class V1TransactionWithdrawalServiceImpl(
         /**
          * 외화 계좌 출금 처리
          * 1. 외화 계좌 출금 한도 확인
-         * 2. 외화 계좌 출금 거래 Cache 저장
-         * 3. 외화 계좌 출금 거래 합계 Cache 증액 업데이트
-         * 4. 외화 계좌 출금 거래 `PENDING` 상태 변경
-         * 4. 외화 계좌 출금 거래 내역 생성 Event 발행
+         * 2. 외화 계좌 출금 거래 `PENDING` 상태 변경
+         * 3. 외화 계좌 출금 거래 Cache 저장
+         * 4. 외화 계좌 출금 거래 합계 Cache 증액 업데이트
+         * 5. 외화 계좌 거래 내역 저장 Event 발행
          */
         return transaction
             .checkAccountLimit(v1AccountValidationService::checkLimit)
@@ -63,21 +65,43 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     @Transactional
-    override fun completeWithdrawal(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+    override fun withdrawalComplete(trReferenceId: String, channel: TransactionChannel): V1Transaction {
         /**
          * 외화 계좌 출금 완료 처리
-         * 1. 외화 계좌 출금 거래 Cache 정보 조회
+         * 1. 외화 계좌 출금 거래 정보 조회
          * 2. 외화 계촤 출금 한도 확인
-         * 3. 외화 계좌 잔액 변경 처리
+         * 3. 외화 계좌 잔액 출금 처리
+         * 4. 외화 계좌 출금 거래 `COMPLETED` 상태 변경
          * 4. 외화 계좌 출금 거래 Cache 정보 삭제
          * 5. 외화 계좌 출금 거래 대기 금액 Cache 감액 업데이트
-         * 6. 외화 계좌 출금 거래 내역 생성 Event 발행
+         * 6. 외화 계좌 거래 내역 저장 Event 발행
          */
         return findWithdrawalTransaction(trReferenceId, channel)
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .withdrawalTransaction()
             .changeStatusToCompleted()
             .cachingProcessCompleted()
+            .publishSaveTransactionEvent()
+    }
+
+    @Transactional
+    override fun withdrawalCancel(trReferenceId: String, orgTrReferenceId: String, channel: TransactionChannel): V1Transaction {
+        /**
+         * 외화 계좌 출금 취소 처리
+         * 1. 외화 계좌 출금 완료 거래 정보 조회
+         * 2. 외화 계좌 상태 확인
+         * 3. 외화 계좌 잔액 입금 처리
+         * 4. 외화 계좌 출금 완료 거래 `CANCELED` 상태 변경
+         * 5. 외화 계좌 출금 완료 거래 업데이트 처리
+         * 6. 외화 계좌 출금 취소 거래 생성
+         * 7. 외화 계좌 거래 내역 저장 Event 발행
+         */
+        return findCompletedWithdrawalTransaction(orgTrReferenceId, channel)
+            .checkAccountStatus(v1AccountValidationService::checkStatus)
+            .depositTransaction()
+            .changeStatusToCanceled()
+            .publishSaveTransactionEvent()
+            .toCanceled(trReferenceId, channel)
             .publishSaveTransactionEvent()
     }
 
@@ -122,9 +146,17 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     private fun V1Transaction.withdrawalTransaction(): V1Transaction {
-        // 외화 계좌 잔액 변경 처리
+        // 외화 계좌 잔액 출금 처리
         distributedLockManager.accountLock(this.account) {
             this.account.withdrawal(this.amount).let(v1AccountSaveService::save)
+        }
+        return this
+    }
+
+    private fun V1Transaction.depositTransaction(): V1Transaction {
+        // 외화 계좌 잔액 입금 처리
+        distributedLockManager.accountLock(this.account) {
+            this.account.deposit(this.amount, this.account.averageExchangeRate).let(v1AccountSaveService::save)
         }
         return this
     }
@@ -139,7 +171,13 @@ class V1TransactionWithdrawalServiceImpl(
         return v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel)
             // 외화 계좌 거래 내역 DB 조회
             ?.let { v1TransactionFindService.findByPredicate(V1TransactionPredicate(id = it)) }
-            ?: throw InternalServiceException(ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND)
+            ?: throw ResourceNotFoundException(ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND)
+    }
+
+    private fun findCompletedWithdrawalTransaction(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+        return V1TransactionPredicate(trReferenceId = trReferenceId, channel = channel, status = COMPLETED)
+            .let { v1TransactionFindService.findByPredicate(it) }
+            ?: throw ResourceNotFoundException(ErrorCode.WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND)
     }
 
 }

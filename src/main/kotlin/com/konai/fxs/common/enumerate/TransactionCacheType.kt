@@ -16,7 +16,7 @@ enum class TransactionCacheType(
     ;
 
     fun getKey(vararg args: String): String {
-        return when(this) {
+        return when (this) {
             WITHDRAWAL_TRANSACTION_CACHE -> {
                 this.keySpec
                     .replace("{trReferenceId}", args[0])

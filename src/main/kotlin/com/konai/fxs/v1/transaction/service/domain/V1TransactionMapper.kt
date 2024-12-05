@@ -34,7 +34,10 @@ class V1TransactionMapper {
             transferDate = request.transferDate,
             requestBy = request.requestBy,
             requestNote = request.requestNote,
-            status = TransactionStatus.CREATED
+            status = TransactionStatus.CREATED,
+            cancelDate = null,
+            orgTransactionId = null,
+            orgTrReferenceId = null,
         )
     }
 
@@ -52,7 +55,10 @@ class V1TransactionMapper {
             transferDate = request.transferDate,
             requestBy = request.requestBy,
             requestNote = request.requestNote,
-            status = TransactionStatus.CREATED
+            status = TransactionStatus.CREATED,
+            cancelDate = null,
+            orgTransactionId = null,
+            orgTrReferenceId = null,
         )
     }
 
@@ -70,31 +76,15 @@ class V1TransactionMapper {
             transferDate = LocalDateTime.now().convertPatternOf(),
             requestBy = request.channel.name,
             requestNote = request.channel.note,
-            status = TransactionStatus.CREATED
+            status = TransactionStatus.CREATED,
+            cancelDate = null,
+            orgTransactionId = null,
+            orgTrReferenceId = null,
         )
     }
 
     fun domainToSaveTransactionEvent(domain: V1Transaction): V1SaveTransactionEvent {
         return V1SaveTransactionEvent(transaction = domain)
-    }
-
-    fun eventToDomain(event: V1SaveTransactionEvent): V1Transaction {
-        return V1Transaction(
-            id = event.transaction.id,
-            trReferenceId = event.transaction.trReferenceId,
-            acquirer = event.transaction.acquirer,
-            fromAcquirer = event.transaction.fromAcquirer,
-            type = event.transaction.type,
-            purpose = event.transaction.purpose,
-            channel = event.transaction.channel,
-            currency = event.transaction.currency,
-            amount = event.transaction.amount,
-            exchangeRate = event.transaction.exchangeRate,
-            transferDate = event.transaction.transferDate,
-            requestBy = event.transaction.requestBy,
-            requestNote = event.transaction.requestNote,
-            status = event.transaction.status
-        )
     }
 
     fun domainToExpireTransactionEvent(domain: V1Transaction): V1ExpireTransactionEvent {
@@ -123,7 +113,10 @@ class V1TransactionMapper {
             transferDate = domain.transferDate,
             requestBy = domain.requestBy,
             requestNote = domain.requestNote,
-            status = domain.status
+            status = domain.status,
+            cancelDate = domain.cancelDate,
+            orgTransactionId = domain.orgTransactionId,
+            orgTrReferenceId = domain.orgTrReferenceId,
         )
     }
 
@@ -142,7 +135,10 @@ class V1TransactionMapper {
             transferDate = entity.transferDate,
             requestBy = entity.requestBy,
             requestNote = entity.requestNote,
-            status = entity.status
+            status = entity.status,
+            cancelDate = entity.cancelDate,
+            orgTransactionId = entity.orgTransactionId,
+            orgTrReferenceId = entity.orgTrReferenceId,
         )
     }
 
