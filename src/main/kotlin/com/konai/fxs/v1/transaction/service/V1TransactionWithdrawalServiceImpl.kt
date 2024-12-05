@@ -4,7 +4,6 @@ import com.konai.fxs.common.enumerate.TransactionChannel
 import com.konai.fxs.common.enumerate.TransactionStatus.COMPLETED
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.infra.error.ErrorCode
-import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
