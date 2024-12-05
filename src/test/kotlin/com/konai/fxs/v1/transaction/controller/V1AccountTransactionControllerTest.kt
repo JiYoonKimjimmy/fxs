@@ -209,7 +209,7 @@ class V1AccountTransactionControllerTest(
                 val transaction = v1TransactionFindService.findByPredicate(predicate)!!
                 transaction.type shouldBe TransactionType.WITHDRAWAL
                 transaction.purpose shouldBe TransactionPurpose.WITHDRAWAL
-                transaction.status shouldBe TransactionStatus.PREPARED
+                transaction.status shouldBe TransactionStatus.PENDING
             }
         }
     }
@@ -231,7 +231,7 @@ class V1AccountTransactionControllerTest(
                     content {
                         jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                         jsonPath("result.code", equalTo("210_2001_007"))
-                        jsonPath("result.message", equalTo("Account transaction service failed. Withdrawal prepared transaction not found."))
+                        jsonPath("result.message", equalTo("Account transaction service failed. Withdrawal transaction not found."))
                     }
                 }
             }
@@ -239,7 +239,7 @@ class V1AccountTransactionControllerTest(
 
         // 출금 거래 정보 저장
         val transaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
-        v1TransactionWithdrawalService.prepareWithdrawal(transaction)
+        v1TransactionWithdrawalService.withdrawal(transaction)
 
         // 출금 거래 금액 합계 추가분 증액
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))

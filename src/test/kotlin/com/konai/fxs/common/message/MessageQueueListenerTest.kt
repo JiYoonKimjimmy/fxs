@@ -1,7 +1,7 @@
 package com.konai.fxs.common.message
 
 import com.konai.fxs.common.enumerate.TransactionStatus.EXPIRED
-import com.konai.fxs.common.enumerate.TransactionStatus.PREPARED
+import com.konai.fxs.common.enumerate.TransactionStatus.PENDING
 import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
@@ -26,24 +26,23 @@ class MessageQueueListenerTest(
 
     val v1TransactionFixture = dependencies.v1TransactionFixture
 
-    lateinit var preparedTransaction: V1Transaction
+    lateinit var transaction: V1Transaction
 
     beforeSpec {
         // 외화 계좌 출금 준비 거래 DB 정보 저장
-        preparedTransaction = v1TransactionRepository.save(v1TransactionFixture.make(status = PREPARED))
+        transaction = v1TransactionRepository.save(v1TransactionFixture.make(status = PENDING))
     }
 
     given("외화 계좌 거래 내역 저장 Message 수신하여") {
         val exchange = V1_SAVE_TRANSACTION_EXCHANGE.exchangeName
         val routingKey = V1_SAVE_TRANSACTION_EXCHANGE.routingKey
-        val transaction = v1TransactionFixture.make()
-        val message = V1SaveTransactionMessage(transaction)
+        val message = V1SaveTransactionMessage(v1TransactionFixture.make())
 
         `when`("성공인 경우") {
             defaultRabbitTemplate.convertAndSend(exchange, routingKey, message)
 
             then("외화 계좌 거래 내역 저장 처리 결과 정상 확인한다") {
-                val entity = v1TransactionRepository.findByPredicate(V1TransactionPredicate(id = transaction.id))
+                val entity = v1TransactionRepository.findByPredicate(V1TransactionPredicate(id = message.transaction.id))
                 entity!! shouldNotBe null
             }
         }
@@ -52,10 +51,10 @@ class MessageQueueListenerTest(
     given("외화 계좌 출금 거래 만료 Message 수신하여") {
         val exchange = V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE.exchangeName
         val routingKey = V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE.routingKey
-        val message = V1ExpirePreparedTransactionMessage(transactionId = preparedTransaction.id!!, amount = preparedTransaction.amount.toLong())
+        val message = V1ExpirePreparedTransactionMessage(transactionId = transaction.id!!, amount = transaction.amount.toLong())
 
         // 출금 준기 거래 금액 합계 Cache 정보 생성
-        v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(preparedTransaction.acquirer, preparedTransaction.amount)
+        v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(transaction.acquirer, transaction.amount)
 
         `when`("성공인 경우") {
             defaultRabbitTemplate.convertAndSend(exchange, routingKey, message)
@@ -66,13 +65,13 @@ class MessageQueueListenerTest(
             }
             eventually(config) {
                 then("외화 계좌 출금 거래 내역 만료 처리 결과 정상 확인한다") {
-                    val result = v1TransactionRepository.findByPredicate(V1TransactionPredicate(id = preparedTransaction.id))
+                    val result = v1TransactionRepository.findByPredicate(V1TransactionPredicate(id = transaction.id))
                     result!! shouldNotBe null
                     result.status shouldBe EXPIRED
                 }
 
                 then("외화 계좌 출금 거래 금액 합계 감액 처리 결과 정상 확인한다") {
-                    val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(preparedTransaction.acquirer)
+                    val result = v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(transaction.acquirer)
                     result.toLong() shouldBe 0
                 }
             }

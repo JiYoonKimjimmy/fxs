@@ -1,6 +1,6 @@
 package com.konai.fxs.testsupport.event
 
-import com.konai.fxs.common.enumerate.TransactionStatus.PREPARED
+import com.konai.fxs.common.enumerate.TransactionStatus.PENDING
 import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE
 import com.konai.fxs.common.message.MessageQueuePublisher
 import com.konai.fxs.v1.transaction.service.V1TransactionSaveService
@@ -29,7 +29,7 @@ class TestV1TransactionEventHandler(
     }
 
     override fun expirePreparedTransactionEventHandler(event: V1ExpirePreparedTransactionEvent) {
-        if (event.transaction.status == PREPARED) {
+        if (event.transaction.status == PENDING) {
             v1TransactionMapper.eventToMessage(event)
                 .let { messageQueuePublisher.sendDirectMessage(V1_EXPIRE_PREPARED_TRANSACTION_EXCHANGE, it) }
         }

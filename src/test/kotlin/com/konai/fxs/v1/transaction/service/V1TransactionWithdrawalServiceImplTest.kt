@@ -61,7 +61,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
-                exception.detailMessage shouldBe "balance: 0 < (preparedAmount: 0 + amount: 100)"
+                exception.detailMessage shouldBe "balance: 0 < (pendingAmount: 0 + amount: 100)"
             }
         }
 
@@ -99,7 +99,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         }
     }
     
-    given("외화 계좌 출금 준비 거래 요청되어") {
+    given("외화 계좌 출금 거래 요청되어") {
         val account = v1AccountFixture.make(id = generateSequence())
         val transaction = v1TransactionFixture.prepareWithdrawalTransaction(
             acquirer = account.acquirer,
@@ -107,7 +107,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         )
 
         `when`("'acquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.prepareWithdrawal(transaction) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawal(transaction) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
@@ -118,25 +118,25 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account)
 
         `when`("'amount' 요청 금액보다 계좌 잔액 부족인 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.prepareWithdrawal(transaction) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.withdrawal(transaction) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
-                exception.detailMessage shouldBe "balance: 0 < (preparedAmount: 0 + amount: 100)"
+                exception.detailMessage shouldBe "balance: 0 < (pendingAmount: 0 + amount: 100)"
             }
         }
 
         // 외화 계좌 정보 잔액 변경
         saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
-        `when`("정상 'account' 출금 준비 요청인 경우") {
-            val result = v1TransactionWithdrawalService.prepareWithdrawal(transaction)
+        `when`("정상 'account' 출금 요청인 경우") {
+            val result = v1TransactionWithdrawalService.withdrawal(transaction)
 
-            then("출금 준비 거래 상태 'PREPARED' 정상 확인한다") {
-                result.status shouldBe TransactionStatus.PREPARED
+            then("출금 거래 상태 'PENDING' 정상 확인한다") {
+                result.status shouldBe TransactionStatus.PENDING
             }
 
-            then("외화 계좌 출금 준비 거래 내역 생성 정상 확인한다") {
+            then("외화 계좌 출금 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
                 val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
 
@@ -150,10 +150,10 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
                 transactionEntity.transferDate shouldBe transaction.transferDate
-                transactionEntity.status shouldBe TransactionStatus.PREPARED
+                transactionEntity.status shouldBe TransactionStatus.PENDING
             }
 
-            then("외화 계좌 출금 준비 거래 Cache 정보 저장 정상 확인한다") {
+            then("외화 계좌 출금 거래 Cache 정보 저장 정상 확인한다") {
                 val trReferenceId = transaction.trReferenceId
                 val channel = transaction.channel.name
                 val key = PREPARED_WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel)
@@ -161,7 +161,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 numberRedisTemplate.opsForValue().get(key) shouldBe result.id
             }
 
-            then("외화 계좌 출금 준비 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {
+            then("외화 계좌 출금 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {
                 val acquirer = transaction.acquirer
                 val key = PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
 
@@ -177,22 +177,22 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         val trReferenceId = generateUUID()
         val channel = TransactionChannel.ORS
 
-        `when`("요청 'trReferenceId' 기준 출금 준비 거래 정보 없는 경우") {
+        `when`("요청 'trReferenceId' 기준 출금 거래 정보 없는 경우") {
             val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel) }
 
-            then("'WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND' 예외 발생 정상 확인한다") {
-                exception.errorCode shouldBe ErrorCode.WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND
+            then("'WITHDRAWAL_TRANSACTION_NOT_FOUND' 예외 발생 정상 확인한다") {
+                exception.errorCode shouldBe ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND
             }
         }
 
         // 외화 계좌 잔액 변경
         saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
-        // 출금 준비 거래 정보 저장
-        val preparedTransaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
-        v1TransactionWithdrawalService.prepareWithdrawal(preparedTransaction)
+        // 출금 거래 정보 저장
+        val transaction = v1TransactionFixture.prepareWithdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
+        v1TransactionWithdrawalService.withdrawal(transaction)
 
-        // 출금 준비 거래 금액 합계 추가분 증액
+        // 출금 거래 금액 합계 추가분 증액
         v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(acquirer, BigDecimal(100))
 
         `when`("요청 'amount' 금액보다 외화 계좌 잔액 부족인 경우") {
@@ -200,21 +200,21 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
-                exception.detailMessage shouldBe "balance: 100 < (preparedAmount: 200 + amount: 0)"
+                exception.detailMessage shouldBe "balance: 100 < (pendingAmount: 200 + amount: 0)"
             }
         }
 
-        // 출금 준비 거래 금액 합계 추가분 감액
+        // 출금 거래 금액 합계 추가분 감액
         saveAccount(account, balance = BigDecimal(1000), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 출금 완료 요청인 경우") {
             val result = v1TransactionWithdrawalService.completeWithdrawal(trReferenceId, channel)
 
-            then("출금 준비 거래 상태 'COMPLETED' 정상 확인한다") {
+            then("출금 거래 상태 'COMPLETED' 정상 확인한다") {
                 result.status shouldBe TransactionStatus.COMPLETED
             }
 
-            then("외화 계좌 출금 준비 거래 내역 생성 정상 확인한다") {
+            then("외화 계좌 출금 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
                 val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
 
@@ -227,15 +227,15 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.currency shouldBe Currency.USD
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
-                transactionEntity.transferDate shouldBe preparedTransaction.transferDate
+                transactionEntity.transferDate shouldBe transaction.transferDate
                 transactionEntity.status shouldBe TransactionStatus.COMPLETED
             }
 
-            then("외화 계좌 출금 준비 거래 Cache 정보 삭제 정상 확인한다") {
+            then("외화 계좌 출금 거래 Cache 정보 삭제 정상 확인한다") {
                 v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
-            then("외화 계좌 출금 준비 거래 금액 합계 Cache 정보 감액 처리 정상 확인한다") {
+            then("외화 계좌 출금 거래 금액 합계 Cache 정보 감액 처리 정상 확인한다") {
                 v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBe BigDecimal(100)
             }
         }

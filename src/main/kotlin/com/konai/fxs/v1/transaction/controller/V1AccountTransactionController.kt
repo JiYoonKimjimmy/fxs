@@ -36,9 +36,9 @@ class V1AccountTransactionController(
     }
 
     @PostMapping("/withdrawal")
-    fun prepareWithdrawal(@RequestBody request: V1TransactionWithdrawalRequest): ResponseEntity<V1TransactionWithdrawalResponse> {
+    fun withdrawal(@RequestBody request: V1TransactionWithdrawalRequest): ResponseEntity<V1TransactionWithdrawalResponse> {
         return v1TransactionMapper.requestToDomain(request)
-            .let { v1TransactionWithdrawalService.prepareWithdrawal(it) }
+            .let { v1TransactionWithdrawalService.withdrawal(it) }
             .let { V1TransactionWithdrawalResponse(it.trReferenceId) }
             .success(HttpStatus.OK)
     }

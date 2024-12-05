@@ -29,13 +29,13 @@ class V1AccountValidationServiceImpl(
         /**
          * 외화 계좌 한도 확인
          * 1. 외화 계좌 조회 & 상태 확인
-         * 2. 출금 준비 금액 합계 Cache 정보 조회
+         * 2. 출금 금액 합계 Cache 정보 조회
          * 3. 외화 계좌 한도 계산
-         *  - 계좌 잔액 < (요청 거래 금액 + 출금 준비 금액 합계)
+         *  - 계좌 잔액 < (출금 금액 합계 + 요청 거래 금액)
          */
         return with(checkStatus(acquirer, currency)) {
             v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(this.acquirer)
-                .let { this.checkSufficientBalance(preparedAmount = it, amount = amount) }
+                .let { this.checkSufficientBalance(pendingAmount = it, amount = amount) }
         }
     }
 

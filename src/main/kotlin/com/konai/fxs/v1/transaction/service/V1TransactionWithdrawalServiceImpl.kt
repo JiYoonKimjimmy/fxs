@@ -45,19 +45,20 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     @Transactional
-    override fun prepareWithdrawal(transaction: V1Transaction): V1Transaction {
+    override fun withdrawal(transaction: V1Transaction): V1Transaction {
         /**
-         * 외화 계좌 출금 준비 처리
+         * 외화 계좌 출금 처리
          * 1. 외화 계좌 출금 한도 확인
-         * 2. 외화 계좌 출금 준비 거래 Cache 저장
-         * 3. 외화 계좌 출금 준비 거래 합계 Cache 증액 업데이트
-         * 4. 외화 계좌 출금 준비 거래 내역 생성 Event 발행
+         * 2. 외화 계좌 출금 거래 Cache 저장
+         * 3. 외화 계좌 출금 거래 합계 Cache 증액 업데이트
+         * 4. 외화 계좌 출금 거래 `PENDING` 상태 변경
+         * 4. 외화 계좌 출금 거래 내역 생성 Event 발행
          */
         return transaction
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
-            .changeStatusToPrepared()
-            .preparedTransactionCacheProc()
+            .changeStatusToPending()
+            .withdrawalTransactionCacheProc()
             .publishSaveTransactionEvent()
     }
 
@@ -72,53 +73,51 @@ class V1TransactionWithdrawalServiceImpl(
          * 5. 외화 계좌 출금 준비 거래 합계 Cache 감액 업데이트
          * 6. 외화 계좌 출금 거래 내역 생성 Event 발행
          */
-        return findPreparedTransactionCache(trReferenceId, channel)
+        return findWithdrawalTransaction(trReferenceId, channel)
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .withdrawalTransaction()
             .changeStatusToCompleted()
-            .completedTransactionCacheProc()
+            .completedWithdrawalTransactionCacheProc()
             .publishSaveTransactionEvent()
     }
 
-    private fun V1Transaction.preparedTransactionCacheProc(): V1Transaction {
-        return this.also {
-            runBlocking {
-                // 출금 준비 거래 Cache 생성
-                launch(Dispatchers.IO) { it.savePreparedTransactionCache() }
-                // 출금 준비 거래 금액 합계 Cache 증액 업데이트
-                launch(Dispatchers.IO) { it.incrementPreparedTransactionAmountCache() }
-            }
+    private fun V1Transaction.withdrawalTransactionCacheProc(): V1Transaction {
+        runBlocking {
+            // 출금 거래 Cache 생성
+            launch(Dispatchers.IO) { this@withdrawalTransactionCacheProc.saveWithdrawalTransactionCache() }
+            // 출금 거래 금액 합계 Cache 증액 업데이트
+            launch(Dispatchers.IO) { this@withdrawalTransactionCacheProc.incrementWithdrawalTransactionAmountCache() }
         }
+        return this
     }
 
-    private suspend fun V1Transaction.savePreparedTransactionCache(): V1Transaction {
+    private suspend fun V1Transaction.saveWithdrawalTransactionCache(): V1Transaction {
         return v1TransactionCacheService.savePreparedWithdrawalTransactionCache(this)
     }
 
-    private suspend fun V1Transaction.incrementPreparedTransactionAmountCache(): V1Transaction {
+    private suspend fun V1Transaction.incrementWithdrawalTransactionAmountCache(): V1Transaction {
         distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
             v1TransactionCacheService.incrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
         }
         return this
     }
 
-    private fun V1Transaction.completedTransactionCacheProc(): V1Transaction {
-        return this.also {
-            runBlocking {
-                // 출금 준비 거래 Cache 삭제
-                launch(Dispatchers.IO) { it.deletePreparedTransactionCache() }
-                // 출금 준비 거래 금액 합계 Cache 감액 업데이트
-                launch(Dispatchers.IO) { it.decrementPreparedTransactionAmountCache() }
-            }
+    private fun V1Transaction.completedWithdrawalTransactionCacheProc(): V1Transaction {
+        runBlocking {
+            // 출금 거래 Cache 삭제
+            launch(Dispatchers.IO) { this@completedWithdrawalTransactionCacheProc.deleteWithdrawalTransactionCache() }
+            // 출금 거래 금액 합계 Cache 감액 업데이트
+            launch(Dispatchers.IO) { this@completedWithdrawalTransactionCacheProc.decrementWithdrawalTransactionAmountCache() }
         }
+        return this
     }
 
-    private suspend fun V1Transaction.deletePreparedTransactionCache(): V1Transaction {
+    private suspend fun V1Transaction.deleteWithdrawalTransactionCache(): V1Transaction {
         v1TransactionCacheService.deletePreparedWithdrawalTransactionCache(this.trReferenceId, this.channel)
         return this
     }
 
-    private suspend fun V1Transaction.decrementPreparedTransactionAmountCache(): V1Transaction {
+    private suspend fun V1Transaction.decrementWithdrawalTransactionAmountCache(): V1Transaction {
         distributedLockManager.prepareWithdrawalTransactionLick(this.account) {
             v1TransactionCacheService.decrementPreparedWithdrawalTotalAmountCache(this.acquirer, this.amount)
         }
@@ -138,12 +137,12 @@ class V1TransactionWithdrawalServiceImpl(
         return this
     }
 
-    private fun findPreparedTransactionCache(trReferenceId: String, channel: TransactionChannel): V1Transaction {
-        // 출금 준비 거래 Cache 정보 조회
+    private fun findWithdrawalTransaction(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+        // 출금 거래 Cache 정보 조회
         return v1TransactionCacheService.findPreparedWithdrawalTransactionCache(trReferenceId, channel)
-            // 출금 준비 거래 Cache 정보 기준 외화 계좌 거래 내역 조회
+            // 외화 계좌 거래 내역 DB 조회
             ?.let { v1TransactionFindService.findByPredicate(V1TransactionPredicate(id = it)) }
-            ?: throw InternalServiceException(ErrorCode.WITHDRAWAL_PREPARED_TRANSACTION_NOT_FOUND)
+            ?: throw InternalServiceException(ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND)
     }
 
 }

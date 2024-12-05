@@ -1,7 +1,7 @@
 package com.konai.fxs.v1.transaction.service.event
 
 import com.konai.fxs.common.enumerate.TransactionStatus.COMPLETED
-import com.konai.fxs.common.enumerate.TransactionStatus.PREPARED
+import com.konai.fxs.common.enumerate.TransactionStatus.PENDING
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
@@ -49,7 +49,7 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
         }
 
         this.given("외화 계좌 출금 준비 거래 만료 Event 발행 요청하여") {
-            val transaction = v1TransactionFixture.make(status = PREPARED)
+            val transaction = v1TransactionFixture.make(status = PENDING)
             val event = v1TransactionMapper.domainToExpirePreparedTransactionEvent(transaction)
 
             `when`("출금 준비 거래 만료 Event 정상 발행된 경우") {
@@ -62,7 +62,7 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
         }
 
         this.given("외화 계좌 거래 내역 'PREPARED' 정보 저장 Event 발행 요청하여") {
-            val transaction = v1TransactionFixture.make(status = PREPARED)
+            val transaction = v1TransactionFixture.make(status = PENDING)
             val event = v1TransactionMapper.domainToSaveTransactionEvent(transaction)
 
             `when`("거래 내역 정보 저장 Event 정상 발행된 경우") {
@@ -73,7 +73,7 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
                     val entity = v1TransactionRepository.findByPredicate(predicate)
                     entity!! shouldNotBe null
                     entity.id!! shouldBeGreaterThan 0L
-                    entity.status shouldBe PREPARED
+                    entity.status shouldBe PENDING
                 }
 
                 then("거래 내역 정보 저장 Event 발행 '1회' 정상 확인한다") {

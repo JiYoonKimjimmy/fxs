@@ -43,7 +43,7 @@ data class V1Transaction(
 
     fun checkAccountLimit(block: (V1Acquirer, String, BigDecimal) -> V1Account): V1Transaction {
         return apply {
-            account = block(acquirer, currency, if (status == PREPARED) BigDecimal.ZERO else amount)
+            account = block(acquirer, currency, if (status == PENDING) BigDecimal.ZERO else amount)
         }
     }
 
@@ -58,8 +58,8 @@ data class V1Transaction(
         return apply { id = block() }
     }
 
-    fun changeStatusToPrepared(): V1Transaction {
-        return apply { status = PREPARED }
+    fun changeStatusToPending(): V1Transaction {
+        return apply { status = PENDING }
     }
 
     fun changeStatusToCompleted(): V1Transaction {

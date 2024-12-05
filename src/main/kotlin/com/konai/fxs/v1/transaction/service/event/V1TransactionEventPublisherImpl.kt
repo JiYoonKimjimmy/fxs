@@ -18,7 +18,7 @@ class V1TransactionEventPublisherImpl(
     }
 
     override fun expirePreparedTransaction(transaction: V1Transaction) {
-        if (transaction.status == TransactionStatus.PREPARED) {
+        if (transaction.status == TransactionStatus.PENDING) {
             v1TransactionMapper.domainToExpirePreparedTransactionEvent(transaction)
                 .let { eventPublisher.publishEvent(it) }
         }

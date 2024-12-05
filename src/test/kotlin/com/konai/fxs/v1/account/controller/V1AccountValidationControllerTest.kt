@@ -55,7 +55,7 @@ class V1AccountValidationControllerTest(
                         jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                         jsonPath("result.code", equalTo("210_1002_005"))
                         jsonPath("result.message", equalTo("Account validation service failed. Account balance is insufficient."))
-                        jsonPath("result.detailMessage", equalTo("balance: 0 < (preparedAmount: 0 + amount: 10000)"))
+                        jsonPath("result.detailMessage", equalTo("balance: 0 < (pendingAmount: 0 + amount: 10000)"))
                     }
                 }
             }
@@ -63,10 +63,10 @@ class V1AccountValidationControllerTest(
 
         // 외화 계좌 DB 저장
         val account = v1AccountJpaRepository.save(v1AccountEntityFixture.make(balance = 20000))
-        // 출금 준비 합계 Cache 저장
+        // 출금 합계 Cache 저장
         v1TransactionCacheRepository.incrementPreparedWithdrawalTotalAmountCache(account.acquirer.id, account.acquirer.type, 10001)
 
-        `when`("외화 계좌 출금 준비 합계 한도 초과인 경우") {
+        `when`("외화 계좌 출금 합계 한도 초과인 경우") {
             val request = V1CheckLimitAccountRequest(account.acquirer.id, account.acquirer.type, account.currency, 10000)
             val result = mockMvc.postProc(url, request)
 
@@ -77,13 +77,13 @@ class V1AccountValidationControllerTest(
                         jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
                         jsonPath("result.code", equalTo("210_1002_005"))
                         jsonPath("result.message", equalTo("Account validation service failed. Account balance is insufficient."))
-                        jsonPath("result.detailMessage", equalTo("balance: 20000 < (preparedAmount: 10001 + amount: 10000)"))
+                        jsonPath("result.detailMessage", equalTo("balance: 20000 < (pendingAmount: 10001 + amount: 10000)"))
                     }
                 }
             }
         }
 
-        // 출금 준비 합계 Cache 초기화
+        // 출금 합계 Cache 초기화
         v1TransactionCacheRepository.clearPreparedWithdrawalTotalAmountCache(account.acquirer.id, account.acquirer.type)
 
         `when`("외화 계좌 한도 확인 결과 정상인 경우") {
