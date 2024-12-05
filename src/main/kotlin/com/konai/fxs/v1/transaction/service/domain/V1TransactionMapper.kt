@@ -8,7 +8,7 @@ import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEnti
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualDepositRequest
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdrawalRequest
-import com.konai.fxs.v1.transaction.controller.model.V1TransactionWithdrawalPrepareRequest
+import com.konai.fxs.v1.transaction.controller.model.V1TransactionWithdrawalRequest
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntity
 import com.konai.fxs.v1.transaction.service.event.V1ExpirePreparedTransactionEvent
 import com.konai.fxs.v1.transaction.service.event.V1SaveTransactionEvent
@@ -56,7 +56,7 @@ class V1TransactionMapper {
         )
     }
 
-    fun requestToDomain(request: V1TransactionWithdrawalPrepareRequest): V1Transaction {
+    fun requestToDomain(request: V1TransactionWithdrawalRequest): V1Transaction {
         return V1Transaction(
             trReferenceId = request.trReferenceId,
             acquirer = request.acquirer.toDomain(),

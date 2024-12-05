@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import java.math.BigDecimal
 
-data class V1TransactionWithdrawalPrepareRequest(
+data class V1TransactionWithdrawalRequest(
     val acquirer: V1AcquirerModel,
     val trReferenceId: String,
     val purpose: TransactionPurpose,
@@ -18,10 +18,10 @@ data class V1TransactionWithdrawalPrepareRequest(
     val exchangeRate: BigDecimal
 )
 
-data class V1TransactionWithdrawalPrepareResponse(
+data class V1TransactionWithdrawalResponse(
     val trReferenceId: String
-) : BaseResponse<V1TransactionWithdrawalPrepareResponse>() {
-    override fun success(httpStatus: HttpStatus): ResponseEntity<V1TransactionWithdrawalPrepareResponse> {
+) : BaseResponse<V1TransactionWithdrawalResponse>() {
+    override fun success(httpStatus: HttpStatus): ResponseEntity<V1TransactionWithdrawalResponse> {
         return ResponseEntity(this, httpStatus)
     }
 }

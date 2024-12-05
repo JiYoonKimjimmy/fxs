@@ -10,7 +10,7 @@ import com.konai.fxs.v1.account.controller.model.V1AcquirerModel
 import com.navercorp.fixturemonkey.kotlin.giveMeKotlinBuilder
 import java.math.BigDecimal
 
-class V1TransactionWithdrawalPrepareRequestFixture {
+class V1TransactionWithdrawalRequestFixture {
 
     fun make(
         acquirer: V1AcquirerModel = V1AcquirerModel(generateUUID(), FX_DEPOSIT, "외화 예치금 계좌"),
@@ -20,15 +20,15 @@ class V1TransactionWithdrawalPrepareRequestFixture {
         currency: String = Currency.USD,
         amount: BigDecimal = BigDecimal(100),
         exchangeRate: BigDecimal = BigDecimal(1000.0)
-    ): V1TransactionWithdrawalPrepareRequest {
-        return fixtureMonkey.giveMeKotlinBuilder<V1TransactionWithdrawalPrepareRequest>()
-            .setExp(V1TransactionWithdrawalPrepareRequest::acquirer, acquirer)
-            .setExp(V1TransactionWithdrawalPrepareRequest::trReferenceId, trReferenceId)
-            .setExp(V1TransactionWithdrawalPrepareRequest::purpose, purpose)
-            .setExp(V1TransactionWithdrawalPrepareRequest::channel, channel)
-            .setExp(V1TransactionWithdrawalPrepareRequest::currency, currency)
-            .setExp(V1TransactionWithdrawalPrepareRequest::amount, amount)
-            .setExp(V1TransactionWithdrawalPrepareRequest::exchangeRate, exchangeRate)
+    ): V1TransactionWithdrawalRequest {
+        return fixtureMonkey.giveMeKotlinBuilder<V1TransactionWithdrawalRequest>()
+            .setExp(V1TransactionWithdrawalRequest::acquirer, acquirer)
+            .setExp(V1TransactionWithdrawalRequest::trReferenceId, trReferenceId)
+            .setExp(V1TransactionWithdrawalRequest::purpose, purpose)
+            .setExp(V1TransactionWithdrawalRequest::channel, channel)
+            .setExp(V1TransactionWithdrawalRequest::currency, currency)
+            .setExp(V1TransactionWithdrawalRequest::amount, amount)
+            .setExp(V1TransactionWithdrawalRequest::exchangeRate, exchangeRate)
             .sample()
     }
 
