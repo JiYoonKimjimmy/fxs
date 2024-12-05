@@ -1,8 +1,8 @@
 package com.konai.fxs.v1.transaction.service
 
 import com.konai.fxs.common.Currency
-import com.konai.fxs.common.enumerate.TransactionCacheType.PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE
-import com.konai.fxs.common.enumerate.TransactionCacheType.PREPARED_WITHDRAWAL_TRANSACTION_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.PENDING_TRANSACTION_AMOUNT_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.PENDING_TRANSACTION_CACHE
 import com.konai.fxs.common.enumerate.TransactionChannel
 import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.enumerate.TransactionStatus
@@ -153,17 +153,17 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.status shouldBe TransactionStatus.PENDING
             }
 
-            then("외화 계좌 출금 거래 Cache 정보 저장 정상 확인한다") {
+            then("'보류 거래 Cache 정보' 저장 정상 확인한다") {
                 val trReferenceId = transaction.trReferenceId
                 val channel = transaction.channel.name
-                val key = PREPARED_WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel)
+                val key = PENDING_TRANSACTION_CACHE.getKey(trReferenceId, channel)
 
                 numberRedisTemplate.opsForValue().get(key) shouldBe result.id
             }
 
-            then("외화 계좌 출금 거래 금액 합계 Cache 정보 업데이트 정상 확인한다") {
+            then("'보류 거래 금액 Cache 정보' 업데이트 정상 확인한다") {
                 val acquirer = transaction.acquirer
-                val key = PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
+                val key = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
 
                 numberRedisTemplate.opsForValue().get(key) shouldBe transaction.amount.toLong()
             }
@@ -231,11 +231,11 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.status shouldBe TransactionStatus.COMPLETED
             }
 
-            then("외화 계좌 출금 거래 Cache 정보 삭제 정상 확인한다") {
+            then("'보류 거래 Cache' 삭제 정상 확인한다") {
                 v1TransactionCacheService.hasPreparedWithdrawalTransactionCache(trReferenceId, channel) shouldBe false
             }
 
-            then("외화 계좌 출금 거래 금액 합계 Cache 정보 감액 처리 정상 확인한다") {
+            then("'보류 거래 금액 Cache' 감액 처리 정상 확인한다") {
                 v1TransactionCacheService.findPreparedWithdrawalTotalAmountCache(acquirer) shouldBe BigDecimal(100)
             }
         }

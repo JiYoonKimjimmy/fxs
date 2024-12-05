@@ -1,7 +1,7 @@
 package com.konai.fxs.v1.transaction.service.cache
 
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
-import com.konai.fxs.common.enumerate.TransactionCacheType.PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE
+import com.konai.fxs.common.enumerate.TransactionCacheType.PENDING_TRANSACTION_AMOUNT_CACHE
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateUUID
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
@@ -21,7 +21,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
 
     val v1TransactionFixture = dependencies.v1TransactionFixture
 
-    given("외화 계좌 출금 준비 금액 합계 Cache 조회 요청되어") {
+    given("보류 거래 금액 Cache 조회 요청되어") {
         val acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT)
 
         `when`("Cache 정보 없는 경우") {
@@ -32,8 +32,8 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
             }
         }
 
-        // cache 정보 저장
-        val cacheKey = PREPARED_WITHDRAWAL_TOTAL_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
+        // 보류 거래 금액 Cache 저장
+        val cacheKey = PENDING_TRANSACTION_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
         val cacheValue = 100000
         numberRedisTemplate.opsForValue().set(cacheKey, cacheValue)
 
@@ -46,7 +46,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
         }
     }
 
-    given("외화 계좌 출금 준비 거래 Cache 저장 요청되어") {
+    given("보류 거래 Cache 저장 요청되어") {
         val transaction = v1TransactionFixture.make()
 
         `when`("Cache 저장 성공인 경우") {
@@ -59,7 +59,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
         }
     }
 
-    given("외화 계좌 출금 준비 거래 Cache 존재 여부 확인 요청되어") {
+    given("보류 거래 금액 Cache 존재 여부 확인 요청되어") {
         val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
         val trReferenceId = transaction.trReferenceId
         val channel = transaction.channel
@@ -73,7 +73,7 @@ class V1TransactionCacheServiceImplTest : CustomBehaviorSpec({
         }
     }
 
-    given("외화 계좌 출금 준비 거래 Cache 삭제 요청되어") {
+    given("보류 거래 금액 Cache 삭제 요청되어") {
         val transaction = v1TransactionCacheService.savePreparedWithdrawalTransactionCache(v1TransactionFixture.make())
         val trReferenceId = transaction.trReferenceId
         val channel = transaction.channel
