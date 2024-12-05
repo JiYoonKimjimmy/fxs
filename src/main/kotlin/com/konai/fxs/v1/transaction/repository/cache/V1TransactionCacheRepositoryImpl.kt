@@ -15,49 +15,49 @@ class V1TransactionCacheRepositoryImpl(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun savePendingTransactionCache(trReferenceId: String, channel: TransactionChannel, transactionId: Long) {
+    override fun saveWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel, transactionId: Long) {
         val key = WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
         logger.info("savePendingTransactionCache : [$key]")
         numberRedisTemplate.opsForValue().set(key, transactionId)
     }
 
-    override fun findPendingTransactionCache(trReferenceId: String, channel: TransactionChannel): Long? {
+    override fun findWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Long? {
         val key = WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
         logger.info("findPendingTransactionCache : [$key]")
         return numberRedisTemplate.opsForValue().get(key)?.toLong()
     }
 
-    override fun hasPendingTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
+    override fun hasWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel): Boolean {
         val key = WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
         logger.info("hasPendingTransactionCache : [$key]")
         return numberRedisTemplate.hasKey(key)
     }
 
-    override fun deletePendingTransactionCache(trReferenceId: String, channel: TransactionChannel) {
+    override fun deleteWithdrawalTransactionCache(trReferenceId: String, channel: TransactionChannel) {
         val key = WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel.name)
         logger.info("deletePendingTransactionCache : [$key]")
         numberRedisTemplate.delete(key)
     }
 
-    override fun findPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType): Number? {
+    override fun findWithdrawalTransactionPendingAmountCache(acquirerId: String, acquirerType: AcquirerType): Number? {
         val key = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
         logger.info("findPendingTransactionAmountCache : [$key]")
         return numberRedisTemplate.opsForValue().get(key)
     }
 
-    override fun incrementPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
+    override fun incrementWithdrawalTransactionPendingAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
         val key = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
         logger.info("incrementPendingTransactionAmountCache : [$key]")
         return numberRedisTemplate.opsForValue().increment(key, amount)
     }
 
-    override fun decrementPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
+    override fun decrementWithdrawalTransactionPendingAmountCache(acquirerId: String, acquirerType: AcquirerType, amount: Long): Number? {
         val key = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
         logger.info("decrementPendingTransactionAmountCache : [$key]")
         return numberRedisTemplate.opsForValue().decrement(key, amount)
     }
 
-    override fun clearPendingTransactionAmountCache(acquirerId: String, acquirerType: AcquirerType) {
+    override fun clearWithdrawalTransactionPendingAmountCache(acquirerId: String, acquirerType: AcquirerType) {
         val key = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirerId, acquirerType.name)
         logger.info("clearPendingTransactionAmountCache : [$key]")
         numberRedisTemplate.delete(key)
