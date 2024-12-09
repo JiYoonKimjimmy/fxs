@@ -101,6 +101,7 @@ class V1TransactionWithdrawalServiceImpl(
             .changeStatusToCanceled()
             .publishSaveTransactionEvent()
             .toCanceled(trReferenceId, channel)
+            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .publishSaveTransactionEvent()
     }
 

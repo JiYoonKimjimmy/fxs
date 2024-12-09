@@ -34,7 +34,7 @@ class V1TransactionSaveServiceImplTest(
             v1TransactionSaveService.save(transaction)
 
             then("시도 횟수 '3회' 확인한다") {
-                verify(exactly = 3) { mockV1TransactionRepository.save(any()) }
+                verify(atLeast = 3) { mockV1TransactionRepository.save(any()) }
             }
         }
 

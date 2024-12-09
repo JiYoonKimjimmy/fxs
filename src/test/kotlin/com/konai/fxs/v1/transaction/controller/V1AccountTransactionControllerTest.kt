@@ -41,6 +41,7 @@ class V1AccountTransactionControllerTest(
     val v1TransactionManualWithdrawalRequestFixture = dependencies.v1TransactionManualWithdrawalRequestFixture
     val v1TransactionWithdrawalRequestFixture = dependencies.v1TransactionWithdrawalRequestFixture
     val v1TransactionWithdrawalCompleteRequestFixture = dependencies.v1TransactionWithdrawalCompleteRequestFixture
+    val v1TransactionWithdrawalCancelRequestFixture = dependencies.v1TransactionWithdrawalCancelRequestFixture
 
     fun saveAccount(account: V1Account, balance: BigDecimal = account.balance): V1Account {
         return v1AccountSaveService.save(account.update(V1AccountPredicate(balance = balance)))
@@ -237,7 +238,7 @@ class V1AccountTransactionControllerTest(
             }
         }
 
-        // 출금 거래 정보 저장
+        // 출금 거래 요청 처리
         val transaction = v1TransactionFixture.withdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
         v1TransactionWithdrawalService.withdrawal(transaction)
 
@@ -280,6 +281,53 @@ class V1AccountTransactionControllerTest(
             then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {
                 v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
             }
+        }
+    }
+
+    given("외화 계좌 '출금 취소' 거래 API 요청하여") {
+        val url = "/api/v1/account/transaction/withdrawal/cancel"
+        val account = saveAccount(v1AccountFixture.make(acquirerType = FX_DEPOSIT, balance = 1000))
+        val transaction = v1TransactionFixture.withdrawalTransaction(account.acquirer, amount = BigDecimal(100))
+
+        // 취소 거래 요청 정보
+        val trReferenceId = generateUUID()
+        val orgTrReferenceId = transaction.trReferenceId
+        val channel = TransactionChannel.ORS
+        val request = v1TransactionWithdrawalCancelRequestFixture.make(trReferenceId, orgTrReferenceId, channel)
+
+        // 출금 거래 요청 처리
+        v1TransactionWithdrawalService.withdrawal(transaction)
+
+        `when`("'orgTrReferenceId' 요청 정보 기준 출금 완료 거래 없는 경우") {
+            val result = mockMvc.postProc(url, request)
+
+            then("'400 Bad Request - 210_2001_008' 에러 응답 정상 확인한다") {
+                result.andExpect {
+                    status { isBadRequest() }
+                    content {
+                        jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
+                        jsonPath("result.code", equalTo("210_2001_008"))
+                        jsonPath("result.message", equalTo("Account transaction service failed. Withdrawal completed transaction not found."))
+                    }
+                }
+            }
+        }
+
+        // 출금 거래 완료 처리
+        v1TransactionWithdrawalService.withdrawalComplete(orgTrReferenceId, channel)
+
+        `when`("출금 취소 요청 처리 결과 성공인 경우") {
+            val result = mockMvc.postProc(url, request)
+
+            then("'200 Ok' 성공 응답 정상 확인한다") {
+                result.andExpect {
+                    status { isOk() }
+                    content {
+                        jsonPath("trReferenceId", equalTo(request.trReferenceId))
+                    }
+                }
+            }
+
         }
     }
 

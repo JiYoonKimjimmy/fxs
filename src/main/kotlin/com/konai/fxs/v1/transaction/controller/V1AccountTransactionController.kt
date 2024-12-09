@@ -53,4 +53,15 @@ class V1AccountTransactionController(
             .success(HttpStatus.OK)
     }
 
+    @PostMapping("/withdrawal/cancel")
+    fun withdrawalCancel(@RequestBody request: V1TransactionWithdrawalCancelRequest): ResponseEntity<V1TransactionWithdrawalCancelResponse> {
+        return v1TransactionWithdrawalService.withdrawalCancel(
+                trReferenceId = request.trReferenceId,
+                orgTrReferenceId = request.orgTrReferenceId,
+                channel = request.channel
+            )
+            .let { V1TransactionWithdrawalCancelResponse(it.trReferenceId) }
+            .success(HttpStatus.OK)
+    }
+
 }
