@@ -100,9 +100,7 @@ class V1TransactionWithdrawalServiceImpl(
             .depositTransaction()
             .changeStatusToCanceled()
             .publishSaveTransactionEvent()
-            .toCanceled(trReferenceId, channel)
-            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
-            .publishSaveTransactionEvent()
+            .generateCanceledTransaction(trReferenceId)
     }
 
     private fun V1Transaction.cachingProcessPending(): V1Transaction {
@@ -121,7 +119,7 @@ class V1TransactionWithdrawalServiceImpl(
 
     private suspend fun V1Transaction.incrementWithdrawalTransactionPendingAmount() {
         distributedLockManager.withdrawalTransactionAmountLick(this.account) {
-            v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(this.acquirer, this.amount)
+            v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(this.baseAcquirer, this.amount)
         }
     }
 
@@ -141,7 +139,7 @@ class V1TransactionWithdrawalServiceImpl(
 
     private suspend fun V1Transaction.decrementWithdrawalTransactionPendingAmount() {
         distributedLockManager.withdrawalTransactionAmountLick(this.account) {
-            v1TransactionCacheService.decrementWithdrawalTransactionPendingAmountCache(this.acquirer, this.amount)
+            v1TransactionCacheService.decrementWithdrawalTransactionPendingAmountCache(this.baseAcquirer, this.amount)
         }
     }
 
@@ -164,6 +162,13 @@ class V1TransactionWithdrawalServiceImpl(
     private fun V1Transaction.publishSaveTransactionEvent(): V1Transaction {
         v1TransactionEventPublisher.saveTransaction(this)
         return this
+    }
+
+    private fun V1Transaction.generateCanceledTransaction(trReferenceId: String): V1Transaction {
+        return this.toCanceled(trReferenceId)
+            .changeStatusToCompleted()
+            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
+            .publishSaveTransactionEvent()
     }
 
     private fun findWithdrawalTransaction(trReferenceId: String, channel: TransactionChannel): V1Transaction {

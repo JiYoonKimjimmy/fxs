@@ -29,11 +29,11 @@ class V1TransactionRepositoryImplTest(
         }
     }
 
-    given("'acquirer' & 'fromAcquirer' 정보 조건 외화 계좌 거래 내역 Entity 정보 조회 요청하여") {
+    given("'baseAcquirer' & 'targetAcquirer' 정보 조건 외화 계좌 거래 내역 Entity 정보 조회 요청하여") {
         val entity = v1TransactionJpaRepository.save(v1TransactionEntityFixture.make())
-        val acquirer = V1AcquirerPredicate(entity.acquirer.id, entity.acquirer.type, entity.acquirer.name)
-        val fromAcquirer = V1AcquirerPredicate(entity.fromAcquirer?.id, entity.fromAcquirer?.type, entity.fromAcquirer?.name)
-        val predicate = V1TransactionPredicate(acquirer = acquirer, fromAcquirer = fromAcquirer)
+        val baseAcquirer = V1AcquirerPredicate(entity.baseAcquirer.id, entity.baseAcquirer.type, entity.baseAcquirer.name)
+        val targetAcquirer = V1AcquirerPredicate(entity.targetAcquirer?.id, entity.targetAcquirer?.type, entity.targetAcquirer?.name)
+        val predicate = V1TransactionPredicate(baseAcquirer = baseAcquirer, targetAcquirer = targetAcquirer)
         val executor = V1TransactionJdslExecutor(predicate)
 
         `when`("일치한 Entity 정보 있는 경우") {

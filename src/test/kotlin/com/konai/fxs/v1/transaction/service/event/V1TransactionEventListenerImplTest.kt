@@ -36,7 +36,7 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
                 applicationEventPublisher.publishEvent(event)
 
                 then("저장 결과 정상 확인한다") {
-                    val predicate = V1TransactionPredicate(acquirer = V1AcquirerPredicate(id = transaction.acquirer.id, type = transaction.acquirer.type))
+                    val predicate = V1TransactionPredicate(baseAcquirer = V1AcquirerPredicate(id = transaction.baseAcquirer.id, type = transaction.baseAcquirer.type))
                     val entity = v1TransactionRepository.findByPredicate(predicate)
                     entity!! shouldNotBe null
                     entity.id!! shouldBeGreaterThan 0L
@@ -70,7 +70,7 @@ class V1TransactionEventListenerImplTest : CustomBehaviorSpec() {
                 applicationEventPublisher.publishEvent(event)
 
                 then("저장 결과 정상 확인한다") {
-                    val predicate = V1TransactionPredicate(acquirer = V1AcquirerPredicate(id = transaction.acquirer.id, type = transaction.acquirer.type))
+                    val predicate = V1TransactionPredicate(baseAcquirer = V1AcquirerPredicate(id = transaction.baseAcquirer.id, type = transaction.baseAcquirer.type))
                     val entity = v1TransactionRepository.findByPredicate(predicate)
                     entity!! shouldNotBe null
                     entity.id!! shouldBeGreaterThan 0L

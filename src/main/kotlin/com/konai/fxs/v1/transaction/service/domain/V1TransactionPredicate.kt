@@ -10,8 +10,8 @@ import java.math.BigDecimal
 data class V1TransactionPredicate(
     val id: Long? = null,
     val trReferenceId: String? = null,
-    val acquirer: V1AcquirerPredicate? = null,
-    val fromAcquirer: V1AcquirerPredicate? = null,
+    val baseAcquirer: V1AcquirerPredicate? = null,
+    val targetAcquirer: V1AcquirerPredicate? = null,
     val type: TransactionType? = null,
     val purpose: TransactionPurpose? = null,
     val channel: TransactionChannel? = null,

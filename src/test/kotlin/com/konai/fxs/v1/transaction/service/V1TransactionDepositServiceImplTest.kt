@@ -38,54 +38,54 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         var accountInvalid = v1AccountFixture.make()
         val fromAccountInvalid = v1AccountFixture.make()
         val transactionInvalid = v1TransactionFixture.manualDepositTransaction(
-            acquirer = accountInvalid.acquirer,
-            fromAcquirer = fromAccountInvalid.acquirer,
+            baseAcquirer = accountInvalid.acquirer,
+            targetAcquirer = fromAccountInvalid.acquirer,
             amount = BigDecimal(100),
             exchangeRate = BigDecimal(1300.0)
         )
 
-        `when`("'acquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
+        `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
             val exception = shouldThrow<ResourceNotFoundException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
-                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.acquirer.id}' could not found"
+                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.baseAcquirer.id}' could not found"
             }
         }
 
         // 외화 계좌 상태 'INACTIVE' 변경
         accountInvalid = saveAccount(accountInvalid, status = INACTIVE)
 
-        `when`("'acquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
+        `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
             val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
 
             then("'ACCOUNT_STATUS_IS_INVALID' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_STATUS_IS_INVALID
-                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.acquirer.id}' status is invalid"
+                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.baseAcquirer.id}' status is invalid"
             }
         }
 
         // 외화 계좌 상태 'ACTIVE' 변경
         saveAccount(accountInvalid, status = ACTIVE)
 
-        `when`("'fromAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
+        `when`("'targetAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
             val exception = shouldThrow<ResourceNotFoundException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
-                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.fromAcquirer?.id}' could not found"
+                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.targetAcquirer?.id}' could not found"
             }
         }
 
         // 외화 계좌 상태 'INACTIVE' 변경
         saveAccount(fromAccountInvalid, status = INACTIVE)
         
-        `when`("'fromAcquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
+        `when`("'targetAcquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
             val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
 
             then("'ACCOUNT_STATUS_IS_INVALID' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_STATUS_IS_INVALID
-                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.fromAcquirer?.id}' status is invalid"
+                exception.detailMessage shouldBe "Account for acquirerId '${transactionInvalid.targetAcquirer?.id}' status is invalid"
             }
         }
 
@@ -93,8 +93,8 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         val account = saveAccount(v1AccountFixture.make())
         val fromAccount = saveAccount(v1AccountFixture.make())
         val transaction = v1TransactionFixture.manualDepositTransaction(
-            acquirer = account.acquirer,
-            fromAcquirer = fromAccount.acquirer,
+            baseAcquirer = account.acquirer,
+            targetAcquirer = fromAccount.acquirer,
             amount = BigDecimal(100),
             exchangeRate = BigDecimal(1300.0)
         )
@@ -115,18 +115,18 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 수기 입금 거래 내역 생성 정상 확인한다") {
-                val acquirerPredicate = V1AcquirerPredicate(transaction.acquirer.id, transaction.acquirer.type, transaction.acquirer.name)
-                val fromAcquirerPredicate = V1AcquirerPredicate(transaction.fromAcquirer?.id, transaction.fromAcquirer?.type, transaction.fromAcquirer?.name)
-                val predicate = V1TransactionPredicate(acquirer = acquirerPredicate, fromAcquirer = fromAcquirerPredicate)
+                val acquirerPredicate = V1AcquirerPredicate(transaction.baseAcquirer.id, transaction.baseAcquirer.type, transaction.baseAcquirer.name)
+                val fromAcquirerPredicate = V1AcquirerPredicate(transaction.targetAcquirer?.id, transaction.targetAcquirer?.type, transaction.targetAcquirer?.name)
+                val predicate = V1TransactionPredicate(baseAcquirer = acquirerPredicate, targetAcquirer = fromAcquirerPredicate)
                 val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id
-                transactionEntity.acquirer.id shouldBe account.acquirer.id
-                transactionEntity.fromAcquirer?.id shouldBe fromAccount.acquirer.id
+                transactionEntity.channel shouldBe TransactionChannel.PORTAL
+                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
+                transactionEntity.targetAcquirer?.id shouldBe fromAccount.acquirer.id
                 transactionEntity.type shouldBe TransactionType.DEPOSIT
                 transactionEntity.purpose shouldBe TransactionPurpose.DEPOSIT
-                transactionEntity.channel shouldBe TransactionChannel.PORTAL
                 transactionEntity.currency shouldBe Currency.USD
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1300)

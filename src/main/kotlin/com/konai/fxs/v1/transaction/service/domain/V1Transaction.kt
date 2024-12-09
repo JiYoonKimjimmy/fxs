@@ -17,16 +17,19 @@ import java.time.LocalDateTime
 data class V1Transaction(
     var id: Long? = null,
     val trReferenceId: String,
-    val acquirer: V1Acquirer,
-    val fromAcquirer: V1Acquirer?,
+    val channel: TransactionChannel,
+    val baseAcquirer: V1Acquirer,
+    val targetAcquirer: V1Acquirer?,
     val type: TransactionType,
     val purpose: TransactionPurpose,
-    val channel: TransactionChannel,
     val currency: String,
     val amount: BigDecimal,
+    val beforeBalance: BigDecimal,
+    val afterBalance: BigDecimal,
     val exchangeRate: BigDecimal,
     val transferDate: String,
-    var cancelDate: String?,
+    var completeDate: LocalDateTime?,
+    var cancelDate: LocalDateTime?,
     val orgTransactionId: Long?,
     val orgTrReferenceId: String?,
     val requestBy: String,
@@ -38,17 +41,17 @@ data class V1Transaction(
 
     fun checkAccountStatus(block: (V1Acquirer, String) -> V1Account): V1Transaction {
         return apply {
-            account = block(acquirer, currency)
+            account = block(baseAcquirer, currency)
                 .also {
-                    // `fromAcquirer` 정보 잇는 경우, 검증 처리만 진행
-                    fromAcquirer?.let { block(it, currency) }
+                    // `targetAcquirer` 정보 잇는 경우, 검증 처리만 진행
+                    targetAcquirer?.let { block(it, currency) }
                 }
         }
     }
 
     fun checkAccountLimit(block: (V1Acquirer, String, BigDecimal) -> V1Account): V1Transaction {
         return apply {
-            account = block(acquirer, currency, if (status == PENDING) BigDecimal.ZERO else amount)
+            account = block(baseAcquirer, currency, if (status == PENDING) BigDecimal.ZERO else amount)
         }
     }
 
@@ -68,13 +71,16 @@ data class V1Transaction(
     }
 
     fun changeStatusToCompleted(): V1Transaction {
-        return apply { status = COMPLETED }
+        return apply {
+            status = COMPLETED
+            completeDate = LocalDateTime.now()
+        }
     }
 
     fun changeStatusToCanceled(): V1Transaction {
         return apply {
             status = CANCELED
-            cancelDate = LocalDateTime.now().convertPatternOf()
+            cancelDate = LocalDateTime.now()
         }
     }
 
@@ -82,19 +88,20 @@ data class V1Transaction(
         return apply { status = EXPIRED }
     }
 
-    fun toCanceled(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+    fun toCanceled(trReferenceId: String): V1Transaction {
         return this.copy(
             id = null,
             trReferenceId = trReferenceId,
+            channel = this.channel,
             type = this.type.cancelType(),
             purpose = this.purpose.cancelPurpose(),
-            channel = channel,
             transferDate = LocalDateTime.now().convertPatternOf(),
             cancelDate = null,
             orgTransactionId = this.id,
             orgTrReferenceId = this.trReferenceId,
-            requestBy = channel.name,
-            status = COMPLETED
+            requestBy = this.channel.name,
+            requestNote = this.channel.note,
+            status = CREATED
         )
     }
 

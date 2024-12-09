@@ -28,7 +28,7 @@ class MessageQueuePublisherImplTest : CustomStringSpec({
         val result = rabbitTemplate.receiveAndConvert(MessageQueue.V1_SAVE_TRANSACTION_QUEUE) as V1SaveTransactionMessage
         result shouldNotBe null
         result.transaction.id shouldBe transaction.id
-        result.transaction.acquirer.id shouldBe transaction.acquirer.id
+        result.transaction.baseAcquirer.id shouldBe transaction.baseAcquirer.id
     }
 
 })

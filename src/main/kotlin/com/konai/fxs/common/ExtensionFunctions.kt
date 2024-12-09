@@ -1,7 +1,13 @@
 package com.konai.fxs.common
 
+import com.konasl.commonlib.springweb.correlation.core.ContextField
+import com.konasl.commonlib.springweb.correlation.core.RequestContext
 import org.slf4j.Logger
 import org.springframework.data.domain.Slice
+
+fun getCorrelationId(): String {
+    return RequestContext.get(ContextField.CORRELATION_ID) ?: RequestContext.generateId()
+}
 
 fun <T> Slice<T?>.firstOrNull(): T? {
     return this.content.ifEmpty { listOf(null) }.first()

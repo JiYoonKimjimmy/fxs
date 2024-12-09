@@ -19,89 +19,95 @@ class V1TransactionFixture {
     fun make(
         id: Long = generateSequence(),
         trReferenceId: String = generateUUID(),
-        acquirer: V1Acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT, "외화 예치금 계좌"),
-        fromAcquirer: V1Acquirer? = V1Acquirer(generateUUID(), FX_DEPOSIT, "외화 매입처 계좌"),
+        channel: TransactionChannel = TransactionChannel.PORTAL,
+        baseAcquirer: V1Acquirer = V1Acquirer(generateUUID(), FX_DEPOSIT, "외화 예치금 계좌"),
+        targetAcquirer: V1Acquirer? = V1Acquirer(generateUUID(), FX_DEPOSIT, "외화 매입처 계좌"),
         type: TransactionType = TransactionType.DEPOSIT,
         purpose: TransactionPurpose = TransactionPurpose.DEPOSIT,
-        channel: TransactionChannel = TransactionChannel.PORTAL,
         currency: String = Currency.USD,
         amount: BigDecimal = BigDecimal(100),
+        beforeBalance: BigDecimal = BigDecimal.ZERO,
+        afterBalance: BigDecimal = BigDecimal.ZERO,
         exchangeRate: BigDecimal = BigDecimal(1000),
         transferDate: String = LocalDateTime.now().convertPatternOf(),
+        completeDate: LocalDateTime? = LocalDateTime.now(),
+        cancelDate: LocalDateTime? = null,
+        orgTransactionId: Long? = null,
+        orgTrReferenceId: String? = null,
         requestBy: String = DEFAULT_REQUEST_BY,
         requestNote: String? = null,
         status: TransactionStatus = TransactionStatus.CREATED,
-        cancelDate: String? = null,
-        orgTransactionId: Long? = null,
-        orgTrReferenceId: String? = null,
     ): V1Transaction {
         return V1Transaction(
             id = id,
             trReferenceId = trReferenceId,
-            acquirer = acquirer,
-            fromAcquirer = fromAcquirer,
+            channel = channel,
+            baseAcquirer = baseAcquirer,
+            targetAcquirer = targetAcquirer,
             type = type,
             purpose = purpose,
-            channel = channel,
             currency = currency,
             amount = amount,
+            beforeBalance = beforeBalance,
+            afterBalance = afterBalance,
             exchangeRate = exchangeRate,
             transferDate = transferDate,
-            requestBy = requestBy,
-            requestNote = requestNote,
-            status = status,
+            completeDate = completeDate,
             cancelDate = cancelDate,
             orgTransactionId = orgTransactionId,
             orgTrReferenceId = orgTrReferenceId,
+            requestBy = requestBy,
+            requestNote = requestNote,
+            status = status,
         )
     }
 
     fun manualDepositTransaction(
-        acquirer: V1Acquirer,
-        fromAcquirer: V1Acquirer,
+        baseAcquirer: V1Acquirer,
+        targetAcquirer: V1Acquirer,
         amount: BigDecimal,
         exchangeRate: BigDecimal
     ): V1Transaction {
         return make(
-            acquirer = acquirer,
-            fromAcquirer = fromAcquirer,
+            channel = TransactionChannel.PORTAL,
+            baseAcquirer = baseAcquirer,
+            targetAcquirer = targetAcquirer,
             type = TransactionType.DEPOSIT,
             purpose = TransactionPurpose.DEPOSIT,
-            channel = TransactionChannel.PORTAL,
             amount = amount,
             exchangeRate = exchangeRate
         )
     }
 
     fun manualWithdrawalTransaction(
-        acquirer: V1Acquirer,
+        baseAcquirer: V1Acquirer,
         fromAcquirer: V1Acquirer? = null,
         amount: BigDecimal,
         exchangeRate: BigDecimal
     ): V1Transaction {
         return make(
-            acquirer = acquirer,
-            fromAcquirer = fromAcquirer,
+            channel = TransactionChannel.PORTAL,
+            baseAcquirer = baseAcquirer,
+            targetAcquirer = fromAcquirer,
             type = TransactionType.WITHDRAWAL,
             purpose = TransactionPurpose.WITHDRAWAL,
-            channel = TransactionChannel.PORTAL,
             amount = amount,
             exchangeRate = exchangeRate
         )
     }
 
     fun withdrawalTransaction(
-        acquirer: V1Acquirer,
+        baseAcquirer: V1Acquirer,
         trReferenceId: String = generateUUID(),
         amount: BigDecimal
     ): V1Transaction {
         return make(
-            acquirer = acquirer,
-            fromAcquirer = null,
+            channel = TransactionChannel.ORS,
+            baseAcquirer = baseAcquirer,
+            targetAcquirer = null,
             trReferenceId = trReferenceId,
             type = TransactionType.WITHDRAWAL,
             purpose = TransactionPurpose.REMITTANCE,
-            channel = TransactionChannel.ORS,
             amount = amount
         )
     }

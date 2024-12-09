@@ -24,22 +24,22 @@ class V1TransactionJdslExecutor(
 
     private fun whereQuery(): Array<Predicatable?> {
         return arrayOf(
-            predicate.id                 .ifNotNullEquals(Paths.path(V1TransactionEntity::id)),
-            predicate.acquirer?.id       .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::acquirer), V1AcquirerEntity::id)),
-            predicate.acquirer?.type     .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::acquirer), V1AcquirerEntity::type)),
-            predicate.acquirer?.name     .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::acquirer), V1AcquirerEntity::name)),
-            predicate.fromAcquirer?.id   .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::fromAcquirer), V1AcquirerEntity::id)),
-            predicate.fromAcquirer?.type .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::fromAcquirer), V1AcquirerEntity::type)),
-            predicate.fromAcquirer?.name .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::fromAcquirer), V1AcquirerEntity::name)),
-            predicate.type               .ifNotNullEquals(Paths.path(V1TransactionEntity::type)),
-            predicate.purpose            .ifNotNullEquals(Paths.path(V1TransactionEntity::purpose)),
-            predicate.channel            .ifNotNullEquals(Paths.path(V1TransactionEntity::channel)),
-            predicate.currency           .ifNotNullEquals(Paths.path(V1TransactionEntity::currency)),
-            predicate.amount             .ifNotNullEquals(Paths.path(V1TransactionEntity::amount)),
-            predicate.exchangeRate       .ifNotNullEquals(Paths.path(V1TransactionEntity::exchangeRate)),
-            predicate.transferDate       .ifNotNullEquals(Paths.path(V1TransactionEntity::transferDate)),
-            predicate.requestBy          .ifNotNullEquals(Paths.path(V1TransactionEntity::requestBy)),
-            predicate.status             .ifNotNullEquals(Paths.path(V1TransactionEntity::status)),
+            predicate.id                   .ifNotNullEquals(Paths.path(V1TransactionEntity::id)),
+            predicate.baseAcquirer?.id     .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::baseAcquirer), V1AcquirerEntity::id)),
+            predicate.baseAcquirer?.type   .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::baseAcquirer), V1AcquirerEntity::type)),
+            predicate.baseAcquirer?.name   .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::baseAcquirer), V1AcquirerEntity::name)),
+            predicate.targetAcquirer?.id   .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::targetAcquirer), V1AcquirerEntity::id)),
+            predicate.targetAcquirer?.type .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::targetAcquirer), V1AcquirerEntity::type)),
+            predicate.targetAcquirer?.name .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::targetAcquirer), V1AcquirerEntity::name)),
+            predicate.type                 .ifNotNullEquals(Paths.path(V1TransactionEntity::type)),
+            predicate.purpose              .ifNotNullEquals(Paths.path(V1TransactionEntity::purpose)),
+            predicate.channel              .ifNotNullEquals(Paths.path(V1TransactionEntity::channel)),
+            predicate.currency             .ifNotNullEquals(Paths.path(V1TransactionEntity::currency)),
+            predicate.amount               .ifNotNullEquals(Paths.path(V1TransactionEntity::amount)),
+            predicate.exchangeRate         .ifNotNullEquals(Paths.path(V1TransactionEntity::exchangeRate)),
+            predicate.transferDate         .ifNotNullEquals(Paths.path(V1TransactionEntity::transferDate)),
+            predicate.requestBy            .ifNotNullEquals(Paths.path(V1TransactionEntity::requestBy)),
+            predicate.status               .ifNotNullEquals(Paths.path(V1TransactionEntity::status)),
         )
     }
 

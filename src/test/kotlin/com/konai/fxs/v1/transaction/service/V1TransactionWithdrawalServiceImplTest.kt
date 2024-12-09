@@ -43,12 +43,12 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
     given("외화 계좌 수기 출금 거래 요청되어") {
         val account = v1AccountFixture.make(id = generateSequence())
         val transaction = v1TransactionFixture.manualWithdrawalTransaction(
-            acquirer = account.acquirer,
+            baseAcquirer = account.acquirer,
             amount = BigDecimal(100),
             exchangeRate = BigDecimal(1000.00)
         )
 
-        `when`("'acquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
+        `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
             val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.manualWithdrawal(transaction) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
@@ -89,10 +89,10 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id
-                transactionEntity.acquirer.id shouldBe account.acquirer.id
+                transactionEntity.channel shouldBe TransactionChannel.PORTAL
+                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
                 transactionEntity.type shouldBe TransactionType.WITHDRAWAL
                 transactionEntity.purpose shouldBe TransactionPurpose.WITHDRAWAL
-                transactionEntity.channel shouldBe TransactionChannel.PORTAL
                 transactionEntity.currency shouldBe Currency.USD
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
@@ -105,11 +105,11 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
     given("외화 계좌 출금 거래 요청되어") {
         val account = v1AccountFixture.make(id = generateSequence())
         val transaction = v1TransactionFixture.withdrawalTransaction(
-            acquirer = account.acquirer,
+            baseAcquirer = account.acquirer,
             amount = BigDecimal(100)
         )
 
-        `when`("'acquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
+        `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
             val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawal(transaction) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
@@ -145,10 +145,10 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id
-                transactionEntity.acquirer.id shouldBe account.acquirer.id
+                transactionEntity.channel shouldBe ORS
+                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
                 transactionEntity.type shouldBe TransactionType.WITHDRAWAL
                 transactionEntity.purpose shouldBe TransactionPurpose.REMITTANCE
-                transactionEntity.channel shouldBe ORS
                 transactionEntity.currency shouldBe Currency.USD
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
@@ -165,7 +165,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("'출금 거래 대기 금액 Cache 정보' 업데이트 정상 확인한다") {
-                val acquirer = transaction.acquirer
+                val acquirer = transaction.baseAcquirer
                 val key = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
 
                 numberRedisTemplate.opsForValue().get(key) shouldBe transaction.amount.toLong()
@@ -176,7 +176,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
     given("외화 계좌 출금 완료 거래 요청되어") {
         val account = v1AccountFixture.make(id = generateSequence())
-        val acquirer = account.acquirer
+        val baseAcquirer = account.acquirer
         val trReferenceId = generateUUID()
         val channel = ORS
 
@@ -192,11 +192,11 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
         // 출금 거래 정보 저장
-        val transaction = v1TransactionFixture.withdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
+        val transaction = v1TransactionFixture.withdrawalTransaction(baseAcquirer, trReferenceId, BigDecimal(100))
         v1TransactionWithdrawalService.withdrawal(transaction)
 
         // 출금 거래 대기 금액 추가분 증액
-        v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(acquirer, BigDecimal(100))
+        v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(baseAcquirer, BigDecimal(100))
 
         `when`("요청 'amount' 금액보다 외화 계좌 잔액 부족인 경우") {
             val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.withdrawalComplete(trReferenceId, channel) }
@@ -223,10 +223,10 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id
-                transactionEntity.acquirer.id shouldBe account.acquirer.id
+                transactionEntity.channel shouldBe ORS
+                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
                 transactionEntity.type shouldBe TransactionType.WITHDRAWAL
                 transactionEntity.purpose shouldBe TransactionPurpose.REMITTANCE
-                transactionEntity.channel shouldBe ORS
                 transactionEntity.currency shouldBe Currency.USD
                 transactionEntity.amount shouldBe BigDecimal(100)
                 transactionEntity.exchangeRate shouldBe BigDecimal(1000)
@@ -239,7 +239,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("'출금 거래 대기 금액 Cache' 감액 처리 정상 확인한다") {
-                v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer) shouldBe BigDecimal(100)
+                v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(baseAcquirer) shouldBe BigDecimal(100)
             }
         }
     }
