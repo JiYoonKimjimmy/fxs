@@ -240,7 +240,7 @@ class V1AccountTransactionControllerTest(
 
         // 출금 거래 요청 처리
         val transaction = v1TransactionFixture.withdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
-        v1TransactionWithdrawalService.withdrawal(transaction)
+        v1TransactionWithdrawalService.withdrawalPending(transaction)
 
         // 출금 거래 대기 금액 추가분 증액
         v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(acquirer, BigDecimal(100))
@@ -296,7 +296,7 @@ class V1AccountTransactionControllerTest(
         val request = v1TransactionWithdrawalCancelRequestFixture.make(trReferenceId, orgTrReferenceId, channel)
 
         // 출금 거래 요청 처리
-        v1TransactionWithdrawalService.withdrawal(transaction)
+        v1TransactionWithdrawalService.withdrawalPending(transaction)
 
         `when`("'orgTrReferenceId' 요청 정보 기준 출금 완료 거래 없는 경우") {
             val result = mockMvc.postProc(url, request)
@@ -314,7 +314,7 @@ class V1AccountTransactionControllerTest(
         }
 
         // 출금 거래 완료 처리
-        v1TransactionWithdrawalService.withdrawalComplete(orgTrReferenceId, channel)
+        v1TransactionWithdrawalService.withdrawalCompleted(orgTrReferenceId, channel)
 
         `when`("출금 취소 요청 처리 결과 성공인 경우") {
             val result = mockMvc.postProc(url, request)

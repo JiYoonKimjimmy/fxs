@@ -38,14 +38,14 @@ class V1AccountTransactionController(
     @PostMapping("/withdrawal")
     fun withdrawal(@RequestBody request: V1TransactionWithdrawalRequest): ResponseEntity<V1TransactionWithdrawalResponse> {
         return v1TransactionMapper.requestToDomain(request)
-            .let { v1TransactionWithdrawalService.withdrawal(it) }
+            .let { v1TransactionWithdrawalService.withdrawalPending(it) }
             .let { V1TransactionWithdrawalResponse(it.trReferenceId) }
             .success(HttpStatus.OK)
     }
 
     @PostMapping("/withdrawal/complete")
-    fun withdrawalComplete(@RequestBody request: V1TransactionWithdrawalCompleteRequest): ResponseEntity<V1TransactionWithdrawalCompleteResponse> {
-        return v1TransactionWithdrawalService.withdrawalComplete(
+    fun withdrawalCompleted(@RequestBody request: V1TransactionWithdrawalCompleteRequest): ResponseEntity<V1TransactionWithdrawalCompleteResponse> {
+        return v1TransactionWithdrawalService.withdrawalCompleted(
                 trReferenceId = request.trReferenceId,
                 channel = request.channel
             )

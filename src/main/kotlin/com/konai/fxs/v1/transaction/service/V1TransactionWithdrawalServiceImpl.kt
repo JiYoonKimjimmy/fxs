@@ -46,9 +46,9 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     @Transactional
-    override fun withdrawal(transaction: V1Transaction): V1Transaction {
+    override fun withdrawalPending(transaction: V1Transaction): V1Transaction {
         /**
-         * 외화 계좌 출금 처리
+         * 외화 계좌 출금 대기 처리
          * 1. 외화 계좌 출금 한도 확인
          * 2. 외화 계좌 출금 거래 `PENDING` 상태 변경
          * 3. 외화 계좌 출금 거래 Cache 저장
@@ -64,7 +64,7 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     @Transactional
-    override fun withdrawalComplete(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+    override fun withdrawalCompleted(trReferenceId: String, channel: TransactionChannel): V1Transaction {
         /**
          * 외화 계좌 출금 완료 처리
          * 1. 외화 계좌 출금 거래 정보 조회
