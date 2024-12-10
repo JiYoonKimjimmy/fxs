@@ -49,7 +49,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         )
 
         `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.manualWithdrawal(transaction) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawal(transaction) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
@@ -60,7 +60,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account)
 
         `when`("'amount' 요청 금액보다 계좌 잔액 부족인 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.manualWithdrawal(transaction) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.withdrawal(transaction) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
@@ -72,7 +72,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 수기 출금 요청인 경우") {
-            val result = v1TransactionWithdrawalService.manualWithdrawal(transaction)
+            val result = v1TransactionWithdrawalService.withdrawal(transaction)
 
             then("수기 출금 거래 상태 'COMPLETED' 정상 확인한다") {
                 result.status shouldBe COMPLETED
@@ -102,7 +102,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         }
     }
     
-    given("외화 계좌 출금 거래 요청되어") {
+    given("외화 계좌 출금 대기 거래 요청되어") {
         val account = v1AccountFixture.make(id = generateSequence())
         val transaction = v1TransactionFixture.withdrawalTransaction(
             baseAcquirer = account.acquirer,
@@ -139,7 +139,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 result.status shouldBe TransactionStatus.PENDING
             }
 
-            then("외화 계좌 출금 거래 내역 생성 정상 확인한다") {
+            then("외화 계좌 출금 대기 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
                 val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
 
@@ -156,7 +156,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 transactionEntity.status shouldBe TransactionStatus.PENDING
             }
 
-            then("'출금 거래 Cache 정보' 저장 정상 확인한다") {
+            then("'출금 대기 거래 Cache 정보' 저장 정상 확인한다") {
                 val trReferenceId = transaction.trReferenceId
                 val channel = transaction.channel.name
                 val key = WITHDRAWAL_TRANSACTION_CACHE.getKey(trReferenceId, channel)
@@ -164,7 +164,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
                 numberRedisTemplate.opsForValue().get(key) shouldBe result.id
             }
 
-            then("'출금 거래 대기 금액 Cache 정보' 업데이트 정상 확인한다") {
+            then("'출금 대기 거래 금액 Cache 정보' 업데이트 정상 확인한다") {
                 val acquirer = transaction.baseAcquirer
                 val key = WITHDRAWAL_TRANSACTION_PENDING_AMOUNT_CACHE.getKey(acquirer.id, acquirer.type.name)
 

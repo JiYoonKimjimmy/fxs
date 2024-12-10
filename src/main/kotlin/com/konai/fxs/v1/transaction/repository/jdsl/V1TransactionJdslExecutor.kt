@@ -25,6 +25,8 @@ class V1TransactionJdslExecutor(
     private fun whereQuery(): Array<Predicatable?> {
         return arrayOf(
             predicate.id                   .ifNotNullEquals(Paths.path(V1TransactionEntity::id)),
+            predicate.trReferenceId        .ifNotNullEquals(Paths.path(V1TransactionEntity::trReferenceId)),
+            predicate.channel              .ifNotNullEquals(Paths.path(V1TransactionEntity::channel)),
             predicate.baseAcquirer?.id     .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::baseAcquirer), V1AcquirerEntity::id)),
             predicate.baseAcquirer?.type   .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::baseAcquirer), V1AcquirerEntity::type)),
             predicate.baseAcquirer?.name   .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::baseAcquirer), V1AcquirerEntity::name)),
@@ -33,7 +35,6 @@ class V1TransactionJdslExecutor(
             predicate.targetAcquirer?.name .ifNotNullEquals(Paths.path(Paths.path(V1TransactionEntity::targetAcquirer), V1AcquirerEntity::name)),
             predicate.type                 .ifNotNullEquals(Paths.path(V1TransactionEntity::type)),
             predicate.purpose              .ifNotNullEquals(Paths.path(V1TransactionEntity::purpose)),
-            predicate.channel              .ifNotNullEquals(Paths.path(V1TransactionEntity::channel)),
             predicate.currency             .ifNotNullEquals(Paths.path(V1TransactionEntity::currency)),
             predicate.amount               .ifNotNullEquals(Paths.path(V1TransactionEntity::amount)),
             predicate.exchangeRate         .ifNotNullEquals(Paths.path(V1TransactionEntity::exchangeRate)),

@@ -45,7 +45,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         )
 
         `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionDepositService.deposit(transactionInvalid) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
@@ -57,7 +57,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         accountInvalid = saveAccount(accountInvalid, status = INACTIVE)
 
         `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.deposit(transactionInvalid) }
 
             then("'ACCOUNT_STATUS_IS_INVALID' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_STATUS_IS_INVALID
@@ -69,7 +69,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         saveAccount(accountInvalid, status = ACTIVE)
 
         `when`("'targetAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionDepositService.deposit(transactionInvalid) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
@@ -81,7 +81,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         saveAccount(fromAccountInvalid, status = INACTIVE)
         
         `when`("'targetAcquirer' 요청 정보 기준 외화 계좌 정보 상태 'ACTIVE' 아닌 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.manualDeposit(transactionInvalid) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionDepositService.deposit(transactionInvalid) }
 
             then("'ACCOUNT_STATUS_IS_INVALID' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_STATUS_IS_INVALID
@@ -100,7 +100,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
         )
         
         `when`("정상 'account' 수기 입금 거래인 경우") {
-            val result = v1TransactionDepositService.manualDeposit(transaction)
+            val result = v1TransactionDepositService.deposit(transaction)
 
             then("수기 입금 거래 상태 'COMPLETED' 정상 확인한다") {
                 result.id!! shouldBeGreaterThanOrEqual 1L

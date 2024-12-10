@@ -22,7 +22,7 @@ class V1AccountTransactionController(
     @PostMapping("/manual/deposit")
     fun manualDeposit(@RequestBody request: V1TransactionManualDepositRequest): ResponseEntity<V1TransactionManualDepositResponse> {
         return v1TransactionMapper.requestToDomain(request)
-            .let { v1TransactionDepositService.manualDeposit(it) }
+            .let { v1TransactionDepositService.deposit(it) }
             .let { V1TransactionManualDepositResponse(it.id!!) }
             .success(HttpStatus.OK)
     }
@@ -30,13 +30,13 @@ class V1AccountTransactionController(
     @PostMapping("/manual/withdrawal")
     fun manualWithdrawal(@RequestBody request: V1TransactionManualWithdrawalRequest): ResponseEntity<V1TransactionManualWithdrawalResponse> {
         return v1TransactionMapper.requestToDomain(request)
-            .let { v1TransactionWithdrawalService.manualWithdrawal(it) }
+            .let { v1TransactionWithdrawalService.withdrawal(it) }
             .let { V1TransactionManualWithdrawalResponse(it.id!!) }
             .success(HttpStatus.OK)
     }
 
-    @PostMapping("/withdrawal")
-    fun withdrawal(@RequestBody request: V1TransactionWithdrawalRequest): ResponseEntity<V1TransactionWithdrawalResponse> {
+    @PostMapping("/withdrawal/pending")
+    fun withdrawalPending(@RequestBody request: V1TransactionWithdrawalRequest): ResponseEntity<V1TransactionWithdrawalResponse> {
         return v1TransactionMapper.requestToDomain(request)
             .let { v1TransactionWithdrawalService.withdrawalPending(it) }
             .let { V1TransactionWithdrawalResponse(it.trReferenceId) }

@@ -30,12 +30,13 @@ class V1TransactionWithdrawalServiceImpl(
 ) : V1TransactionWithdrawalService {
 
     @Transactional
-    override fun manualWithdrawal(transaction: V1Transaction): V1Transaction {
+    override fun withdrawal(transaction: V1Transaction): V1Transaction {
         /**
-         * 외화 계좌 수기 출금 처리
+         * 외화 계좌 출금 처리
          * 1. 외화 계좌 출금 한도 확인
          * 2. 외화 계좌 잔액 출금 처리
-         * 3. 외화 계좌 출금 거래 내역 생성 Event 발행
+         * 3. 외화 계좌 출금 완료 거래 내역 생성
+         * 4. 외화 계좌 출금 거래 내역 생성 Event 발행
          */
         return transaction
             .checkAccountLimit(v1AccountValidationService::checkLimit)
@@ -51,9 +52,9 @@ class V1TransactionWithdrawalServiceImpl(
          * 외화 계좌 출금 대기 처리
          * 1. 외화 계좌 출금 한도 확인
          * 2. 외화 계좌 출금 거래 `PENDING` 상태 변경
-         * 3. 외화 계좌 출금 거래 Cache 저장
-         * 4. 외화 계좌 출금 거래 합계 Cache 증액 업데이트
-         * 5. 외화 계좌 거래 내역 저장 Event 발행
+         * 3. 외화 계좌 출금 대기 거래 Cache 저장
+         * 4. 외화 계좌 출금 대기 거래 합계 Cache 증액 업데이트
+         * 5. 외화 계좌 거래 대기 내역 저장 Event 발행
          */
         return transaction
             .checkAccountLimit(v1AccountValidationService::checkLimit)
@@ -68,19 +69,13 @@ class V1TransactionWithdrawalServiceImpl(
         /**
          * 외화 계좌 출금 완료 처리
          * 1. 외화 계좌 출금 거래 정보 조회
-         * 2. 외화 계촤 출금 한도 확인
-         * 3. 외화 계좌 잔액 출금 처리
-         * 4. 외화 계좌 출금 거래 `COMPLETED` 상태 변경
-         * 4. 외화 계좌 출금 거래 Cache 정보 삭제
-         * 5. 외화 계좌 출금 거래 대기 금액 Cache 감액 업데이트
-         * 6. 외화 계좌 거래 내역 저장 Event 발행
+         * 2. 외화 계좌 출금 처리
+         * 3. 외화 계좌 출금 대기 거래 Cache 정보 삭제
+         * 4. 외화 계좌 출금 대기 거래 금액 Cache 감액 업데이트
          */
         return findWithdrawalTransaction(trReferenceId, channel)
-            .checkAccountLimit(v1AccountValidationService::checkLimit)
-            .withdrawalTransaction()
-            .changeStatusToCompleted()
+            .let(this::withdrawal)
             .cachingProcessCompleted()
-            .publishSaveTransactionEvent()
     }
 
     @Transactional

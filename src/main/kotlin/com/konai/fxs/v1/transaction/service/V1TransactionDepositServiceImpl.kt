@@ -19,7 +19,7 @@ class V1TransactionDepositServiceImpl(
 ) : V1TransactionDepositService {
 
     @Transactional
-    override fun manualDeposit(transaction: V1Transaction): V1Transaction {
+    override fun deposit(transaction: V1Transaction): V1Transaction {
         /**
          * 외화 계좌 수기 입금 처리
          * 1. 외화 계좌 상태 확인

@@ -158,13 +158,13 @@ class V1AccountTransactionControllerTest(
         }
     }
 
-    given("외화 계좌 '출금' 거래 API 요청하여 ") {
-        val url = "/api/v1/account/transaction/withdrawal"
+    given("외화 계좌 '출금 대기' 거래 API 요청하여 ") {
+        val url = "/api/v1/account/transaction/withdrawal/pending"
         val account = saveAccount(v1AccountFixture.make(acquirerType = FX_DEPOSIT))
         val amount = BigDecimal(100)
         val request = v1TransactionWithdrawalRequestFixture.make(acquirer = account.acquirer.toModel(), amount = amount)
 
-        `when`("출금 요청 금액보다 외화 계좌 잔액 부족한 경우") {
+        `when`("출금 대기 요청 금액보다 외화 계좌 잔액 부족한 경우") {
             val result = mockMvc.postProc(url, request)
 
             then("'500 Internal Server Error - 210_2001_005' 에러 응답 정상 확인한다") {
@@ -181,7 +181,7 @@ class V1AccountTransactionControllerTest(
 
         saveAccount(account, balance = BigDecimal(100))
 
-        `when`("'USD 100' 출금 요청 처리 결과 성공인 경우") {
+        `when`("'USD 100' 출금 대기 요청 처리 결과 성공인 경우") {
             val result = mockMvc.postProc(url, request)
 
             then("'200 OK' 성공 응답 정상 확인한다") {
@@ -193,18 +193,18 @@ class V1AccountTransactionControllerTest(
                 }
             }
 
-            then("외화 계좌 출금 거래 Cache 정보 생성 정상 확인한다") {
+            then("외화 계좌 출금 대기 거래 Cache 정보 생성 정상 확인한다") {
                 val trReferenceId = request.trReferenceId
                 val channel = request.channel
                 v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel) shouldNotBe null
             }
 
-            then("외화 계좌 출금 거래 대기 금액 Cache 정보 업데이트 정상 확인한다") {
+            then("외화 계좌 출금 대기 거래 금액 Cache 정보 업데이트 정상 확인한다") {
                 val acquirer = account.acquirer
                 v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(acquirer) shouldBeGreaterThanOrEquals BigDecimal(100)
             }
 
-            then("외화 계좌 출금 거래 내역 저장 정보 정상 확인한다") {
+            then("외화 계좌 출금 대기 거래 내역 저장 정보 정상 확인한다") {
                 val trReferenceId = JsonPath.read<String>(result.andReturn().response.contentAsString, "trReferenceId")
                 val predicate = V1TransactionPredicate(trReferenceId = trReferenceId)
                 val transaction = v1TransactionFindService.findByPredicate(predicate)!!
