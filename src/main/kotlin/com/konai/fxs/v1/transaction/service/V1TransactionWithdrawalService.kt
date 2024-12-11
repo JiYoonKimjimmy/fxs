@@ -7,10 +7,15 @@ interface V1TransactionWithdrawalService {
 
     fun withdrawal(transaction: V1Transaction): V1Transaction
 
-    fun withdrawalPending(transaction: V1Transaction): V1Transaction
+    fun pending(transaction: V1Transaction): V1Transaction
 
-    fun withdrawalCompleted(trReferenceId: String, channel: TransactionChannel): V1Transaction
+    fun complete(trReferenceId: String, channel: TransactionChannel): V1Transaction
 
-    fun withdrawalCancel(trReferenceId: String, orgTrReferenceId: String, channel: TransactionChannel): V1Transaction
+    fun cancel(
+        trReferenceId: String,
+        orgTrReferenceId: String,
+        channel: TransactionChannel,
+        canceledTransactionId: () -> Long
+    ): V1Transaction
 
 }

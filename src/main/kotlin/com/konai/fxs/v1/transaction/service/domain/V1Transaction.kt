@@ -63,7 +63,7 @@ data class V1Transaction(
     }
 
     fun applyTransactionId(block: () -> Long): V1Transaction {
-        return apply { id = if (id != null) id else block() }
+        return apply { id = block() }
     }
 
     fun changeStatusToPending(): V1Transaction {

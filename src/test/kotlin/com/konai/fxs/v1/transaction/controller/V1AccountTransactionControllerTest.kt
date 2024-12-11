@@ -13,8 +13,8 @@ import com.konai.fxs.v1.account.service.V1AccountFindService
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
+import com.konai.fxs.v1.transaction.service.V1AccountTransactionService
 import com.konai.fxs.v1.transaction.service.V1TransactionFindService
-import com.konai.fxs.v1.transaction.service.V1TransactionWithdrawalService
 import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheService
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionPredicate
 import io.kotest.matchers.bigdecimal.shouldBeGreaterThanOrEquals
@@ -32,7 +32,7 @@ class V1AccountTransactionControllerTest(
     private val v1AccountFindService: V1AccountFindService,
     private val v1TransactionFindService: V1TransactionFindService,
     private val v1TransactionCacheService: V1TransactionCacheService,
-    private val v1TransactionWithdrawalService: V1TransactionWithdrawalService
+    private val v1AccountTransactionService: V1AccountTransactionService,
 ) : CustomBehaviorSpec({
 
     val v1AccountFixture = dependencies.v1AccountFixture
@@ -240,7 +240,7 @@ class V1AccountTransactionControllerTest(
 
         // 출금 거래 요청 처리
         val transaction = v1TransactionFixture.withdrawalTransaction(acquirer, trReferenceId, BigDecimal(100))
-        v1TransactionWithdrawalService.withdrawalPending(transaction)
+        v1AccountTransactionService.withdrawalPending(transaction)
 
         // 출금 거래 대기 금액 추가분 증액
         v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(acquirer, BigDecimal(100))
@@ -296,7 +296,7 @@ class V1AccountTransactionControllerTest(
         val request = v1TransactionWithdrawalCancelRequestFixture.make(trReferenceId, orgTrReferenceId, channel)
 
         // 출금 거래 요청 처리
-        v1TransactionWithdrawalService.withdrawalPending(transaction)
+        v1AccountTransactionService.withdrawalPending(transaction)
 
         `when`("'orgTrReferenceId' 요청 정보 기준 출금 완료 거래 없는 경우") {
             val result = mockMvc.postProc(url, request)
@@ -314,7 +314,7 @@ class V1AccountTransactionControllerTest(
         }
 
         // 출금 거래 완료 처리
-        v1TransactionWithdrawalService.withdrawalCompleted(orgTrReferenceId, channel)
+        v1AccountTransactionService.withdrawalComplete(orgTrReferenceId, channel)
 
         `when`("출금 취소 요청 처리 결과 성공인 경우") {
             val result = mockMvc.postProc(url, request)

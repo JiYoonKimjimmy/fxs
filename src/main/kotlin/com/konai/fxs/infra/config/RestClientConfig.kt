@@ -30,7 +30,7 @@ class RestClientConfig(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun <T> restClientRepositoryProxy(component: ExternalComponent, classType: Class<T>): T {
+    fun <T> restClientHttpServiceProxy(component: ExternalComponent, classType: Class<T>): T {
         val url = externalUrlProperties.getProperty(component).url
         val adapter = RestClientAdapter.create(restClient(component, url, Duration.ofSeconds(5), Duration.ofSeconds(20)))
         val factory = HttpServiceProxyFactory.builderFor(adapter).build()

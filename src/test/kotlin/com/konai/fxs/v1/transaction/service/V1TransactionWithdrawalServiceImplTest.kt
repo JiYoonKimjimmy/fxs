@@ -31,6 +31,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
     val v1TransactionWithdrawalService = dependencies.v1TransactionWithdrawalService
     val v1TransactionCacheService = dependencies.v1TransactionCacheService
+    val v1SequenceGeneratorService = dependencies.v1SequenceGeneratorService
 
     val v1AccountRepository = dependencies.fakeV1AccountRepository
     val v1TransactionRepository = dependencies.fakeV1TransactionRepository
@@ -110,7 +111,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         )
 
         `when`("'baseAcquirer' 요청 정보 기준 외화 계좌 정보 존재하지 않는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawalPending(transaction) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.pending(transaction) }
 
             then("'ACCOUNT_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_NOT_FOUND
@@ -121,7 +122,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account)
 
         `when`("'amount' 요청 금액보다 계좌 잔액 부족인 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.withdrawalPending(transaction) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.pending(transaction) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
@@ -133,7 +134,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account, balance = BigDecimal(100), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 출금 요청인 경우") {
-            val result = v1TransactionWithdrawalService.withdrawalPending(transaction)
+            val result = v1TransactionWithdrawalService.pending(transaction)
 
             then("출금 거래 상태 'PENDING' 정상 확인한다") {
                 result.status shouldBe TransactionStatus.PENDING
@@ -181,7 +182,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         val channel = ORS
 
         `when`("요청 'trReferenceId' 기준 출금 거래 정보 없는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawalCompleted(trReferenceId, channel) }
+            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.complete(trReferenceId, channel) }
 
             then("'WITHDRAWAL_TRANSACTION_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND
@@ -193,13 +194,13 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
         // 출금 거래 정보 저장
         val transaction = v1TransactionFixture.withdrawalTransaction(baseAcquirer, trReferenceId, BigDecimal(100))
-        v1TransactionWithdrawalService.withdrawalPending(transaction)
+        v1TransactionWithdrawalService.pending(transaction)
 
         // 출금 거래 대기 금액 추가분 증액
         v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(baseAcquirer, BigDecimal(100))
 
         `when`("요청 'amount' 금액보다 외화 계좌 잔액 부족인 경우") {
-            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.withdrawalCompleted(trReferenceId, channel) }
+            val exception = shouldThrow<InternalServiceException> { v1TransactionWithdrawalService.complete(trReferenceId, channel) }
 
             then("'ACCOUNT_BALANCE_IS_INSUFFICIENT' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.ACCOUNT_BALANCE_IS_INSUFFICIENT
@@ -211,7 +212,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
         saveAccount(account, balance = BigDecimal(1000), averageExchangeRate = BigDecimal(1300.00))
 
         `when`("정상 'account' 출금 완료 요청인 경우") {
-            val result = v1TransactionWithdrawalService.withdrawalCompleted(trReferenceId, channel)
+            val result = v1TransactionWithdrawalService.complete(trReferenceId, channel)
 
             then("출금 거래 상태 'COMPLETED' 정상 확인한다") {
                 result.status shouldBe COMPLETED
@@ -245,9 +246,12 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
     }
     
     given("외화 계좌 출금 취소 거래 요청되어") {
+        val canceledTransactionId = v1SequenceGeneratorService::nextTransactionSequence
 
         `when`("'orgTrReferenceId' 요청 정보 기준 출금 완료 거래 없는 경우") {
-            val exception = shouldThrow<ResourceNotFoundException> { v1TransactionWithdrawalService.withdrawalCancel(generateUUID(), generateUUID(), ORS) }
+            val exception = shouldThrow<ResourceNotFoundException> {
+                v1TransactionWithdrawalService.cancel(generateUUID(), generateUUID(), ORS, canceledTransactionId)
+            }
             
             then("'WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND' 예외 발생 정상 확인한다") {
                 exception.errorCode shouldBe ErrorCode.WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND
@@ -260,17 +264,17 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
         // 출금 거래 정보 저장
         val transaction = v1TransactionFixture.withdrawalTransaction(account.acquirer, generateUUID(), BigDecimal(100))
-        v1TransactionWithdrawalService.withdrawalPending(transaction)
+        v1TransactionWithdrawalService.pending(transaction)
 
         // 출금 거래 완료 처리
-        v1TransactionWithdrawalService.withdrawalCompleted(transaction.trReferenceId, transaction.channel)
+        v1TransactionWithdrawalService.complete(transaction.trReferenceId, transaction.channel)
 
         val trReferenceId = generateUUID()
         val orgTrReferenceId = transaction.trReferenceId
         val channel = transaction.channel
 
         `when`("정상 출금 취소 거래 요청인 경우") {
-            val result = v1TransactionWithdrawalService.withdrawalCancel(trReferenceId, orgTrReferenceId, channel)
+            val result = v1TransactionWithdrawalService.cancel(trReferenceId, orgTrReferenceId, channel, canceledTransactionId)
 
             then("출금 취소 거래 완료 처리 정상 확인한다") {
                 result.trReferenceId shouldBe trReferenceId

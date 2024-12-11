@@ -3,7 +3,6 @@ package com.konai.fxs.v1.transaction.service
 import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
-import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisher
 import org.springframework.stereotype.Service
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional
 class V1TransactionDepositServiceImpl(
     private val v1AccountValidationService: V1AccountValidationService,
     private val v1AccountSaveService: V1AccountSaveService,
-    private val v1SequenceGeneratorService: V1SequenceGeneratorService,
     private val v1TransactionEventPublisher: V1TransactionEventPublisher,
     private val distributedLockManager: DistributedLockManager
 ) : V1TransactionDepositService {
@@ -28,7 +26,6 @@ class V1TransactionDepositServiceImpl(
          */
         return transaction
             .checkAccountStatus(v1AccountValidationService::checkStatus)
-            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .depositTransaction()
             .changeStatusToCompleted()
             .publishSaveTransactionEvent()
@@ -43,8 +40,7 @@ class V1TransactionDepositServiceImpl(
     }
 
     private fun V1Transaction.publishSaveTransactionEvent(): V1Transaction {
-        v1TransactionEventPublisher.saveTransaction(this)
-        return this
+        return this.also(v1TransactionEventPublisher::saveTransaction)
     }
 
 }
