@@ -14,7 +14,9 @@ class V1TransactionSaveServiceImpl(
 
     @Transactional
     override fun save(transaction: V1Transaction): V1Transaction {
-        return retryableManager.retrySaveTransaction(transaction, v1TransactionRepository::save)
+        return retryableManager.retrySaveTransaction(transaction) {
+            v1TransactionRepository.save(it)
+        }
     }
 
 }

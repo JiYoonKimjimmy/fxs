@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class V1AccountTransactionServiceImpl(
     private val v1TransactionDepositService: V1TransactionDepositService,
     private val v1TransactionWithdrawalService: V1TransactionWithdrawalService,
-    private val v1SequenceGeneratorService: V1SequenceGeneratorService,
+    private val v1SequenceGeneratorService: V1SequenceGeneratorService
 ) : V1AccountTransactionService {
 
     override fun manualDeposit(transaction: V1Transaction): V1Transaction {
@@ -43,4 +43,7 @@ class V1AccountTransactionServiceImpl(
         )
     }
 
+    override fun reverse(transaction: V1Transaction): V1Transaction {
+        return transaction
+    }
 }

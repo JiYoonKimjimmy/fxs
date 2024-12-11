@@ -6,4 +6,6 @@ interface V1TransactionEventListener {
 
     fun expireTransactionEventHandler(event: V1ExpireTransactionEvent)
 
+    fun reverseTransactionEventHandler(event: V1ReverseTransactionEvent)
+
 }

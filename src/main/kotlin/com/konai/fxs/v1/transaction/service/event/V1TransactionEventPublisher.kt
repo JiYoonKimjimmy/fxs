@@ -8,4 +8,6 @@ interface V1TransactionEventPublisher {
 
     fun expireTransaction(transaction: V1Transaction)
 
+    fun reverseTransaction(transaction: V1Transaction)
+
 }

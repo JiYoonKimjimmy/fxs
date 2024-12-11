@@ -3,7 +3,7 @@ package com.konai.fxs.testsupport
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
 import com.konai.fxs.common.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
-import com.konai.fxs.testsupport.event.TestV1TransactionEventHandler
+import com.konai.fxs.testsupport.event.FakeApplicationEventPublisher
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ
 import com.konai.fxs.testsupport.redis.EmbeddedRedis
 import com.konai.fxs.v1.account.controller.model.V1FindAllAccountRequestFixture
@@ -28,6 +28,7 @@ import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheServiceImpl
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionFixture
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
 import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisherImpl
+import com.konai.fxs.v1.transaction.service.event.V1TransactionEventServiceImpl
 
 object TestDependencies {
 
@@ -35,6 +36,8 @@ object TestDependencies {
     val numberRedisTemplate = EmbeddedRedis.numberRedisTemplate
     val rabbitTemplate = MockRabbitMQ.rabbitTemplate
     val messageQueuePublisher = MessageQueuePublisherImpl(rabbitTemplate)
+
+    private val fakeApplicationEventPublisher = FakeApplicationEventPublisher()
     private val fakeDistributedLockManager = FakeDistributedLockManagerImpl()
     private val fakeRetryableManager = FakeRetryableManagerImpl()
 
@@ -59,10 +62,9 @@ object TestDependencies {
 
     val v1SequenceGeneratorService = V1SequenceGeneratorServiceImpl(fakeV1SequenceGeneratorRepository, fakeDistributedLockManager)
 
+    private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, fakeApplicationEventPublisher)
     private val v1TransactionFindService = V1TransactionFindServiceImpl(fakeV1TransactionRepository)
     private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository, fakeRetryableManager)
-    private val v1TransactionEventHandler = TestV1TransactionEventHandler(v1TransactionMapper, v1TransactionSaveService, messageQueuePublisher)
-    private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, v1TransactionEventHandler)
     val v1TransactionDepositService = V1TransactionDepositServiceImpl(
         v1AccountValidationService,
         v1AccountSaveService,
@@ -81,6 +83,13 @@ object TestDependencies {
         v1TransactionDepositService,
         v1TransactionWithdrawalService,
         v1SequenceGeneratorService
+    )
+    val v1TransactionEventService = V1TransactionEventServiceImpl(
+        v1TransactionMapper,
+        v1TransactionSaveService,
+        v1TransactionEventPublisher,
+        v1AccountTransactionService,
+        messageQueuePublisher
     )
 
     // fixture

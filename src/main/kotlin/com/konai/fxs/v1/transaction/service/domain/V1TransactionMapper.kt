@@ -12,6 +12,7 @@ import com.konai.fxs.v1.transaction.controller.model.V1TransactionManualWithdraw
 import com.konai.fxs.v1.transaction.controller.model.V1TransactionWithdrawalRequest
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntity
 import com.konai.fxs.v1.transaction.service.event.V1ExpireTransactionEvent
+import com.konai.fxs.v1.transaction.service.event.V1ReverseTransactionEvent
 import com.konai.fxs.v1.transaction.service.event.V1SaveTransactionEvent
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
@@ -98,6 +99,10 @@ class V1TransactionMapper {
 
     fun domainToExpireTransactionEvent(domain: V1Transaction): V1ExpireTransactionEvent {
         return V1ExpireTransactionEvent(transaction = domain)
+    }
+
+    fun domainToReverseTransactionEvent(domain: V1Transaction): V1ReverseTransactionEvent {
+        return V1ReverseTransactionEvent(transaction = domain)
     }
 
     fun eventToMessage(event: V1ExpireTransactionEvent): V1ExpireTransactionMessage {

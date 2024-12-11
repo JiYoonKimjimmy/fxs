@@ -9,3 +9,7 @@ data class V1SaveTransactionEvent(
 data class V1ExpireTransactionEvent(
     val transaction: V1Transaction
 )
+
+data class V1ReverseTransactionEvent(
+    val transaction: V1Transaction
+)

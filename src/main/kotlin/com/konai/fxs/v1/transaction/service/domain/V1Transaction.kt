@@ -1,11 +1,12 @@
 package com.konai.fxs.v1.transaction.service.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.konai.fxs.common.enumerate.TransactionChannel
-import com.konai.fxs.common.enumerate.TransactionPurpose
-import com.konai.fxs.common.enumerate.TransactionStatus
+import com.konai.fxs.common.enumerate.*
+import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
+import com.konai.fxs.common.enumerate.AcquirerType.MTO_FUNDING
+import com.konai.fxs.common.enumerate.TransactionPurpose.REMITTANCE
 import com.konai.fxs.common.enumerate.TransactionStatus.*
-import com.konai.fxs.common.enumerate.TransactionType
+import com.konai.fxs.common.enumerate.TransactionType.WITHDRAWAL
 import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
@@ -86,6 +87,22 @@ data class V1Transaction(
 
     fun changeStatusToExpired(): V1Transaction {
         return apply { status = EXPIRED }
+    }
+
+    fun isNeedsExpireTransaction(block: (V1Transaction) -> Unit): V1Transaction {
+        if (baseAcquirer.type == MTO_FUNDING && type == WITHDRAWAL && purpose == REMITTANCE && status == PENDING) {
+            // MTO 펀딩 계좌 '송금 출금 대기' 거래인 경우
+            block(this)
+        }
+        return this
+    }
+
+    fun isNeedsReverseTransaction(block: (V1Transaction) -> Unit): V1Transaction {
+        if (baseAcquirer.type == FX_DEPOSIT && type == WITHDRAWAL && purpose == TransactionPurpose.FUNDING) {
+            // 외화 예치금 계좌의 'MTO 펀딩 출금' 거래인 경우
+            block(this)
+        }
+        return this
     }
 
     fun toCanceled(trReferenceId: String): V1Transaction {

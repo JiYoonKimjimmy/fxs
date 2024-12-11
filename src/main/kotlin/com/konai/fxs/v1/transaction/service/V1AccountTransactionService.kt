@@ -15,4 +15,6 @@ interface V1AccountTransactionService {
 
     fun withdrawalCancel(trReferenceId: String, orgTrReferenceId: String, channel: TransactionChannel): V1Transaction
 
+    fun reverse(transaction: V1Transaction): V1Transaction
+
 }

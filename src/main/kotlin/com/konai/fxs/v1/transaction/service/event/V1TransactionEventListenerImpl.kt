@@ -1,9 +1,5 @@
 package com.konai.fxs.v1.transaction.service.event
 
-import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_TRANSACTION_EXCHANGE
-import com.konai.fxs.common.message.MessageQueuePublisher
-import com.konai.fxs.v1.transaction.service.V1TransactionSaveService
-import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper
 import org.slf4j.LoggerFactory
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
@@ -12,10 +8,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class V1TransactionEventListenerImpl(
-    private val v1TransactionMapper: V1TransactionMapper,
-    private val v1TransactionSaveService: V1TransactionSaveService,
-    private val v1TransactionEventPublisher: V1TransactionEventPublisher,
-    private val messageQueuePublisher: MessageQueuePublisher,
+    private val v1TransactionEventService: V1TransactionEventService
 ) : V1TransactionEventListener {
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -24,17 +17,24 @@ class V1TransactionEventListenerImpl(
     @EventListener
     override fun saveTransactionEventHandler(event: V1SaveTransactionEvent) {
         logger.info("[SaveTransactionEvent] EventListener Started.")
-        v1TransactionSaveService.save(event.transaction)
-            .let { v1TransactionEventPublisher.expireTransaction(it) }
+        v1TransactionEventService.saveTransaction(event)
         logger.info("[SaveTransactionEvent] EventListener Completed.")
     }
 
+    @Async
     @TransactionalEventListener
     override fun expireTransactionEventHandler(event: V1ExpireTransactionEvent) {
         logger.info("[ExpireTransactionEventHandler] EventListener Started.")
-        v1TransactionMapper.eventToMessage(event)
-            .let { messageQueuePublisher.sendDirectMessage(V1_EXPIRE_TRANSACTION_EXCHANGE, it) }
+        v1TransactionEventService.expireTransaction(event)
         logger.info("[ExpireTransactionEventHandler] EventListener Completed.")
+    }
+
+    @Async
+    @TransactionalEventListener
+    override fun reverseTransactionEventHandler(event: V1ReverseTransactionEvent) {
+        logger.info("[ReverseTransactionEventHandler] EventListener Started.")
+        v1TransactionEventService.reverseTransaction(event)
+        logger.info("[ReverseTransactionEventHandler] EventListener Completed.")
     }
 
 }
