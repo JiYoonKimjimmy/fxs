@@ -11,8 +11,8 @@ enum class TransactionPurpose(private val note: String) {
     ;
 
     fun cancelPurpose(): TransactionPurpose {
-        return when {
-            this == REMITTANCE -> REMITTANCE_CANCEL
+        return when (this) {
+            REMITTANCE -> REMITTANCE_CANCEL
             else -> this
         }
     }

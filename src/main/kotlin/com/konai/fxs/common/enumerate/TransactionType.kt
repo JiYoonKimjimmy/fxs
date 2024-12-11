@@ -6,11 +6,10 @@ enum class TransactionType(private val note: String) {
     WITHDRAWAL("출금")
     ;
 
-    fun cancelType(): TransactionType {
-        return when {
-            this == DEPOSIT -> WITHDRAWAL
-            this == WITHDRAWAL -> DEPOSIT
-            else -> this
+    fun reverseType(): TransactionType {
+        return when (this) {
+            DEPOSIT -> WITHDRAWAL
+            WITHDRAWAL -> DEPOSIT
         }
     }
 

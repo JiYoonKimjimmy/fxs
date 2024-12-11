@@ -93,7 +93,7 @@ data class V1Transaction(
             id = null,
             trReferenceId = trReferenceId,
             channel = this.channel,
-            type = this.type.cancelType(),
+            type = this.type.reverseType(),
             purpose = this.purpose.cancelPurpose(),
             transferDate = LocalDateTime.now().convertPatternOf(),
             cancelDate = null,
