@@ -31,8 +31,8 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
     val v1AccountFixture = dependencies.v1AccountFixture
     val v1TransactionFixture = dependencies.v1TransactionFixture
 
-    val v1AccountRepository = dependencies.fakeV1AccountRepository
-    val v1TransactionRepository = dependencies.fakeV1TransactionRepository
+    val v1AccountFindService = dependencies.v1AccountFindService
+    val v1TransactionFindService = dependencies.v1TransactionFindService
 
     given("외화 계좌 수기 입금 거래 요청되어") {
         var accountInvalid = v1AccountFixture.make()
@@ -108,7 +108,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 잔액 증액 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
-                val accountEntity = v1AccountRepository.findByPredicate(V1AccountPredicate(id = account.id))!!
+                val accountEntity = v1AccountFindService.findByPredicate(V1AccountPredicate(id = account.id))!!
                 accountEntity.balance shouldBe BigDecimal(100)
                 accountEntity.averageExchangeRate.toDouble() shouldBe 1300.00
                 accountEntity.depositAmount shouldBe BigDecimal(100)
@@ -118,7 +118,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
                 val acquirerPredicate = V1AcquirerPredicate(transaction.baseAcquirer.id, transaction.baseAcquirer.type, transaction.baseAcquirer.name)
                 val fromAcquirerPredicate = V1AcquirerPredicate(transaction.targetAcquirer?.id, transaction.targetAcquirer?.type, transaction.targetAcquirer?.name)
                 val predicate = V1TransactionPredicate(baseAcquirer = acquirerPredicate, targetAcquirer = fromAcquirerPredicate)
-                val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
+                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id

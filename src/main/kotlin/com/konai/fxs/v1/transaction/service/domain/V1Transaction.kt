@@ -122,4 +122,16 @@ data class V1Transaction(
         )
     }
 
+    fun toReversed(): V1Transaction {
+        return this.copy(
+            id = null,
+            baseAcquirer = targetAcquirer ?: baseAcquirer,
+            targetAcquirer = baseAcquirer,
+            type = type.reverseType(),
+            beforeBalance = BigDecimal.ZERO,
+            afterBalance = BigDecimal.ZERO,
+            status = CREATED
+        )
+    }
+
 }

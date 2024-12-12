@@ -3,7 +3,6 @@ package com.konai.fxs.testsupport
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.common.enumerate.AccountStatus
-import com.konai.fxs.testsupport.TestDependencies.fakeV1AccountRepository
 import com.konai.fxs.v1.account.service.domain.V1Account
 import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import org.springframework.http.MediaType
@@ -15,6 +14,7 @@ import java.math.BigDecimal
 object TestCommonFunctions {
 
     private val objectMapper by lazy { jacksonObjectMapper().registerModule(kotlinModule()) }
+    private val v1AccountSaveService by lazy { TestDependencies.v1AccountSaveService }
 
     fun saveAccount(
         account: V1Account,
@@ -27,7 +27,7 @@ object TestCommonFunctions {
             averageExchangeRate = averageExchangeRate,
             status = status
         )
-        return fakeV1AccountRepository.save(account.update(predicate))
+        return v1AccountSaveService.save(account.update(predicate))
     }
 
     fun MockMvc.postProc(url: String, request: Any): ResultActionsDsl {

@@ -1,6 +1,7 @@
 package com.konai.fxs.v1.transaction.service
 
 import com.konai.fxs.common.enumerate.TransactionChannel
+import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.v1.sequence.service.V1SequenceGeneratorService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import org.springframework.stereotype.Service
@@ -44,6 +45,13 @@ class V1AccountTransactionServiceImpl(
     }
 
     override fun reverse(transaction: V1Transaction): V1Transaction {
-        return transaction
+        return transaction.toReversed()
+            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
+            .let {
+                when (it.type) {
+                    TransactionType.DEPOSIT -> manualDeposit(it)
+                    TransactionType.WITHDRAWAL -> manualWithdrawal(it)
+                }
+            }
     }
 }

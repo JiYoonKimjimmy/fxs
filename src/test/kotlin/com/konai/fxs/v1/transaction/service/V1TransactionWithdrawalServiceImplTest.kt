@@ -33,8 +33,8 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
     val v1TransactionCacheService = dependencies.v1TransactionCacheService
     val v1SequenceGeneratorService = dependencies.v1SequenceGeneratorService
 
-    val v1AccountRepository = dependencies.fakeV1AccountRepository
-    val v1TransactionRepository = dependencies.fakeV1TransactionRepository
+    val v1AccountFindService = dependencies.v1AccountFindService
+    val v1TransactionFindService = dependencies.v1TransactionFindService
 
     val v1AccountFixture = dependencies.v1AccountFixture
     val v1TransactionFixture = dependencies.v1TransactionFixture
@@ -80,13 +80,13 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 잔액 감액 변경 정상 확인한다") {
-                val accountEntity = v1AccountRepository.findByPredicate(V1AccountPredicate(id = account.id))!!
+                val accountEntity = v1AccountFindService.findByPredicate(V1AccountPredicate(id = account.id))!!
                 accountEntity.balance shouldBe BigDecimal(0)
             }
 
             then("외화 계좌 수기 출금 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
-                val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
+                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id
@@ -142,7 +142,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("외화 계좌 출금 대기 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
-                val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
+                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id
@@ -220,7 +220,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("외화 계좌 출금 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
-                val transactionEntity = v1TransactionRepository.findByPredicate(predicate)
+                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
 
                 transactionEntity!! shouldNotBe null
                 transactionEntity.id shouldBe result.id
@@ -283,18 +283,18 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 잔액 변경 정상 확인한다") {
-                val entity = v1AccountRepository.findByPredicate(V1AccountPredicate(account.id))!!
+                val entity = v1AccountFindService.findByPredicate(V1AccountPredicate(account.id))!!
                 entity.balance shouldBe BigDecimal(1000)
             }
 
             then("출금 완료 거래 'CANCELED' 상태 변경 정상 확인한다") {
-                val entity = v1TransactionRepository.findByPredicate(V1TransactionPredicate(trReferenceId = orgTrReferenceId))!!
+                val entity = v1TransactionFindService.findByPredicate(V1TransactionPredicate(trReferenceId = orgTrReferenceId))!!
                 entity.status shouldBe CANCELED
                 entity.cancelDate shouldNotBe null
             }
 
             then("출금 취소 거래 내역 생성 정상 확인한다") {
-                val entity = v1TransactionRepository.findByPredicate(V1TransactionPredicate(trReferenceId = trReferenceId))!!
+                val entity = v1TransactionFindService.findByPredicate(V1TransactionPredicate(trReferenceId = trReferenceId))!!
                 entity.status shouldBe COMPLETED
                 entity.orgTrReferenceId shouldBe orgTrReferenceId
             }

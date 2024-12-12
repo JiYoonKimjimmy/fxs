@@ -47,24 +47,24 @@ object TestDependencies {
     val v1TransactionMapper = V1TransactionMapper()
 
     // repository
-    val fakeV1AccountRepository = FakeV1AccountRepositoryImpl(v1AccountMapper)
-    val fakeV1TransactionRepository = FakeV1TransactionRepositoryImpl(v1TransactionMapper)
+    private val fakeV1AccountRepository = FakeV1AccountRepositoryImpl(v1AccountMapper)
+    private val fakeV1TransactionRepository = FakeV1TransactionRepositoryImpl(v1TransactionMapper)
     val fakeV1SequenceGeneratorRepository = FakeV1SequenceGeneratorRepositoryImpl(v1SequenceGeneratorMapper)
     val v1TransactionCacheRepository = V1TransactionCacheRepositoryImpl(numberRedisTemplate)
 
     // service
     val v1TransactionCacheService = V1TransactionCacheServiceImpl(v1TransactionCacheRepository)
 
-    private val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
-    private val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
+    val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
+    val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
     val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountSaveService, v1AccountFindService)
     val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService, v1TransactionCacheService)
 
     val v1SequenceGeneratorService = V1SequenceGeneratorServiceImpl(fakeV1SequenceGeneratorRepository, fakeDistributedLockManager)
 
     private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, fakeApplicationEventPublisher)
-    private val v1TransactionFindService = V1TransactionFindServiceImpl(fakeV1TransactionRepository)
     private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository, fakeRetryableManager)
+    val v1TransactionFindService = V1TransactionFindServiceImpl(fakeV1TransactionRepository)
     val v1TransactionDepositService = V1TransactionDepositServiceImpl(
         v1AccountValidationService,
         v1AccountSaveService,
@@ -79,7 +79,7 @@ object TestDependencies {
         v1TransactionEventPublisher,
         fakeDistributedLockManager
     )
-    private val v1AccountTransactionService = V1AccountTransactionServiceImpl(
+    val v1AccountTransactionService = V1AccountTransactionServiceImpl(
         v1TransactionDepositService,
         v1TransactionWithdrawalService,
         v1SequenceGeneratorService

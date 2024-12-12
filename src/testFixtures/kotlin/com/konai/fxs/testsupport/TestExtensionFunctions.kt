@@ -4,6 +4,8 @@ import com.konai.fxs.common.enumerate.AcquirerType
 import com.konai.fxs.v1.account.controller.model.V1AcquirerModel
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
+import com.konai.fxs.v1.account.service.domain.V1AccountPredicate.V1AcquirerPredicate
 import com.navercorp.fixturemonkey.FixtureMonkey
 import com.navercorp.fixturemonkey.FixtureMonkeyBuilder
 import com.navercorp.fixturemonkey.jackson.plugin.JacksonPlugin
@@ -38,11 +40,11 @@ object TestExtensionFunctions {
     )
 
     fun V1Acquirer.toModel(): V1AcquirerModel {
-        return V1AcquirerModel(
-            acquirerId = this.id,
-            acquirerType = this.type,
-            acquirerName = this.name
-        )
+        return V1AcquirerModel(acquirerId = this.id, acquirerType = this.type, acquirerName = this.name)
+    }
+
+    fun V1Acquirer.toPredicate(): V1AcquirerPredicate {
+        return V1AcquirerPredicate(id = this.id, type = this.type, name = this.name)
     }
 
 }

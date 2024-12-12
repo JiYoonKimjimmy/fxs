@@ -81,16 +81,17 @@ class V1TransactionFixture {
 
     fun manualWithdrawalTransaction(
         baseAcquirer: V1Acquirer,
-        fromAcquirer: V1Acquirer? = null,
+        targetAcquirer: V1Acquirer? = null,
+        purpose: TransactionPurpose = TransactionPurpose.WITHDRAWAL,
         amount: BigDecimal,
         exchangeRate: BigDecimal
     ): V1Transaction {
         return make(
             channel = TransactionChannel.PORTAL,
             baseAcquirer = baseAcquirer,
-            targetAcquirer = fromAcquirer,
+            targetAcquirer = targetAcquirer,
             type = TransactionType.WITHDRAWAL,
-            purpose = TransactionPurpose.WITHDRAWAL,
+            purpose = purpose,
             amount = amount,
             exchangeRate = exchangeRate
         )
