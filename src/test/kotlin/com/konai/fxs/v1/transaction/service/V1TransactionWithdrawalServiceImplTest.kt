@@ -80,25 +80,27 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 잔액 감액 변경 정상 확인한다") {
-                val accountEntity = v1AccountFindService.findByPredicate(V1AccountPredicate(id = account.id))!!
-                accountEntity.balance shouldBe BigDecimal(0)
+                val saved = v1AccountFindService.findByPredicate(V1AccountPredicate(id = account.id))!!
+                saved.balance shouldBe BigDecimal(0)
             }
 
             then("외화 계좌 수기 출금 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
-                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
+                val saved = v1TransactionFindService.findByPredicate(predicate)
 
-                transactionEntity!! shouldNotBe null
-                transactionEntity.id shouldBe result.id
-                transactionEntity.channel shouldBe TransactionChannel.PORTAL
-                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
-                transactionEntity.type shouldBe TransactionType.WITHDRAWAL
-                transactionEntity.purpose shouldBe TransactionPurpose.WITHDRAWAL
-                transactionEntity.currency shouldBe Currency.USD
-                transactionEntity.amount shouldBe BigDecimal(100)
-                transactionEntity.exchangeRate shouldBe BigDecimal(1000)
-                transactionEntity.transferDate shouldBe transaction.transferDate
-                transactionEntity.status shouldBe COMPLETED
+                saved!! shouldNotBe null
+                saved.id shouldBe result.id
+                saved.channel shouldBe TransactionChannel.PORTAL
+                saved.baseAcquirer.id shouldBe account.acquirer.id
+                saved.type shouldBe TransactionType.WITHDRAWAL
+                saved.purpose shouldBe TransactionPurpose.WITHDRAWAL
+                saved.currency shouldBe Currency.USD
+                saved.amount shouldBe BigDecimal(100)
+                saved.beforeBalance shouldBe BigDecimal(100)
+                saved.afterBalance shouldBe BigDecimal(0)
+                saved.exchangeRate shouldBe BigDecimal(1000)
+                saved.transferDate shouldBe transaction.transferDate
+                saved.status shouldBe COMPLETED
             }
         }
     }
@@ -142,19 +144,21 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("외화 계좌 출금 대기 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
-                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
+                val saved = v1TransactionFindService.findByPredicate(predicate)
 
-                transactionEntity!! shouldNotBe null
-                transactionEntity.id shouldBe result.id
-                transactionEntity.channel shouldBe ORS
-                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
-                transactionEntity.type shouldBe TransactionType.WITHDRAWAL
-                transactionEntity.purpose shouldBe TransactionPurpose.REMITTANCE
-                transactionEntity.currency shouldBe Currency.USD
-                transactionEntity.amount shouldBe BigDecimal(100)
-                transactionEntity.exchangeRate shouldBe BigDecimal(1000)
-                transactionEntity.transferDate shouldBe transaction.transferDate
-                transactionEntity.status shouldBe TransactionStatus.PENDING
+                saved!! shouldNotBe null
+                saved.id shouldBe result.id
+                saved.channel shouldBe ORS
+                saved.baseAcquirer.id shouldBe account.acquirer.id
+                saved.type shouldBe TransactionType.WITHDRAWAL
+                saved.purpose shouldBe TransactionPurpose.REMITTANCE
+                saved.currency shouldBe Currency.USD
+                saved.amount shouldBe BigDecimal(100)
+                saved.beforeBalance shouldBe BigDecimal(0)
+                saved.afterBalance shouldBe BigDecimal(0)
+                saved.exchangeRate shouldBe BigDecimal(1000)
+                saved.transferDate shouldBe transaction.transferDate
+                saved.status shouldBe TransactionStatus.PENDING
             }
 
             then("'출금 대기 거래 Cache 정보' 저장 정상 확인한다") {
@@ -220,19 +224,21 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
             then("외화 계좌 출금 거래 내역 생성 정상 확인한다") {
                 val predicate = V1TransactionPredicate(id = result.id)
-                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
+                val saved = v1TransactionFindService.findByPredicate(predicate)
 
-                transactionEntity!! shouldNotBe null
-                transactionEntity.id shouldBe result.id
-                transactionEntity.channel shouldBe ORS
-                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
-                transactionEntity.type shouldBe TransactionType.WITHDRAWAL
-                transactionEntity.purpose shouldBe TransactionPurpose.REMITTANCE
-                transactionEntity.currency shouldBe Currency.USD
-                transactionEntity.amount shouldBe BigDecimal(100)
-                transactionEntity.exchangeRate shouldBe BigDecimal(1000)
-                transactionEntity.transferDate shouldBe transaction.transferDate
-                transactionEntity.status shouldBe COMPLETED
+                saved!! shouldNotBe null
+                saved.id shouldBe result.id
+                saved.channel shouldBe ORS
+                saved.baseAcquirer.id shouldBe account.acquirer.id
+                saved.type shouldBe TransactionType.WITHDRAWAL
+                saved.purpose shouldBe TransactionPurpose.REMITTANCE
+                saved.currency shouldBe Currency.USD
+                saved.amount shouldBe BigDecimal(100)
+                saved.beforeBalance shouldBe BigDecimal(1000)
+                saved.afterBalance shouldBe BigDecimal(900)
+                saved.exchangeRate shouldBe BigDecimal(1000)
+                saved.transferDate shouldBe transaction.transferDate
+                saved.status shouldBe COMPLETED
             }
 
             then("'출금 거래 Cache' 삭제 정상 확인한다") {
@@ -283,20 +289,24 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 잔액 변경 정상 확인한다") {
-                val entity = v1AccountFindService.findByPredicate(V1AccountPredicate(account.id))!!
-                entity.balance shouldBe BigDecimal(1000)
+                val saved = v1AccountFindService.findByPredicate(V1AccountPredicate(account.id))!!
+                saved.balance shouldBe BigDecimal(1000)
             }
 
             then("출금 완료 거래 'CANCELED' 상태 변경 정상 확인한다") {
-                val entity = v1TransactionFindService.findByPredicate(V1TransactionPredicate(trReferenceId = orgTrReferenceId))!!
-                entity.status shouldBe CANCELED
-                entity.cancelDate shouldNotBe null
+                val saved = v1TransactionFindService.findByPredicate(V1TransactionPredicate(trReferenceId = orgTrReferenceId))!!
+                saved.status shouldBe CANCELED
+                saved.beforeBalance shouldBe BigDecimal(1000)
+                saved.afterBalance shouldBe BigDecimal(900)
+                saved.cancelDate shouldNotBe null
             }
 
             then("출금 취소 거래 내역 생성 정상 확인한다") {
-                val entity = v1TransactionFindService.findByPredicate(V1TransactionPredicate(trReferenceId = trReferenceId))!!
-                entity.status shouldBe COMPLETED
-                entity.orgTrReferenceId shouldBe orgTrReferenceId
+                val saved = v1TransactionFindService.findByPredicate(V1TransactionPredicate(trReferenceId = trReferenceId))!!
+                saved.status shouldBe COMPLETED
+                saved.beforeBalance shouldBe BigDecimal(900)
+                saved.afterBalance shouldBe BigDecimal(1000)
+                saved.orgTrReferenceId shouldBe orgTrReferenceId
             }
         }
     }

@@ -6,6 +6,7 @@ import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.common.enumerate.AcquirerType.MTO_FUNDING
 import com.konai.fxs.common.enumerate.TransactionPurpose.REMITTANCE
 import com.konai.fxs.common.enumerate.TransactionStatus.*
+import com.konai.fxs.common.enumerate.TransactionType.DEPOSIT
 import com.konai.fxs.common.enumerate.TransactionType.WITHDRAWAL
 import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.infra.error.ErrorCode
@@ -25,8 +26,8 @@ data class V1Transaction(
     val purpose: TransactionPurpose,
     val currency: String,
     val amount: BigDecimal,
-    val beforeBalance: BigDecimal,
-    val afterBalance: BigDecimal,
+    var beforeBalance: BigDecimal,
+    var afterBalance: BigDecimal,
     val exchangeRate: BigDecimal,
     val transferDate: String,
     var completeDate: LocalDateTime?,
@@ -65,6 +66,16 @@ data class V1Transaction(
 
     fun applyTransactionId(block: () -> Long): V1Transaction {
         return apply { id = block() }
+    }
+
+    fun changeBalances(isCancel: Boolean = false): V1Transaction {
+        return apply {
+            beforeBalance = account.balance
+            afterBalance = when (type) {
+                DEPOSIT -> if (isCancel.not()) account.balance + amount else account.balance - amount
+                WITHDRAWAL -> if (isCancel.not()) account.balance - amount else account.balance + amount
+            }
+        }
     }
 
     fun changeStatusToPending(): V1Transaction {

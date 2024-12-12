@@ -108,30 +108,32 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             }
 
             then("외화 계좌 잔액 증액 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
-                val accountEntity = v1AccountFindService.findByPredicate(V1AccountPredicate(id = account.id))!!
-                accountEntity.balance shouldBe BigDecimal(100)
-                accountEntity.averageExchangeRate.toDouble() shouldBe 1300.00
-                accountEntity.depositAmount shouldBe BigDecimal(100)
+                val saved = v1AccountFindService.findByPredicate(V1AccountPredicate(id = account.id))!!
+                saved.balance shouldBe BigDecimal(100)
+                saved.averageExchangeRate.toDouble() shouldBe 1300.00
+                saved.depositAmount shouldBe BigDecimal(100)
             }
 
             then("외화 계좌 수기 입금 거래 내역 생성 정상 확인한다") {
                 val acquirerPredicate = V1AcquirerPredicate(transaction.baseAcquirer.id, transaction.baseAcquirer.type, transaction.baseAcquirer.name)
                 val fromAcquirerPredicate = V1AcquirerPredicate(transaction.targetAcquirer?.id, transaction.targetAcquirer?.type, transaction.targetAcquirer?.name)
                 val predicate = V1TransactionPredicate(baseAcquirer = acquirerPredicate, targetAcquirer = fromAcquirerPredicate)
-                val transactionEntity = v1TransactionFindService.findByPredicate(predicate)
+                val saved = v1TransactionFindService.findByPredicate(predicate)
 
-                transactionEntity!! shouldNotBe null
-                transactionEntity.id shouldBe result.id
-                transactionEntity.channel shouldBe TransactionChannel.PORTAL
-                transactionEntity.baseAcquirer.id shouldBe account.acquirer.id
-                transactionEntity.targetAcquirer?.id shouldBe fromAccount.acquirer.id
-                transactionEntity.type shouldBe TransactionType.DEPOSIT
-                transactionEntity.purpose shouldBe TransactionPurpose.DEPOSIT
-                transactionEntity.currency shouldBe Currency.USD
-                transactionEntity.amount shouldBe BigDecimal(100)
-                transactionEntity.exchangeRate shouldBe BigDecimal(1300)
-                transactionEntity.transferDate shouldBe transaction.transferDate
-                transactionEntity.status shouldBe COMPLETED
+                saved!! shouldNotBe null
+                saved.id shouldBe result.id
+                saved.channel shouldBe TransactionChannel.PORTAL
+                saved.baseAcquirer.id shouldBe account.acquirer.id
+                saved.targetAcquirer?.id shouldBe fromAccount.acquirer.id
+                saved.type shouldBe TransactionType.DEPOSIT
+                saved.purpose shouldBe TransactionPurpose.DEPOSIT
+                saved.currency shouldBe Currency.USD
+                saved.amount shouldBe BigDecimal(100)
+                saved.beforeBalance shouldBe BigDecimal.ZERO
+                saved.afterBalance shouldBe BigDecimal(100)
+                saved.exchangeRate shouldBe BigDecimal(1300)
+                saved.transferDate shouldBe transaction.transferDate
+                saved.status shouldBe COMPLETED
             }
         }
     }

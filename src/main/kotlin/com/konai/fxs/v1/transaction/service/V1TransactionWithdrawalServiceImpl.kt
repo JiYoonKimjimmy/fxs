@@ -38,6 +38,7 @@ class V1TransactionWithdrawalServiceImpl(
          */
         return transaction
             .checkAccountLimit(v1AccountValidationService::checkLimit)
+            .changeBalances()
             .withdrawalTransaction()
             .changeStatusToCompleted()
             .publishSaveTransactionEvent()
@@ -96,6 +97,7 @@ class V1TransactionWithdrawalServiceImpl(
             .withdrawalCancelTransaction()
             .changeStatusToCanceled()
             .publishSaveTransactionEvent()
+            .changeBalances(true)
             .generateCanceledTransaction(trReferenceId, canceledTransactionId)
     }
 

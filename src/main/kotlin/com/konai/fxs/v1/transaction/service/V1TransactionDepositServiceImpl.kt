@@ -26,6 +26,7 @@ class V1TransactionDepositServiceImpl(
          */
         return transaction
             .checkAccountStatus(v1AccountValidationService::checkStatus)
+            .changeBalances()
             .depositTransaction()
             .changeStatusToCompleted()
             .publishSaveTransactionEvent()

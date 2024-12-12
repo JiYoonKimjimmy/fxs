@@ -14,20 +14,17 @@ class V1AccountTransactionServiceImpl(
 ) : V1AccountTransactionService {
 
     override fun manualDeposit(transaction: V1Transaction): V1Transaction {
-        return transaction
-            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
+        return transaction.applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .let(v1TransactionDepositService::deposit)
     }
 
     override fun manualWithdrawal(transaction: V1Transaction): V1Transaction {
-        return transaction
-            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
+        return transaction.applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .let(v1TransactionWithdrawalService::withdrawal)
     }
 
     override fun withdrawalPending(transaction: V1Transaction): V1Transaction {
-        return transaction
-            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
+        return transaction.applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .let(v1TransactionWithdrawalService::pending)
     }
 
@@ -45,8 +42,7 @@ class V1AccountTransactionServiceImpl(
     }
 
     override fun reverse(transaction: V1Transaction): V1Transaction {
-        return transaction.toReversed()
-            .applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
+        return transaction.toReversed().applyTransactionId(v1SequenceGeneratorService::nextTransactionSequence)
             .let {
                 when (it.type) {
                     TransactionType.DEPOSIT -> manualDeposit(it)
