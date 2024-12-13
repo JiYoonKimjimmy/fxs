@@ -34,7 +34,7 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
     val v1AccountFindService = dependencies.v1AccountFindService
     val v1TransactionFindService = dependencies.v1TransactionFindService
 
-    given("외화 계좌 수기 입금 거래 요청되어") {
+    given("'외화 매입처 계좌 > 외화 예치금 계좌' 수기 입금 거래 요청되어") {
         var accountInvalid = v1AccountFixture.make()
         val fromAccountInvalid = v1AccountFixture.make()
         val transactionInvalid = v1TransactionFixture.manualDepositTransaction(
@@ -99,22 +99,22 @@ class V1TransactionDepositServiceImplTest : CustomBehaviorSpec({
             exchangeRate = BigDecimal(1300.0)
         )
         
-        `when`("정상 'account' 수기 입금 거래인 경우") {
+        `when`("수기 입금 거래 요청 성공인 경우") {
             val result = v1TransactionDepositService.deposit(transaction)
 
-            then("수기 입금 거래 상태 'COMPLETED' 정상 확인한다") {
+            then("수기 입금 거래 결과 상태 'COMPLETED' 정상 확인한다") {
                 result.id!! shouldBeGreaterThanOrEqual 1L
                 result.status shouldBe COMPLETED
             }
 
-            then("외화 계좌 잔액 증액 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
+            then("'외화 예치금 계좌' 잔액 증액 & 평균 환율 & 매입 수량 변경 정상 확인한다") {
                 val saved = v1AccountFindService.findByPredicate(V1AccountPredicate(id = account.id))!!
                 saved.balance shouldBe BigDecimal(100)
                 saved.averageExchangeRate.toDouble() shouldBe 1300.00
                 saved.depositAmount shouldBe BigDecimal(100)
             }
 
-            then("외화 계좌 수기 입금 거래 내역 생성 정상 확인한다") {
+            then("수기 입금 거래 내역 정보 생성 정상 확인한다") {
                 val acquirerPredicate = V1AcquirerPredicate(transaction.baseAcquirer.id, transaction.baseAcquirer.type, transaction.baseAcquirer.name)
                 val fromAcquirerPredicate = V1AcquirerPredicate(transaction.targetAcquirer?.id, transaction.targetAcquirer?.type, transaction.targetAcquirer?.name)
                 val predicate = V1TransactionPredicate(baseAcquirer = acquirerPredicate, targetAcquirer = fromAcquirerPredicate)
