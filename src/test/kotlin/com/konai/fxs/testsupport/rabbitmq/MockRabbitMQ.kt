@@ -60,22 +60,36 @@ object MockRabbitMQ {
         V1_SAVE_TRANSACTION_EXCHANGE(
             exchangeName = "fxs.v1.save.transaction.exchange",
             queueName = "fxs.v1.save.transaction.queue",
-            routingKey = "fxs.v1.save.transaction.routingKey",
+            routingKey = "fxs.v1.save.transaction.routing-key",
             bindingFunction = Exchange::setupDirectExchange
         ),
         V1_EXPIRE_TRANSACTION_DL_EXCHANGE(
             exchangeName = "fxs.v1.expire.transaction.dl.exchange",
             queueName = "fxs.v1.expire.transaction.dl.queue",
-            routingKey = "fxs.v1.expire.transaction.dl.routingKey",
+            routingKey = "fxs.v1.expire.transaction.dl.routing-key",
             Exchange::setupDirectExchange
         ),
         V1_EXPIRE_TRANSACTION_EXCHANGE(
             exchangeName = "fxs.v1.expire.transaction.exchange",
             queueName = "fxs.v1.expire.transaction.queue",
-            routingKey = "fxs.v1.expire.transaction.routingKey",
+            routingKey = "fxs.v1.expire.transaction.routing-key",
             bindingFunction = Exchange::setupDeadLetterExchange,
             dlx = V1_EXPIRE_TRANSACTION_DL_EXCHANGE
-        );
+        ),
+        V1_EXCHANGE_RATE_TIMER_DL_EXCHANGE(
+            exchangeName = "fxs.v1.exchange.rate.timer.dl.exchange",
+            queueName = "fxs.v1.exchange.rate.timer.dl.queue",
+            routingKey = "fxs.v1.exchange.rate.timer.dl.routing-key",
+            Exchange::setupDirectExchange
+        ),
+        V1_EXCHANGE_RATE_TIMER_EXCHANGE(
+            exchangeName = "fxs.v1.exchange.rate.timer.exchange",
+            queueName = "fxs.v1.exchange.rate.timer.queue",
+            routingKey = "fxs.v1.exchange.rate.timer.routing-key",
+            bindingFunction = Exchange::setupDeadLetterExchange,
+            dlx = V1_EXCHANGE_RATE_TIMER_DL_EXCHANGE
+        )
+        ;
 
         fun binding(rabbitAdmin: RabbitAdmin) {
             bindingFunction.invoke(this, rabbitAdmin)
