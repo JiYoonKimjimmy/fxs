@@ -5,10 +5,8 @@ import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.annotation.CustomRestClientTest
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
-import org.springframework.context.annotation.Import
 
-@Import(ApplicationProperties::class)
-@AutoConfigureWireMock(port = 8888)
+@AutoConfigureWireMock(port = 8888, stubs = ["classpath:/mappings/koreaexim"])
 @CustomRestClientTest
 class KoreaeximHttpServiceImplTest(
     private val koreaeximHttpServiceProxy: KoreaeximHttpServiceProxy,
