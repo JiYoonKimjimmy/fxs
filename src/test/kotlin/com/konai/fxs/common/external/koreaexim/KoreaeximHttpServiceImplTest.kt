@@ -3,7 +3,7 @@ package com.konai.fxs.common.external.koreaexim
 import com.konai.fxs.infra.config.ApplicationProperties
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.annotation.CustomRestClientTest
-import io.kotest.matchers.collections.shouldNotBeEmpty
+import io.kotest.matchers.shouldBe
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 
 @AutoConfigureWireMock(port = 8888, stubs = ["classpath:/mappings/koreaexim"])
@@ -20,10 +20,19 @@ class KoreaeximHttpServiceImplTest(
         val date = "20241217"
 
         // when
-        val result = koreaeximHttpServiceImpl.getExchangeRate(date)
+        val result = koreaeximHttpServiceImpl.getExchangeRate(date).first()
 
         // then
-        result.shouldNotBeEmpty()
+        result.curUnit shouldBe "USD"
+        result.ttb shouldBe "1,420.55"
+        result.tts shouldBe "1,449.24"
+        result.dealBasR shouldBe "1,434.9"
+        result.bkpr shouldBe "1,434"
+        result.yyEfeeR shouldBe "0"
+        result.tenDdEfeeR shouldBe "0"
+        result.kftcBkpr shouldBe "1,434"
+        result.kftcDealBasR shouldBe "1,434.9"
+        result.curNm shouldBe "미국 달러"
     }
 
 })

@@ -1,7 +1,13 @@
 {
+  "priority": 1,
   "request": {
     "method": "GET",
-    "urlPath": "/site/program/financial/exchangeJSON"
+    "urlPath": "/site/program/financial/exchangeJSON",
+    "queryParameters": {
+      "authkey": { "equalTo": "M6qkz3m4nxahvH47Ilu4Rx3k91yDdAxh" },
+      "data": { "equalTo": "AP01" },
+      "searchdate": { "equalTo": "20241217" }
+    }
   },
   "response": {
     "headers": {
