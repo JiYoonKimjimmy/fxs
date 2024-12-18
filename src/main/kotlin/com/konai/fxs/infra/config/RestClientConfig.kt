@@ -22,6 +22,7 @@ import java.net.http.HttpClient
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.Executors
+import javax.net.ssl.SSLContext
 
 @Configuration
 class RestClientConfig(
@@ -62,6 +63,7 @@ class RestClientConfig(
             .newBuilder()
             .connectTimeout(connectTimeout)
             .executor(Executors.newVirtualThreadPerTaskExecutor())
+            .sslContext(SSLContext.getDefault())
             .build()
     }
 

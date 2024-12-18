@@ -1,5 +1,6 @@
 package com.konai.fxs.testsupport
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.konai.fxs.common.enumerate.AccountStatus
@@ -13,7 +14,7 @@ import java.math.BigDecimal
 
 object TestCommonFunctions {
 
-    private val objectMapper by lazy { jacksonObjectMapper().registerModule(kotlinModule()) }
+    val objectMapper: ObjectMapper by lazy { jacksonObjectMapper().registerModule(kotlinModule()) }
     private val v1AccountSaveService by lazy { TestDependencies.v1AccountSaveService }
 
     fun saveAccount(

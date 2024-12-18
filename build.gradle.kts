@@ -99,6 +99,8 @@ dependencies {
     testImplementation("com.github.codemonstur:embedded-redis:1.4.3")
     // rabbitmq-mock
     testImplementation("com.github.fridujo:rabbitmq-mock:1.2.0")
+    // wire-mock
+    testImplementation("org.springframework.cloud:spring-cloud-contract-wiremock")
 
     // fixture-monkey
     val fixtureMonkeyVersion = "1.1.2"

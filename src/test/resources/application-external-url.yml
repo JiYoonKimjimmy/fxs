@@ -4,4 +4,5 @@ external-url:
     host: http://118.33.122.28
     port: 15519
   koreaexim:
-    host: https://www.koreaexim.go.kr
+    host: http://localhost
+    port: 8888
