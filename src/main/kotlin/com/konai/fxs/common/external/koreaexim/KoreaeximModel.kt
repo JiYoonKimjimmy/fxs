@@ -1,7 +1,7 @@
 package com.konai.fxs.common.external.koreaexim
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.KoreaeximExchangeRate
+import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate
 
 data class KoreaeximGetExchangeRateResponse(
     @field:JsonProperty("result")          val result: Int,          // 조회 결과 (1: 성공, 2: DATA코드 오류, 3: 인증코드 오류, 4: 일일제한횟수 마감)
@@ -16,8 +16,8 @@ data class KoreaeximGetExchangeRateResponse(
     @field:JsonProperty("kftc_deal_bas_r") val kftcDealBasR: String, // 서울외국환중개매매기준율
     @field:JsonProperty("kftc_bkpr")       val kftcBkpr: String      // 서울외국환중개 장부가격
 ) {
-    fun toDomain(): KoreaeximExchangeRate {
-        return KoreaeximExchangeRate(
+    fun toDomain(): V1KoreaeximExchangeRate {
+        return V1KoreaeximExchangeRate(
             result = result,
             curUnit = curUnit,
             curNm = curNm,

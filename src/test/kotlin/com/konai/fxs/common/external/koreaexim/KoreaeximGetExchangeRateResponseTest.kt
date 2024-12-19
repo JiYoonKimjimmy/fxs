@@ -2,7 +2,7 @@ package com.konai.fxs.common.external.koreaexim
 
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.TestCommonFunctions
-import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.KoreaeximExchangeRate
+import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate
 import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -13,7 +13,7 @@ class KoreaeximGetExchangeRateResponseTest : CustomStringSpec({
 
     "한국수출입은행 환율 조회 정보 JSON 직렬화 정상 확인한다" {
         // given
-        val data = KoreaeximExchangeRate(
+        val data = V1KoreaeximExchangeRate(
             result = 1,
             curUnit = "USD",
             ttb = "1,357.38",
@@ -32,7 +32,7 @@ class KoreaeximGetExchangeRateResponseTest : CustomStringSpec({
 
         // then
         result shouldNotBe null
-        shouldNotThrowAny { objectMapper.readValue(result, KoreaeximExchangeRate::class.java) }
+        shouldNotThrowAny { objectMapper.readValue(result, V1KoreaeximExchangeRate::class.java) }
     }
 
     "한국수출입은행 환율 조회 정보 JSON 역직렬화 정상 확인한다" {
