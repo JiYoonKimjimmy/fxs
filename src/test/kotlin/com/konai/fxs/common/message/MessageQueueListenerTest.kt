@@ -2,7 +2,6 @@ package com.konai.fxs.common.message
 
 import com.konai.fxs.common.enumerate.TransactionStatus.EXPIRED
 import com.konai.fxs.common.enumerate.TransactionStatus.PENDING
-import com.konai.fxs.common.message.MessageQueueExchange.V1_EXCHANGE_RATE_TIMER_EXCHANGE
 import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_TRANSACTION_EXCHANGE
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
@@ -26,11 +25,6 @@ class MessageQueueListenerTest(
 ) : CustomBehaviorSpec({
 
     val v1TransactionFixture = dependencies.v1TransactionFixture
-
-    val eventuallyConfig = eventuallyConfig {
-        initialDelay = 1.seconds
-        duration = 5.seconds
-    }
 
     lateinit var transaction: V1Transaction
 
@@ -65,6 +59,7 @@ class MessageQueueListenerTest(
         `when`("성공인 경우") {
             defaultRabbitTemplate.convertAndSend(exchange, routingKey, message)
 
+            val eventuallyConfig = eventuallyConfig { initialDelay = 1.seconds; duration = 5.seconds }
             eventually(eventuallyConfig) {
                 then("외화 계좌 출금 거래 내역 만료 처리 결과 정상 확인한다") {
                     val result = v1TransactionRepository.findByPredicate(V1TransactionPredicate(id = transaction.id))
@@ -75,26 +70,6 @@ class MessageQueueListenerTest(
                 then("외화 계좌 출금 거래 대기 금액 감액 처리 결과 정상 확인한다") {
                     val result = v1TransactionCacheService.findWithdrawalTransactionPendingAmountCache(transaction.baseAcquirer)
                     result.toLong() shouldBe 0
-                }
-            }
-        }
-    }
-    
-    given("환율 정보 수집 Timer Message 수신하여") {
-        val exchange = V1_EXCHANGE_RATE_TIMER_EXCHANGE.exchangeName
-        val routingKey = V1_EXCHANGE_RATE_TIMER_EXCHANGE.routingKey
-        val message = V1CollectExchangeRateTimerMessage(index = 1, date = "20241217")
-        
-        `when`("성공인 경우") {
-            defaultRabbitTemplate.convertAndSend(exchange, routingKey, message)
-
-            eventually(eventuallyConfig) {
-                then("최근 환율 정보 Cache 변경 처리 결과 정상 확인한다") {
-
-                }
-
-                then("Koreaexim 환율 정보 DB 저장 결과 정상 확인한다") {
-
                 }
             }
         }
