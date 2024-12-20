@@ -14,6 +14,7 @@ class KoreaeximGetExchangeRateResponseTest : CustomStringSpec({
     "한국수출입은행 환율 조회 정보 JSON 직렬화 정상 확인한다" {
         // given
         val data = V1KoreaeximExchangeRate(
+            registerDate = "20241217",
             result = 1,
             curUnit = "USD",
             ttb = "1,357.38",

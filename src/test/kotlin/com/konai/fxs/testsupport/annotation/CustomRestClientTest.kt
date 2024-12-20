@@ -7,6 +7,11 @@ import com.konai.fxs.infra.config.RestClientConfig
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.context.annotation.Import
 
-@Import(value = [RestClientConfig::class, HttpServiceProxyConfig::class, ApplicationProperties::class, ExternalUrlProperties::class])
+@Import(value = [
+    RestClientConfig::class,
+    HttpServiceProxyConfig::class,
+    ApplicationProperties::class,
+    ExternalUrlProperties::class
+])
 @RestClientTest
 annotation class CustomRestClientTest

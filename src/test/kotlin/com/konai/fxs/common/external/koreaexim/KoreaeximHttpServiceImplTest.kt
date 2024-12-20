@@ -3,6 +3,7 @@ package com.konai.fxs.common.external.koreaexim
 import com.konai.fxs.infra.config.ApplicationProperties
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.annotation.CustomRestClientTest
+import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRateMapper
 import io.kotest.matchers.shouldBe
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 
@@ -13,7 +14,8 @@ class KoreaeximHttpServiceImplTest(
     private val applicationProperties: ApplicationProperties,
 ) : CustomStringSpec({
 
-    val koreaeximHttpServiceImpl = KoreaeximHttpServiceImpl(koreaeximHttpServiceProxy, applicationProperties)
+    val v1KoreaeximExchangeRateMapper = V1KoreaeximExchangeRateMapper()
+    val koreaeximHttpServiceImpl = KoreaeximHttpServiceImpl(v1KoreaeximExchangeRateMapper, koreaeximHttpServiceProxy, applicationProperties)
 
     "한국수출입은행 환율 정보 조회 API 요청하여 응답 정상 확인한다" {
         // given

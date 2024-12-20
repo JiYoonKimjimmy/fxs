@@ -1,6 +1,8 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.service.domain
 
-data class KoreaeximExchangeRate(
+data class V1KoreaeximExchangeRate(
+    val index: Int? = null,
+    val registerDate: String,
     val result: Int,
     val curUnit: String,
     val curNm: String,
