@@ -1,6 +1,6 @@
 package com.konai.fxs.v1.transaction.repository
 
-import com.konai.fxs.common.FakeSequenceBaseRepository
+import com.konai.fxs.testsupport.FakeSequenceBaseRepository
 import com.konai.fxs.common.ifNotNullEquals
 import com.konai.fxs.v1.transaction.repository.entity.V1TransactionEntity
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction

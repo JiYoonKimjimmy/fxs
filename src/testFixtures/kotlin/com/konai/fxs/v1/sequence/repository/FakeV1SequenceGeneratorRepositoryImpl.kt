@@ -1,7 +1,7 @@
 package com.konai.fxs.v1.sequence.repository
 
 import com.konai.fxs.common.DEFAULT_SEQUENCE_DATE
-import com.konai.fxs.common.FakeSequenceBaseRepository
+import com.konai.fxs.testsupport.FakeSequenceBaseRepository
 import com.konai.fxs.common.enumerate.SequenceType
 import com.konai.fxs.v1.sequence.repository.entity.V1SequenceGeneratorEntity
 import com.konai.fxs.v1.sequence.service.domain.V1SequenceGenerator

@@ -1,6 +1,6 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.repository
 
-import com.konai.fxs.common.FakeSequenceBaseRepository
+import com.konai.fxs.testsupport.FakeSequenceBaseRepository
 import com.konai.fxs.common.ifNotNullEquals
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.entity.V1KoreaeximExchangeRateEntity
 import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate

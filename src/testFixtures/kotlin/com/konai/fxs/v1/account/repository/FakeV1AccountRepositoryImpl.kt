@@ -1,6 +1,6 @@
 package com.konai.fxs.v1.account.repository
 
-import com.konai.fxs.common.FakeSequenceBaseRepository
+import com.konai.fxs.testsupport.FakeSequenceBaseRepository
 import com.konai.fxs.common.ifNotNullEquals
 import com.konai.fxs.common.model.BasePageable
 import com.konai.fxs.common.model.PageableRequest

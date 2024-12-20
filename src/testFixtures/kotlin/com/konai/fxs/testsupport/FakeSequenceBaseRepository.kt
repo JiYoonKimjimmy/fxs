@@ -1,8 +1,7 @@
-package com.konai.fxs.common
+package com.konai.fxs.testsupport
 
 import com.konai.fxs.common.entity.SequenceBaseEntity
 import com.konai.fxs.common.model.PageableRequest
-import com.konai.fxs.testsupport.TestExtensionFunctions
 
 open class FakeSequenceBaseRepository<T : SequenceBaseEntity> {
 
