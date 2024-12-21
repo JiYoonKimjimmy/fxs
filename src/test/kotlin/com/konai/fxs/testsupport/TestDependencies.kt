@@ -43,7 +43,7 @@ object TestDependencies {
 
     // ext-library
     val numberRedisTemplate = EmbeddedRedis.numberRedisTemplate
-    val koreaeximExchangeRateRedisTemplate = EmbeddedRedis.koreaeximExchangeRateRedisTemplate
+    private val koreaeximExchangeRateRedisTemplate = EmbeddedRedis.koreaeximExchangeRateRedisTemplate
     val rabbitTemplate = MockRabbitMQ.rabbitTemplate
     val messageQueuePublisher = MessageQueuePublisherImpl(rabbitTemplate)
 
@@ -69,7 +69,7 @@ object TestDependencies {
     val fakeV1SequenceGeneratorRepository = FakeV1SequenceGeneratorRepositoryImpl(v1SequenceGeneratorMapper)
     val v1TransactionCacheRepository = V1TransactionCacheRepositoryImpl(numberRedisTemplate)
     val fakeV1KoreaeximExchangeRateRepository = FakeV1KoreaeximExchangeRateRepositoryImpl(v1KoreaeximExchangeRateMapper)
-    private val v1KoreaeximExchangeRateCacheRepository = V1KoreaeximExchangeRateCacheRepositoryImpl(koreaeximExchangeRateRedisTemplate)
+    val v1KoreaeximExchangeRateCacheRepository = V1KoreaeximExchangeRateCacheRepositoryImpl(koreaeximExchangeRateRedisTemplate)
 
     // service
     val v1TransactionCacheService = V1TransactionCacheServiceImpl(v1TransactionCacheRepository)
@@ -111,7 +111,7 @@ object TestDependencies {
         messageQueuePublisher
     )
     private val koreaeximHttpService = KoreaeximHttpServiceImpl(v1KoreaeximExchangeRateMapper, fakeKoreaeximHttpServiceProxy, applicationProperties)
-    val v1KoreaeximExchangeRateCollectService = V1KoreaeximExchangeRateCollectServiceImpl(koreaeximHttpService, fakeV1KoreaeximExchangeRateRepository)
+    val v1KoreaeximExchangeRateCollectService = V1KoreaeximExchangeRateCollectServiceImpl(koreaeximHttpService, fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

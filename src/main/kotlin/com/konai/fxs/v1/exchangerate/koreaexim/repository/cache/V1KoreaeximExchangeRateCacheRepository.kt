@@ -6,6 +6,8 @@ interface V1KoreaeximExchangeRateCacheRepository {
 
     fun saveKoreaeximExchangeRateCache(exchangeRate: V1KoreaeximExchangeRate)
 
+    fun saveAllKoreaeximExchangeRateCache(exchangeRates: List<V1KoreaeximExchangeRate>)
+
     fun findKoreaeximExchangeRateCache(currency: String): V1KoreaeximExchangeRate?
 
 }

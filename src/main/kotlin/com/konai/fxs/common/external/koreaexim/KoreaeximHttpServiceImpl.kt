@@ -19,7 +19,7 @@ class KoreaeximHttpServiceImpl(
         maxAttempts = 3,
         backoff = Backoff(delay = 500, multiplier = 2.0)
     )
-    override fun getExchangeRate(searchDate: String): List<V1KoreaeximExchangeRate> {
+    override fun getExchangeRates(searchDate: String): List<V1KoreaeximExchangeRate> {
         return koreaeximHttpServiceProxy.getExchangeRate(
                 apiKey = applicationProperties.koreaeximApiKey,
                 apiType = applicationProperties.koreaeximApiType,

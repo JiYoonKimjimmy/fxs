@@ -19,6 +19,10 @@ class V1KoreaeximExchangeRateCacheRepositoryImpl(
         koreaeximExchangeRateRedisTemplate.opsForValue().set(key, exchangeRate)
     }
 
+    override fun saveAllKoreaeximExchangeRateCache(exchangeRates: List<V1KoreaeximExchangeRate>) {
+        exchangeRates.forEach { saveKoreaeximExchangeRateCache(it) }
+    }
+
     override fun findKoreaeximExchangeRateCache(currency: String): V1KoreaeximExchangeRate? {
         val key = KOREAEXIM_EXCHANGE_RATE_CACHE.getKey(currency)
         logger.info("findKoreaeximExchangeRateCache : [$key]")

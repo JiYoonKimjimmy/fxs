@@ -22,7 +22,7 @@ class KoreaeximHttpServiceImplTest(
         val date = "20241217"
 
         // when
-        val result = koreaeximHttpServiceImpl.getExchangeRate(date).first()
+        val result = koreaeximHttpServiceImpl.getExchangeRates(date).first()
 
         // then
         result.curUnit shouldBe "USD"

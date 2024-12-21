@@ -4,6 +4,6 @@ import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchang
 
 interface KoreaeximHttpService {
 
-    fun getExchangeRate(searchDate: String): List<V1KoreaeximExchangeRate>
+    fun getExchangeRates(searchDate: String): List<V1KoreaeximExchangeRate>
 
 }
