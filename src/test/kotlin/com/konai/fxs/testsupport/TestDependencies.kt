@@ -20,6 +20,7 @@ import com.konai.fxs.v1.account.service.V1AccountValidationServiceImpl
 import com.konai.fxs.v1.account.service.domain.V1AccountFixture
 import com.konai.fxs.v1.account.service.domain.V1AccountMapper
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.FakeV1KoreaeximExchangeRateRepositoryImpl
+import com.konai.fxs.v1.exchangerate.koreaexim.repository.cache.V1KoreaeximExchangeRateCacheRepositoryImpl
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.entity.V1KoreaeximExchangeRateEntityFixture
 import com.konai.fxs.v1.exchangerate.koreaexim.service.V1KoreaeximExchangeRateCollectServiceImpl
 import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRateFixture
@@ -42,6 +43,7 @@ object TestDependencies {
 
     // ext-library
     val numberRedisTemplate = EmbeddedRedis.numberRedisTemplate
+    val koreaeximExchangeRateRedisTemplate = EmbeddedRedis.koreaeximExchangeRateRedisTemplate
     val rabbitTemplate = MockRabbitMQ.rabbitTemplate
     val messageQueuePublisher = MessageQueuePublisherImpl(rabbitTemplate)
 
@@ -67,6 +69,7 @@ object TestDependencies {
     val fakeV1SequenceGeneratorRepository = FakeV1SequenceGeneratorRepositoryImpl(v1SequenceGeneratorMapper)
     val v1TransactionCacheRepository = V1TransactionCacheRepositoryImpl(numberRedisTemplate)
     val fakeV1KoreaeximExchangeRateRepository = FakeV1KoreaeximExchangeRateRepositoryImpl(v1KoreaeximExchangeRateMapper)
+    private val v1KoreaeximExchangeRateCacheRepository = V1KoreaeximExchangeRateCacheRepositoryImpl(koreaeximExchangeRateRedisTemplate)
 
     // service
     val v1TransactionCacheService = V1TransactionCacheServiceImpl(v1TransactionCacheRepository)

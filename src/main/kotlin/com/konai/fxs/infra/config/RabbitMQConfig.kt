@@ -1,7 +1,6 @@
 package com.konai.fxs.infra.config
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.konasl.commonlib.springweb.config.rabbitmq.RabbitMqCommonConfig
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
@@ -15,12 +14,14 @@ import org.springframework.context.annotation.Profile
 @Profile("!test")
 @Import(RabbitMqCommonConfig::class)
 @Configuration
-class RabbitMQConfig {
+class RabbitMQConfig(
+    private val objectMapper: ObjectMapper
+) {
 
     @Bean
     fun defaultRabbitTemplate(connectionFactory: ConnectionFactory): RabbitTemplate {
         return RabbitTemplate(connectionFactory).apply {
-            this.messageConverter = Jackson2JsonMessageConverter()
+            this.messageConverter = Jackson2JsonMessageConverter(objectMapper)
         }
     }
 
@@ -28,7 +29,7 @@ class RabbitMQConfig {
     fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): SimpleRabbitListenerContainerFactory {
         return SimpleRabbitListenerContainerFactory().apply {
             setConnectionFactory(connectionFactory)
-            setMessageConverter(Jackson2JsonMessageConverter(jacksonObjectMapper().registerModule(kotlinModule())))
+            setMessageConverter(Jackson2JsonMessageConverter(objectMapper))
         }
     }
 

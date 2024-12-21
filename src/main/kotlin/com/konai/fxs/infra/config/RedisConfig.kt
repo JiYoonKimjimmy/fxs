@@ -1,5 +1,7 @@
 package com.konai.fxs.infra.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate
 import io.lettuce.core.resource.DefaultClientResources
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties
@@ -11,22 +13,29 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 class RedisConfig(
-    private val redisProperties: RedisProperties
+    private val redisProperties: RedisProperties,
+    private val objectMapper: ObjectMapper
 ) {
 
     @Bean
     fun numberRedisTemplate(): RedisTemplate<String, Number> {
-        return configureRedisTemplate(RedisTemplate<String, Number>())
-    }
-
-    private fun <T> configureRedisTemplate(redisTemplate: RedisTemplate<String, T>): RedisTemplate<String, T> {
-        return redisTemplate.apply {
+        return RedisTemplate<String, Number>().apply {
             this.keySerializer = StringRedisSerializer()
             this.valueSerializer = GenericJackson2JsonRedisSerializer()
+            this.connectionFactory = redisConnectionFactory()
+        }
+    }
+
+    @Bean
+    fun koreaeximExchangeRateRedisTemplate(): RedisTemplate<String, V1KoreaeximExchangeRate> {
+        return RedisTemplate<String, V1KoreaeximExchangeRate>().apply {
+            this.keySerializer = StringRedisSerializer()
+            this.valueSerializer = Jackson2JsonRedisSerializer(objectMapper, V1KoreaeximExchangeRate::class.java)
             this.connectionFactory = redisConnectionFactory()
         }
     }

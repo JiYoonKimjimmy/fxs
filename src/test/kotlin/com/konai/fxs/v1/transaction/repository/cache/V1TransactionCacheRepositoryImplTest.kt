@@ -14,13 +14,13 @@ class V1TransactionCacheRepositoryImplTest(
         // given
         val key = "test-key"
         val value = 10000
-        numberRedisTemplate.opsForValue().set(key, value)
 
         // when
-        val result = numberRedisTemplate.opsForValue().get(key)
+        numberRedisTemplate.opsForValue().set(key, value)
 
         // then
-        result shouldBe value
+        val cache = numberRedisTemplate.opsForValue().get(key)
+        cache shouldBe value
     }
 
     "'numberRedisTemplate' 사용하여 Cache 저장하고, 'hasKey' 존재 유무 정상 확인한다" {

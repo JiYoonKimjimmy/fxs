@@ -1,10 +1,9 @@
 package com.konai.fxs.common.external.knotify
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.konai.fxs.testsupport.annotation.CustomRestClientTest
 import com.konai.fxs.testsupport.CustomStringSpec
+import com.konai.fxs.testsupport.TestCommonFunctions.objectMapper
+import com.konai.fxs.testsupport.annotation.CustomRestClientTest
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
 import com.konasl.commonlib.springweb.correlation.loggercontext.CorrelationLoggingField.CORRELATION_ID_LOG_FIELD
 import io.kotest.assertions.throwables.shouldThrow
@@ -49,7 +48,7 @@ class KnotifyHttpServiceImplTest(
         val exception = shouldThrow<HttpClientErrorException> { knotifyHttpService.sendSMS(request) }
 
         // then
-        val responseBody = jacksonObjectMapper().registerModule(kotlinModule()).readValue<Map<String, String>>(exception.responseBodyAsString)
+        val responseBody = objectMapper.readValue<Map<String, String>>(exception.responseBodyAsString)
         responseBody["reason"] shouldBe "29_0006_013"
         responseBody["message"] shouldBe "Sms Sending. Message Template Not Found. Message template not found."
 

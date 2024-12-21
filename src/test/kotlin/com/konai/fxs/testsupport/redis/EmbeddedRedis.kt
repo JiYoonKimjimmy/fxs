@@ -1,5 +1,7 @@
 package com.konai.fxs.testsupport.redis
 
+import com.konai.fxs.testsupport.TestCommonFunctions.objectMapper
+import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate
 import org.redisson.Redisson
 import org.redisson.api.RedissonClient
 import org.redisson.config.Config
@@ -8,6 +10,7 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import redis.embedded.RedisSentinel
 import redis.embedded.RedisServer
@@ -40,6 +43,7 @@ object EmbeddedRedis {
 
     val lettuceConnectionFactory: LettuceConnectionFactory by lazy { redisConnectionFactory() }
     val numberRedisTemplate: RedisTemplate<String, Number> by lazy { numberRedisTemplate() }
+    val koreaeximExchangeRateRedisTemplate: RedisTemplate<String, V1KoreaeximExchangeRate> by lazy { koreaeximExchangeRateRedisTemplate() }
     val redissonClient: RedissonClient by lazy { redissonClient() }
 
     fun embeddedRedisStart() {
@@ -68,15 +72,19 @@ object EmbeddedRedis {
     }
 
     private fun numberRedisTemplate(): RedisTemplate<String, Number> {
-        return configureRedisTemplate(RedisTemplate<String, Number>()).also { it.afterPropertiesSet() }
-    }
-
-    private fun <T> configureRedisTemplate(redisTemplate: RedisTemplate<String, T>): RedisTemplate<String, T> {
-        return redisTemplate.apply {
+        return RedisTemplate<String, Number>().apply {
             this.keySerializer = StringRedisSerializer()
             this.valueSerializer = GenericJackson2JsonRedisSerializer()
             this.connectionFactory = lettuceConnectionFactory
-        }
+        }.also { it.afterPropertiesSet() }
+    }
+
+    private fun koreaeximExchangeRateRedisTemplate(): RedisTemplate<String, V1KoreaeximExchangeRate> {
+        return RedisTemplate<String, V1KoreaeximExchangeRate>().apply {
+            this.keySerializer = StringRedisSerializer()
+            this.valueSerializer = Jackson2JsonRedisSerializer(objectMapper, V1KoreaeximExchangeRate::class.java)
+            this.connectionFactory = lettuceConnectionFactory
+        }.also { it.afterPropertiesSet() }
     }
 
     private fun redissonClient(): RedissonClient {
