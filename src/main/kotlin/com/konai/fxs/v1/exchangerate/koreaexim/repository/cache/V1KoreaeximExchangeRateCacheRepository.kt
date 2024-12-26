@@ -4,7 +4,7 @@ import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchang
 
 interface V1KoreaeximExchangeRateCacheRepository {
 
-    fun saveKoreaeximExchangeRateCache(exchangeRate: V1KoreaeximExchangeRate)
+    fun saveKoreaeximExchangeRateCache(exchangeRate: V1KoreaeximExchangeRate): V1KoreaeximExchangeRate
 
     fun saveAllKoreaeximExchangeRateCache(exchangeRates: List<V1KoreaeximExchangeRate>)
 

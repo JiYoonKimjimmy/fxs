@@ -13,10 +13,11 @@ class V1KoreaeximExchangeRateCacheRepositoryImpl(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun saveKoreaeximExchangeRateCache(exchangeRate: V1KoreaeximExchangeRate) {
+    override fun saveKoreaeximExchangeRateCache(exchangeRate: V1KoreaeximExchangeRate): V1KoreaeximExchangeRate {
         val key = KOREAEXIM_EXCHANGE_RATE_CACHE.getKey(exchangeRate.curUnit)
         logger.info("saveKoreaeximExchangeRateCache : [$key]")
         koreaeximExchangeRateRedisTemplate.opsForValue().set(key, exchangeRate)
+        return exchangeRate
     }
 
     override fun saveAllKoreaeximExchangeRateCache(exchangeRates: List<V1KoreaeximExchangeRate>) {

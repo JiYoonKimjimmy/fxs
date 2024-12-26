@@ -13,9 +13,10 @@ class V1KoreaeximExchangeRateFindServiceImpl(
     private val v1KoreaeximExchangeRateCacheRepository: V1KoreaeximExchangeRateCacheRepository,
 ) : V1KoreaeximExchangeRateFindService {
 
-    override fun findOne(currency: String, requestDate: String): V1KoreaeximExchangeRate {
+    override fun findLatestExchangeRate(currency: String, requestDate: String): V1KoreaeximExchangeRate {
         return v1KoreaeximExchangeRateCacheRepository.findKoreaeximExchangeRateCache(currency = currency)
             ?: v1KoreaeximExchangeRateRepository.findLatestKoreaeximExchangeRate(registerDate = requestDate, curUnit = currency)
+            ?.let { v1KoreaeximExchangeRateCacheRepository.saveKoreaeximExchangeRateCache(it) }
             ?: throw ResourceNotFoundException(ErrorCode.EXCHANGE_RATE_NOT_FOUND)
     }
 

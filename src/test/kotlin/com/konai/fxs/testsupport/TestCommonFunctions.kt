@@ -9,6 +9,7 @@ import com.konai.fxs.v1.account.service.domain.V1AccountPredicate
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActionsDsl
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import java.math.BigDecimal
 
@@ -29,6 +30,12 @@ object TestCommonFunctions {
             status = status
         )
         return v1AccountSaveService.save(account.update(predicate))
+    }
+
+    fun MockMvc.getProc(url: String, vararg queryParam: Any): ResultActionsDsl {
+        return this.get(url, queryParam) {
+            contentType = MediaType.APPLICATION_JSON
+        }.andDo { print() }
     }
 
     fun MockMvc.postProc(url: String, request: Any): ResultActionsDsl {

@@ -41,7 +41,7 @@ class V1KoreaeximExchangeRateRepositoryImpl(
                 predicate = V1KoreaeximExchangeRatePredicate(registerDate = registerDate, curUnit = curUnit),
                 pageable = PageableRequest(number = 0, size = 1, sortBy = "index")
             )
-            .content.first()
+            .content.firstOrNull()
     }
 
 }

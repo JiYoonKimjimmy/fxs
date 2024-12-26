@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.service.domain
 
+import com.konai.fxs.v1.exchangerate.controller.model.V1KoreaeximExchangeRateModel
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.entity.V1KoreaeximExchangeRateEntity
 import org.springframework.stereotype.Component
 
@@ -39,6 +40,21 @@ class V1KoreaeximExchangeRateMapper {
             tenDdEfeeR = entity.tenDdEfeeR,
             kftcDealBasR = entity.kftcDealBasR,
             kftcBkpr = entity.kftcBkpr,
+        )
+    }
+
+    fun domainToModel(domain: V1KoreaeximExchangeRate): V1KoreaeximExchangeRateModel {
+        return V1KoreaeximExchangeRateModel(
+            curUnit = domain.curUnit,
+            curNm = domain.curNm,
+            ttb = domain.ttb,
+            tts = domain.tts,
+            dealBasR = domain.dealBasR,
+            bkpr = domain.bkpr,
+            yyEfeeR = domain.yyEfeeR,
+            tenDdEfeeR = domain.tenDdEfeeR,
+            kftcDealBasR = domain.kftcDealBasR,
+            kftcBkpr = domain.kftcBkpr
         )
     }
 
