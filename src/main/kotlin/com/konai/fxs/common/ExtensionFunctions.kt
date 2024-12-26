@@ -1,5 +1,6 @@
 package com.konai.fxs.common
 
+import com.konai.fxs.infra.error.exception.BaseException
 import com.konasl.commonlib.springweb.correlation.core.ContextField
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
 import org.slf4j.Logger
@@ -25,7 +26,10 @@ fun <T> T?.ifNull(value: T): T {
 }
 
 fun Logger.error(exception: Exception): Exception {
-    this.error(exception.message, exception)
+    when (exception) {
+        is BaseException -> this.error("${exception.errorCode.message}. ${exception.detailMessage}", exception)
+        else -> this.error(exception.message, exception)
+    }
     return exception
 }
 

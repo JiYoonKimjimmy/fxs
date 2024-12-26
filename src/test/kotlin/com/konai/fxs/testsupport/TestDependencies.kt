@@ -108,7 +108,7 @@ object TestDependencies {
         v1AccountTransactionService,
         messageQueuePublisher
     )
-    private val koreaeximHttpService = KoreaeximHttpServiceImpl(v1KoreaeximExchangeRateMapper, fakeKoreaeximHttpServiceProxy, applicationProperties)
+    private val koreaeximHttpService = KoreaeximHttpServiceImpl(fakeKoreaeximHttpServiceProxy, applicationProperties)
     val v1KoreaeximExchangeRateCollectService = V1KoreaeximExchangeRateCollectServiceImpl(koreaeximHttpService, fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
 
     // fixture

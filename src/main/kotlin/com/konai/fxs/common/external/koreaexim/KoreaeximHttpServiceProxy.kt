@@ -10,6 +10,6 @@ interface KoreaeximHttpServiceProxy {
         @PathVariable apiKey: String,
         @PathVariable apiType: String,
         @PathVariable searchDate: String
-    ): List<KoreaeximGetExchangeRateResponse>
+    ): List<KoreaeximExchangeRateResponse>
 
 }

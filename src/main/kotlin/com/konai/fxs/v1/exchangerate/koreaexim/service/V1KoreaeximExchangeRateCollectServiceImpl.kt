@@ -24,17 +24,19 @@ class V1KoreaeximExchangeRateCollectServiceImpl(
          * 3. Koreaexim 환율 DB 정보 저장
          */
         return koreaeximHttpService.getExchangeRates(searchDate)
-            .saveAllKoreaeximExchangeRates()
+            .takeIf { it.isSuccess }
+            ?.let { saveAllKoreaeximExchangeRates(it.content) }
+            ?: emptyList()
     }
 
-    private fun List<V1KoreaeximExchangeRate>.saveAllKoreaeximExchangeRates(): List<V1KoreaeximExchangeRate> {
+    private fun saveAllKoreaeximExchangeRates(content: List<V1KoreaeximExchangeRate>): List<V1KoreaeximExchangeRate> {
         runBlocking {
             // 최근 Koreaexim 환율 Cache 정보 변경
-            launch(Dispatchers.IO) { v1KoreaeximExchangeRateRepository.saveAll(this@saveAllKoreaeximExchangeRates) }
+            launch(Dispatchers.IO) { v1KoreaeximExchangeRateRepository.saveAll(content) }
             // Koreaexim 환율 DB 정보 저장
-            launch(Dispatchers.IO) { v1KoreaeximExchangeRateCacheRepository.saveAllKoreaeximExchangeRateCache(this@saveAllKoreaeximExchangeRates) }
+            launch(Dispatchers.IO) { v1KoreaeximExchangeRateCacheRepository.saveAllKoreaeximExchangeRateCache(content) }
         }
-        return this
+        return content
     }
 
 }

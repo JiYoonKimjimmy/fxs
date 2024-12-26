@@ -7,7 +7,7 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
-class KoreaeximGetExchangeRateResponseTest : CustomStringSpec({
+class KoreaeximExchangeRateResponseTest : CustomStringSpec({
 
     val objectMapper = TestCommonFunctions.objectMapper
 
@@ -55,7 +55,7 @@ class KoreaeximGetExchangeRateResponseTest : CustomStringSpec({
         """.trimIndent()
 
         // when
-        val result = objectMapper.readValue(json, KoreaeximGetExchangeRateResponse::class.java)
+        val result = objectMapper.readValue(json, KoreaeximExchangeRateResponse::class.java)
 
         // then
         result shouldNotBe null

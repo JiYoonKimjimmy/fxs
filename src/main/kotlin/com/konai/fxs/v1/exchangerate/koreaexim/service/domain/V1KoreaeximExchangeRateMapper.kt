@@ -1,6 +1,5 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.service.domain
 
-import com.konai.fxs.common.external.koreaexim.KoreaeximGetExchangeRateResponse
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.entity.V1KoreaeximExchangeRateEntity
 import org.springframework.stereotype.Component
 
@@ -40,23 +39,6 @@ class V1KoreaeximExchangeRateMapper {
             tenDdEfeeR = entity.tenDdEfeeR,
             kftcDealBasR = entity.kftcDealBasR,
             kftcBkpr = entity.kftcBkpr,
-        )
-    }
-
-    fun responseToDomain(response: KoreaeximGetExchangeRateResponse, registerDate: String): V1KoreaeximExchangeRate {
-        return V1KoreaeximExchangeRate(
-            registerDate = registerDate,
-            result = response.result,
-            curUnit = response.curUnit,
-            curNm = response.curNm,
-            ttb = response.ttb,
-            tts = response.tts,
-            dealBasR = response.dealBasR,
-            bkpr = response.bkpr,
-            yyEfeeR = response.yyEfeeR,
-            tenDdEfeeR = response.tenDdEfeeR,
-            kftcDealBasR = response.kftcDealBasR,
-            kftcBkpr = response.kftcBkpr,
         )
     }
 

@@ -13,10 +13,15 @@ enum class ErrorCode(
     ACCOUNT_STATUS_IS_DELETED(HttpStatus.BAD_REQUEST, "003", "Account status is already deleted"),
     ACCOUNT_STATUS_IS_INVALID(HttpStatus.BAD_REQUEST, "004", "Account status is invalid"),
     ACCOUNT_BALANCE_IS_INSUFFICIENT(HttpStatus.INTERNAL_SERVER_ERROR, "005", "Account balance is insufficient"),
-    ACCOUNT_TRANSACTION_NOT_FOUND(HttpStatus.NOT_FOUND, "006", "Account transaction not found"),
-    WITHDRAWAL_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "007", "Withdrawal transaction not found"),
-    WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "008", "Withdrawal completed transaction not found"),
-    WITHDRAWAL_TRANSACTION_IS_COMPLETED(HttpStatus.BAD_REQUEST, "009", "Withdrawal transaction is already completed"),
+
+    WITHDRAWAL_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "006", "Withdrawal transaction not found"),
+    WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "007", "Withdrawal completed transaction not found"),
+    WITHDRAWAL_TRANSACTION_IS_COMPLETED(HttpStatus.BAD_REQUEST, "008", "Withdrawal transaction is already completed"),
+
+    KOREAEXIM_API_TYPE_IS_INVALID(HttpStatus.BAD_REQUEST, "009", "Koreaexim API type is invalid"),
+    KOREAEXIM_API_KEY_IS_INVALID(HttpStatus.BAD_REQUEST, "010", "Koreaexim API key is invalid"),
+    KOREAEXIM_API_REQUEST_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "011", "Koreaexim API request limit exceeded"),
+    KOREAEXIM_API_UNKNOWN_ERROR(HttpStatus.BAD_REQUEST, "012", "Koreaexim API unknown error"),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900", "Internal server error"),
     EXTERNAL_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901", "External API service error"),

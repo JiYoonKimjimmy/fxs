@@ -231,7 +231,7 @@ class V1AccountTransactionControllerTest(
                     status { isBadRequest() }
                     content {
                         jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                        jsonPath("result.code", equalTo("210_2001_007"))
+                        jsonPath("result.code", equalTo("210_2001_006"))
                         jsonPath("result.message", equalTo("Account transaction service failed. Withdrawal transaction not found."))
                     }
                 }
@@ -306,7 +306,7 @@ class V1AccountTransactionControllerTest(
                     status { isBadRequest() }
                     content {
                         jsonPath("result.status", equalTo(ResultStatus.FAILED.name))
-                        jsonPath("result.code", equalTo("210_2001_008"))
+                        jsonPath("result.code", equalTo("210_2001_007"))
                         jsonPath("result.message", equalTo("Account transaction service failed. Withdrawal completed transaction not found."))
                     }
                 }

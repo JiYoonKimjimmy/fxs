@@ -5,6 +5,7 @@ const val COMPONENT_CODE = "210"
 
 const val EMPTY = ""
 const val ZERO_STR = "0"
+const val NONE = "NONE"
 const val DEFAULT_SORT_ORDER = "DESC"
 const val DEFAULT_SORT_BY = "id"
 const val DEFAULT_REQUEST_BY = "FXS_SYSTEM"

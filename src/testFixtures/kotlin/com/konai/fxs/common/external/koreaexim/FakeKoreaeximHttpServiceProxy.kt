@@ -2,10 +2,10 @@ package com.konai.fxs.common.external.koreaexim
 
 class FakeKoreaeximHttpServiceProxy : KoreaeximHttpServiceProxy {
 
-    private val koreaeximGetExchangeRateResponseFixture = KoreaeximGetExchangeRateResponseFixture()
+    private val koreaeximExchangeRateResponseFixture = KoreaeximExchangeRateResponseFixture()
 
-    override fun getExchangeRate(apiKey: String, apiType: String, searchDate: String): List<KoreaeximGetExchangeRateResponse> {
-        return listOf(koreaeximGetExchangeRateResponseFixture.make())
+    override fun getExchangeRate(apiKey: String, apiType: String, searchDate: String): List<KoreaeximExchangeRateResponse> {
+        return listOf(koreaeximExchangeRateResponseFixture.make())
     }
 
 }
