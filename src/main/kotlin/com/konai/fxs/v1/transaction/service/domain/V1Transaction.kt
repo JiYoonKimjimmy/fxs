@@ -1,11 +1,14 @@
 package com.konai.fxs.v1.transaction.service.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.konai.fxs.common.enumerate.*
 import com.konai.fxs.common.enumerate.AcquirerType.FX_DEPOSIT
 import com.konai.fxs.common.enumerate.AcquirerType.MTO_FUNDING
+import com.konai.fxs.common.enumerate.TransactionChannel
+import com.konai.fxs.common.enumerate.TransactionPurpose
 import com.konai.fxs.common.enumerate.TransactionPurpose.REMITTANCE
+import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionStatus.*
+import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.common.enumerate.TransactionType.DEPOSIT
 import com.konai.fxs.common.enumerate.TransactionType.WITHDRAWAL
 import com.konai.fxs.common.util.convertPatternOf

@@ -1,19 +1,9 @@
 package com.konai.fxs.v1.transaction.service
 
 import com.konai.fxs.common.enumerate.TransactionChannel
-import com.konai.fxs.common.enumerate.TransactionStatus.COMPLETED
-import com.konai.fxs.common.lock.DistributedLockManager
-import com.konai.fxs.infra.error.ErrorCode
-import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
-import com.konai.fxs.v1.transaction.service.cache.V1TransactionCacheService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
-import com.konai.fxs.v1.transaction.service.domain.V1TransactionPredicate
-import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -22,9 +12,7 @@ class V1TransactionWithdrawalServiceImpl(
     private val v1AccountValidationService: V1AccountValidationService,
     private val v1AccountSaveService: V1AccountSaveService,
     private val v1TransactionFindService: V1TransactionFindService,
-    private val v1TransactionCacheService: V1TransactionCacheService,
-    private val v1TransactionEventPublisher: V1TransactionEventPublisher,
-    private val distributedLockManager: DistributedLockManager
+    private val v1TransactionAfterService: V1TransactionAfterService,
 ) : V1TransactionWithdrawalService {
 
     @Transactional
@@ -39,7 +27,7 @@ class V1TransactionWithdrawalServiceImpl(
         return transaction
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .changeBalances()
-            .withdrawalTransaction()
+            .withdrawalProcessed()
             .changeStatusToCompleted()
             .publishSaveTransactionEvent()
     }
@@ -57,7 +45,7 @@ class V1TransactionWithdrawalServiceImpl(
         return transaction
             .checkAccountLimit(v1AccountValidationService::checkLimit)
             .changeStatusToPending()
-            .cachingProcessPending()
+            .afterPendingTransaction()
             .publishSaveTransactionEvent()
     }
 
@@ -72,16 +60,11 @@ class V1TransactionWithdrawalServiceImpl(
          */
         return findWithdrawalTransaction(trReferenceId, channel)
             .let(this::withdrawal)
-            .cachingProcessCompleted()
+            .afterCompletedTransaction()
     }
 
     @Transactional
-    override fun cancel(
-        trReferenceId: String,
-        orgTrReferenceId: String,
-        channel: TransactionChannel,
-        canceledTransactionId: () -> Long
-    ): V1Transaction {
+    override fun cancel(trReferenceId: String, orgTrReferenceId: String, channel: TransactionChannel, canceledTransactionId: () -> Long): V1Transaction {
         /**
          * 외화 계좌 출금 취소 처리
          * 1. 외화 계좌 출금 완료 거래 정보 조회
@@ -92,95 +75,56 @@ class V1TransactionWithdrawalServiceImpl(
          * 6. 외화 계좌 출금 취소 거래 생성
          * 7. 외화 계좌 출금 취소 거래 내역 저장 Event 발행
          */
-        return findCompletedWithdrawalTransaction(orgTrReferenceId, channel)
+        return findWithdrawalCompletedTransaction(orgTrReferenceId, channel)
             .checkAccountStatus(v1AccountValidationService::checkStatus)
-            .withdrawalCancelTransaction()
+            .withdrawalCancelProcessed()
             .changeStatusToCanceled()
             .publishSaveTransactionEvent()
             .changeBalances(true)
             .generateCanceledTransaction(trReferenceId, canceledTransactionId)
     }
 
-    private fun V1Transaction.generateCanceledTransaction(trReferenceId: String, canceledTransactionId: () -> Long): V1Transaction {
-        return this
-            .toCanceled(trReferenceId)
-            .applyTransactionId(canceledTransactionId)
-            .changeStatusToCompleted()
-            .publishSaveTransactionEvent()
-    }
-
-    private fun V1Transaction.withdrawalTransaction(): V1Transaction {
-        // 외화 계좌 잔액 출금 처리
-        distributedLockManager.accountLock(this.account) {
-            this.account.withdrawal(this.amount).let(v1AccountSaveService::save)
-        }
-        return this
-    }
-
-    private fun V1Transaction.withdrawalCancelTransaction(): V1Transaction {
-        // 외화 계좌 잔액 입금 처리
-        distributedLockManager.accountLock(this.account) {
-            this.account.deposit(this.amount, this.account.averageExchangeRate).let(v1AccountSaveService::save)
-        }
-        return this
-    }
-
-    private fun V1Transaction.cachingProcessPending(): V1Transaction {
-        runBlocking {
-            // 출금 거래 Cache 생성
-            launch(Dispatchers.IO) { this@cachingProcessPending.saveWithdrawalTransaction() }
-            // 출금 거래 대기 금액 Cache 증액 업데이트
-            launch(Dispatchers.IO) { this@cachingProcessPending.incrementWithdrawalTransactionPendingAmount() }
-        }
-        return this
-    }
-
-    private suspend fun V1Transaction.saveWithdrawalTransaction() {
-        v1TransactionCacheService.saveWithdrawalTransactionCache(this)
-    }
-
-    private suspend fun V1Transaction.incrementWithdrawalTransactionPendingAmount() {
-        distributedLockManager.withdrawalTransactionAmountLick(this.account) {
-            v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(this.baseAcquirer, this.amount)
-        }
-    }
-
-    private fun V1Transaction.cachingProcessCompleted(): V1Transaction {
-        runBlocking {
-            // 출금 거래 Cache 삭제
-            launch(Dispatchers.IO) { this@cachingProcessCompleted.deleteWithdrawalTransaction() }
-            // 출금 거래 대기 금액 Cache 감액 업데이트
-            launch(Dispatchers.IO) { this@cachingProcessCompleted.decrementWithdrawalTransactionPendingAmount() }
-        }
-        return this
-    }
-
-    private suspend fun V1Transaction.deleteWithdrawalTransaction() {
-        v1TransactionCacheService.deleteWithdrawalTransactionCache(this.trReferenceId, this.channel)
-    }
-
-    private suspend fun V1Transaction.decrementWithdrawalTransactionPendingAmount() {
-        distributedLockManager.withdrawalTransactionAmountLick(this.account) {
-            v1TransactionCacheService.decrementWithdrawalTransactionPendingAmountCache(this.baseAcquirer, this.amount)
-        }
-    }
-
     private fun findWithdrawalTransaction(trReferenceId: String, channel: TransactionChannel): V1Transaction {
-        // 출금 거래 Cache 정보 조회
-        return v1TransactionCacheService.findWithdrawalTransactionCache(trReferenceId, channel)
-            // 외화 계좌 거래 내역 DB 조회
-            ?.let { v1TransactionFindService.findByPredicate(V1TransactionPredicate(id = it)) }
-            ?: throw ResourceNotFoundException(ErrorCode.WITHDRAWAL_TRANSACTION_NOT_FOUND)
+        return v1TransactionFindService.findWithdrawalTransaction(trReferenceId, channel)
     }
 
-    private fun findCompletedWithdrawalTransaction(trReferenceId: String, channel: TransactionChannel): V1Transaction {
-        return V1TransactionPredicate(trReferenceId = trReferenceId, channel = channel, status = COMPLETED)
-            .let { v1TransactionFindService.findByPredicate(it) }
-            ?: throw ResourceNotFoundException(ErrorCode.WITHDRAWAL_COMPLETED_TRANSACTION_NOT_FOUND)
+    private fun findWithdrawalCompletedTransaction(trReferenceId: String, channel: TransactionChannel): V1Transaction {
+        return v1TransactionFindService.findWithdrawalCompletedTransaction(trReferenceId, channel)
+    }
+
+    private fun V1Transaction.withdrawalProcessed(): V1Transaction {
+        // 외화 계좌 잔액 출금 처리
+        this.account
+            .withdrawal(this.amount)
+            .let(v1AccountSaveService::save)
+        return this
+    }
+
+    private fun V1Transaction.withdrawalCancelProcessed(): V1Transaction {
+        // 외화 계좌 잔액 입금 처리
+        this.account
+            .withdrawalCanceled(this.amount)
+            .let(v1AccountSaveService::save)
+        return this
+    }
+
+    private fun V1Transaction.afterPendingTransaction(): V1Transaction {
+        return v1TransactionAfterService.cachingPendingTransaction(this)
+    }
+
+    private fun V1Transaction.afterCompletedTransaction(): V1Transaction {
+        return v1TransactionAfterService.cachingCompletedTransaction(this)
     }
 
     private fun V1Transaction.publishSaveTransactionEvent(): V1Transaction {
-        return this.also(v1TransactionEventPublisher::saveTransaction)
+        return v1TransactionAfterService.publishSaveTransaction(this)
+    }
+
+    private fun V1Transaction.generateCanceledTransaction(trReferenceId: String, canceledTransactionId: () -> Long): V1Transaction {
+        return this.toCanceled(trReferenceId)
+            .applyTransactionId(canceledTransactionId)
+            .changeStatusToCompleted()
+            .publishSaveTransactionEvent()
     }
 
 }

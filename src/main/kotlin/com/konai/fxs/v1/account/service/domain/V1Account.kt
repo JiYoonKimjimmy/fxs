@@ -77,7 +77,6 @@ data class V1Account(
          * 외화 계좌 입금
          * - 외화 계좌 잔액 증액 처리
          * - 평단가 계산
-         *   - 평단가 = ((이전 매입 환율 * 수량) + (현재 매입 환율 * 수량)) / (총 매입 수량)
          */
         return copy(
             balance = balance + amount,
@@ -87,6 +86,10 @@ data class V1Account(
     }
 
     private fun calculateAverageExchangeRate(amount: BigDecimal, exchangeRate: BigDecimal): BigDecimal {
+        /**
+         * 평단가 계산
+         * - 평단가 = ((이전 매입 환율 * 수량) + (현재 매입 환율 * 수량)) / (총 매입 수량)
+         */
         val averagePart = averageExchangeRate.multiply(depositAmount)
         val exchangePart = exchangeRate.multiply(amount)
         val numerator = averagePart.add(exchangePart)
@@ -100,6 +103,14 @@ data class V1Account(
          * - 외화 계좌 잔액 감액 처리
          */
         return copy(balance = balance - amount)
+    }
+
+    fun withdrawalCanceled(amount: BigDecimal): V1Account {
+        /**
+         * 외화 계좌 출금 취소
+         * - 외화 계좌 평균 환율 기준 잔액 입금 처리
+         */
+        return deposit(amount, averageExchangeRate)
     }
 
 }

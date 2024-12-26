@@ -1,10 +1,8 @@
 package com.konai.fxs.v1.transaction.service
 
-import com.konai.fxs.common.lock.DistributedLockManager
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
-import com.konai.fxs.v1.transaction.service.event.V1TransactionEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -12,8 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 class V1TransactionDepositServiceImpl(
     private val v1AccountValidationService: V1AccountValidationService,
     private val v1AccountSaveService: V1AccountSaveService,
-    private val v1TransactionEventPublisher: V1TransactionEventPublisher,
-    private val distributedLockManager: DistributedLockManager
+    private val v1TransactionAfterService: V1TransactionAfterService,
 ) : V1TransactionDepositService {
 
     @Transactional
@@ -34,14 +31,14 @@ class V1TransactionDepositServiceImpl(
 
     private fun V1Transaction.depositTransaction(): V1Transaction {
         // 외화 계좌 잔액/평균 환율 변경 처리
-        distributedLockManager.accountLock(this.account) {
-            this.account.deposit(this.amount, this.exchangeRate).let(v1AccountSaveService::save)
-        }
+        this.account
+            .deposit(this.amount, this.exchangeRate)
+            .let(v1AccountSaveService::save)
         return this
     }
 
     private fun V1Transaction.publishSaveTransactionEvent(): V1Transaction {
-        return this.also(v1TransactionEventPublisher::saveTransaction)
+        return v1TransactionAfterService.publishSaveTransaction(this)
     }
 
 }

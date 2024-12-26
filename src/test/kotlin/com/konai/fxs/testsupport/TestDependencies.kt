@@ -74,7 +74,7 @@ object TestDependencies {
     // service
     val v1TransactionCacheService = V1TransactionCacheServiceImpl(v1TransactionCacheRepository)
 
-    val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository)
+    val v1AccountSaveService = V1AccountSaveServiceImpl(fakeV1AccountRepository, fakeDistributedLockManager)
     val v1AccountFindService = V1AccountFindServiceImpl(fakeV1AccountRepository)
     val v1AccountManagementService = V1AccountManagementServiceImpl(v1AccountSaveService, v1AccountFindService)
     val v1AccountValidationService = V1AccountValidationServiceImpl(v1AccountFindService, v1TransactionCacheService)
@@ -83,20 +83,18 @@ object TestDependencies {
 
     private val v1TransactionEventPublisher = V1TransactionEventPublisherImpl(v1TransactionMapper, fakeApplicationEventPublisher)
     private val v1TransactionSaveService = V1TransactionSaveServiceImpl(fakeV1TransactionRepository, fakeRetryableManager)
-    val v1TransactionFindService = V1TransactionFindServiceImpl(fakeV1TransactionRepository)
+    private val v1TransactionAfterService = V1TransactionAfterServiceImpl(v1TransactionCacheService, v1TransactionEventPublisher, fakeDistributedLockManager)
+    val v1TransactionFindService = V1TransactionFindServiceImpl(fakeV1TransactionRepository, v1TransactionCacheRepository)
     val v1TransactionDepositService = V1TransactionDepositServiceImpl(
         v1AccountValidationService,
         v1AccountSaveService,
-        v1TransactionEventPublisher,
-        fakeDistributedLockManager
+        v1TransactionAfterService
     )
     val v1TransactionWithdrawalService = V1TransactionWithdrawalServiceImpl(
         v1AccountValidationService,
         v1AccountSaveService,
         v1TransactionFindService,
-        v1TransactionCacheService,
-        v1TransactionEventPublisher,
-        fakeDistributedLockManager
+        v1TransactionAfterService
     )
     val v1AccountTransactionService = V1AccountTransactionServiceImpl(
         v1TransactionDepositService,
