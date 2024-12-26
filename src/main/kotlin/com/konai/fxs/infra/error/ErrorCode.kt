@@ -23,6 +23,8 @@ enum class ErrorCode(
     KOREAEXIM_API_REQUEST_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "011", "Koreaexim API request limit exceeded"),
     KOREAEXIM_API_UNKNOWN_ERROR(HttpStatus.BAD_REQUEST, "012", "Koreaexim API unknown error"),
 
+    EXCHANGE_RATE_NOT_FOUND(HttpStatus.NOT_FOUND, "013", "Exchange rate not found"),
+
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900", "Internal server error"),
     EXTERNAL_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901", "External API service error"),
     EXTERNAL_URL_PROPERTY_NOT_DEFINED(HttpStatus.INTERNAL_SERVER_ERROR, "902", "External url property is not defined"),

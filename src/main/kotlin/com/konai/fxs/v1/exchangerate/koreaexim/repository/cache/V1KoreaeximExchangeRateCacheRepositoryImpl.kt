@@ -29,4 +29,10 @@ class V1KoreaeximExchangeRateCacheRepositoryImpl(
         return koreaeximExchangeRateRedisTemplate.opsForValue().get(key)
     }
 
+    override fun clearKoreaeximExchangeRateCache(currency: String) {
+        val key = KOREAEXIM_EXCHANGE_RATE_CACHE.getKey(currency)
+        logger.info("clearKoreaeximExchangeRateCache : [$key]")
+        koreaeximExchangeRateRedisTemplate.delete(key)
+    }
+
 }

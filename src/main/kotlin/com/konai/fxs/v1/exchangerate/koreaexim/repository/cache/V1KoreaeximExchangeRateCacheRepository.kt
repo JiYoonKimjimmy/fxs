@@ -10,4 +10,6 @@ interface V1KoreaeximExchangeRateCacheRepository {
 
     fun findKoreaeximExchangeRateCache(currency: String): V1KoreaeximExchangeRate?
 
+    fun clearKoreaeximExchangeRateCache(currency: String)
+
 }

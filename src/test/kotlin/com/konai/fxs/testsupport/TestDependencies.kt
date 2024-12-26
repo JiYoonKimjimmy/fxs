@@ -23,6 +23,7 @@ import com.konai.fxs.v1.exchangerate.koreaexim.repository.FakeV1KoreaeximExchang
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.cache.V1KoreaeximExchangeRateCacheRepositoryImpl
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.entity.V1KoreaeximExchangeRateEntityFixture
 import com.konai.fxs.v1.exchangerate.koreaexim.service.V1KoreaeximExchangeRateCollectServiceImpl
+import com.konai.fxs.v1.exchangerate.koreaexim.service.V1KoreaeximExchangeRateFindServiceImpl
 import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRateFixture
 import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRateMapper
 import com.konai.fxs.v1.sequence.repository.FakeV1SequenceGeneratorRepositoryImpl
@@ -110,6 +111,8 @@ object TestDependencies {
     )
     private val koreaeximHttpService = KoreaeximHttpServiceImpl(fakeKoreaeximHttpServiceProxy, applicationProperties)
     val v1KoreaeximExchangeRateCollectService = V1KoreaeximExchangeRateCollectServiceImpl(koreaeximHttpService, fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
+
+    val v1KoreaeximExchangeRateFindService = V1KoreaeximExchangeRateFindServiceImpl(fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

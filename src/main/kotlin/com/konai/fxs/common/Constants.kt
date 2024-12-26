@@ -16,4 +16,5 @@ const val HEADER_REQUEST_START_TIME = "X-KM-Request-Start-Time"
 object Currency {
     const val KRW = "KRW"
     const val USD = "USD"
+    const val EUR = "EUR"
 }

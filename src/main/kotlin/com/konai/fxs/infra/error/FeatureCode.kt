@@ -12,4 +12,6 @@ enum class FeatureCode(
 
     V1_ACCOUNT_TRANSACTION_SERVICE("2001", "Account transaction service"),
 
+    V1_EXCHANGE_RATE_FIND_SERVICE("3001", "Exchange rate find service"),
+
 }

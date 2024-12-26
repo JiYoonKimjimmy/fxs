@@ -1,11 +1,14 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.service.domain
 
+import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.testsupport.TestExtensionFunctions.fixtureMonkey
 import com.navercorp.fixturemonkey.kotlin.giveMeKotlinBuilder
+import java.time.LocalDate
 
 class V1KoreaeximExchangeRateFixture {
 
     fun make(
+        registerDate: String = LocalDate.now().convertPatternOf(),
         result: Int = 1,
         curUnit: String = "USD",
         curNm: String = "미국 달러",
@@ -19,6 +22,7 @@ class V1KoreaeximExchangeRateFixture {
         kftcBkpr: String = "1,434",
     ): V1KoreaeximExchangeRate {
         return fixtureMonkey.giveMeKotlinBuilder<V1KoreaeximExchangeRate>()
+            .setExp(V1KoreaeximExchangeRate::registerDate, registerDate)
             .setExp(V1KoreaeximExchangeRate::result, result)
             .setExp(V1KoreaeximExchangeRate::curUnit, curUnit)
             .setExp(V1KoreaeximExchangeRate::curNm, curNm)

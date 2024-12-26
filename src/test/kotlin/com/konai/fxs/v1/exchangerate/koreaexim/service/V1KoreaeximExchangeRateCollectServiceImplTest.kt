@@ -19,27 +19,6 @@ class V1KoreaeximExchangeRateCollectServiceImplTest : CustomBehaviorSpec({
         val index = 1
         val searchDate = "20241217"
 
-        `when`("Koreaexim API 응답 결과 'RESULT: 2' 에러인 경우") {
-            
-            then("'API 요청 데이터 오류 에러 코드' 예외 발생 정상 확인한다") {
-                
-            }
-        }
-        
-        `when`("Koreaexim API 응답 결과 'RESULT: 3' 에러인 경우") {
-
-            then("'API 인증키 만료 에러 코드' 예외 발생 정상 확인한다") {
-                
-            }
-        }
-
-        `when`("Koreaexim API 응답 결과 'RESULT: 4' 에러인 경우") {
-
-            then("'API 호출 횟수 초과 에러 코드' 예외 발생 정상 확인한다") {
-                
-            }
-        }
-
         `when`("API 연동 정상 조회 성공인 경우") {
             val result = v1KoreaeximExchangeRateCollectService.collect(index, searchDate)
 
