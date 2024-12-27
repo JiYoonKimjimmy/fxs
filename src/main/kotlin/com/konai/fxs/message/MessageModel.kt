@@ -1,4 +1,4 @@
-package com.konai.fxs.common.message
+package com.konai.fxs.message
 
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import com.konasl.commonlib.springweb.correlation.core.RequestContext

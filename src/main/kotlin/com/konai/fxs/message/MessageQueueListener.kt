@@ -1,4 +1,4 @@
-package com.konai.fxs.common.message
+package com.konai.fxs.message
 
 import com.konai.fxs.v1.exchangerate.koreaexim.service.V1KoreaeximExchangeRateCollectService
 import com.konai.fxs.v1.transaction.service.V1TransactionExpireService

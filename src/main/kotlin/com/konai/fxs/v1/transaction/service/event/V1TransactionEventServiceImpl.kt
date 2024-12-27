@@ -1,7 +1,7 @@
 package com.konai.fxs.v1.transaction.service.event
 
-import com.konai.fxs.common.message.MessageQueueExchange.V1_EXPIRE_TRANSACTION_EXCHANGE
-import com.konai.fxs.common.message.MessageQueuePublisher
+import com.konai.fxs.message.MessageQueueExchange.V1_EXPIRE_TRANSACTION_EXCHANGE
+import com.konai.fxs.message.MessageQueuePublisher
 import com.konai.fxs.v1.transaction.service.V1AccountTransactionService
 import com.konai.fxs.v1.transaction.service.V1TransactionSaveService
 import com.konai.fxs.v1.transaction.service.domain.V1TransactionMapper

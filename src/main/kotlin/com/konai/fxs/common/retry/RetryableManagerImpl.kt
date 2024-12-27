@@ -1,9 +1,9 @@
 package com.konai.fxs.common.retry
 
-import com.konai.fxs.common.message.MessageQueueExchange.*
+import com.konai.fxs.message.MessageQueueExchange.*
 import com.konai.fxs.common.error
-import com.konai.fxs.common.message.MessageQueuePublisher
-import com.konai.fxs.common.message.V1SaveTransactionMessage
+import com.konai.fxs.message.MessageQueuePublisher
+import com.konai.fxs.message.V1SaveTransactionMessage
 import com.konai.fxs.infra.error.exception.BaseException
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 import org.slf4j.LoggerFactory

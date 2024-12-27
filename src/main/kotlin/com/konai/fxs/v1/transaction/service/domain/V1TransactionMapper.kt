@@ -3,7 +3,7 @@ package com.konai.fxs.v1.transaction.service.domain
 import com.konai.fxs.common.enumerate.TransactionStatus
 import com.konai.fxs.common.enumerate.TransactionType
 import com.konai.fxs.common.getCorrelationId
-import com.konai.fxs.common.message.V1ExpireTransactionMessage
+import com.konai.fxs.message.V1ExpireTransactionMessage
 import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.v1.account.repository.entity.V1AccountEntity.V1AcquirerEntity
 import com.konai.fxs.v1.account.service.domain.V1Account.V1Acquirer

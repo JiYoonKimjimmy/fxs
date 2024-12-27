@@ -3,7 +3,7 @@ package com.konai.fxs.testsupport
 import com.konai.fxs.common.external.koreaexim.FakeKoreaeximHttpServiceProxy
 import com.konai.fxs.common.external.koreaexim.KoreaeximHttpServiceImpl
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
-import com.konai.fxs.common.message.MessageQueuePublisherImpl
+import com.konai.fxs.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.infra.config.ApplicationProperties
 import com.konai.fxs.testsupport.event.FakeApplicationEventPublisher

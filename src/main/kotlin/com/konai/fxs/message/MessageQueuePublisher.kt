@@ -1,4 +1,4 @@
-package com.konai.fxs.common.message
+package com.konai.fxs.message
 
 interface MessageQueuePublisher {
 
