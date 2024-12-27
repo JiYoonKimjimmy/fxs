@@ -1,8 +1,5 @@
 package com.konai.fxs.message
 
-import com.konai.fxs.message.MessageQueue
-import com.konai.fxs.message.MessageQueueExchange
-import com.konai.fxs.message.V1SaveTransactionMessage
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_SAVE_TRANSACTION_EXCHANGE
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQTestListener

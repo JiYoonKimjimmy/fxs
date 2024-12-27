@@ -3,8 +3,6 @@ package com.konai.fxs.message
 import com.konai.fxs.common.enumerate.TransactionStatus.EXPIRED
 import com.konai.fxs.common.enumerate.TransactionStatus.PENDING
 import com.konai.fxs.message.MessageQueueExchange.V1_EXPIRE_TRANSACTION_EXCHANGE
-import com.konai.fxs.message.V1ExpireTransactionMessage
-import com.konai.fxs.message.V1SaveTransactionMessage
 import com.konai.fxs.testsupport.CustomBehaviorSpec
 import com.konai.fxs.testsupport.annotation.CustomSpringBootTest
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_SAVE_TRANSACTION_EXCHANGE
