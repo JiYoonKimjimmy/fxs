@@ -12,7 +12,7 @@ class V1KoreaeximExchangeRateEntity(
     @SequenceGenerator(name = "V1_KOREAEXIM_EXCHANGE_RATE_SEQ", sequenceName = "V1_KOREAEXIM_EXCHANGE_RATE_SEQ", allocationSize = 1)
     @Column(name = "ID")
     override var id: Long? = null,
-    @Column(name = "INDEX")
+    @Column(name = "REGISTER_INDEX")
     val index: Int,
     @Column(name = "REGISTER_DATE")
     val registerDate: String,
