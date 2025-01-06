@@ -77,37 +77,6 @@ logging:
 
 ---
 
-spring:
-  config:
-    activate:
-      on-profile: dev
-  datasource:
-    url: jdbc:oracle:thin:@118.33.122.24:15322:KMDBP19
-    hikari:
-      driver-class-name: oracle.jdbc.OracleDriver
-      jdbc-url: jdbc:oracle:thin:@118.33.122.24:15322:KMDBP19
-      username: fxs
-      password: StgFXS1104#
-  jpa:
-    database-platform: org.hibernate.dialect.OracleDialect
-    show-sql: true
-    generate-ddl: false
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        format_sql: true
-  data:
-    redis:
-      host: 118.33.122.28
-      port: 6379
-      password: 123456
-      sentinel:
-        master: mymaster
-        nodes: 118.33.122.28:26379
-
----
-
 # spring
 spring:
   config:
