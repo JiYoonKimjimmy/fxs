@@ -1,11 +1,17 @@
 package com.konai.fxs.common.lock
 
 import com.konai.fxs.common.enumerate.SequenceType
+import com.konai.fxs.infra.error.ErrorCode
+import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.TestExtensionFunctions.generateSequence
 import com.konai.fxs.testsupport.redis.EmbeddedRedis
 import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
@@ -99,6 +105,26 @@ class DistributedLockManagerImplTest : CustomStringSpec({
 
         // then
         result shouldBe "Hello World, TRANSACTION_SEQUENCE"
+    }
+
+    "'exchangeRateCollectorTimerLock' 중복 Lock 점유 요청 예외 발생 정상 확인한다" {
+        // given
+        val date = "20241227"
+        val block: () -> String = {
+            Thread.sleep(2000)
+            "Hello World, $date."
+        }
+
+        // when
+        val task1 = async(Dispatchers.Default) { distributedLockManager.exchangeRateCollectorTimerLock(date) { block() } }
+        val task2 = async(Dispatchers.Default) {
+            delay(1000)
+            shouldThrow<InternalServiceException> { distributedLockManager.exchangeRateCollectorTimerLock(date) { block() } }
+        }
+
+        // then
+        task1.await() shouldBe "Hello World, 20241227."
+        task2.await().errorCode shouldBe ErrorCode.REDISSON_LOCK_ATTEMPT_ERROR
     }
 
 })

@@ -41,9 +41,14 @@ class FakeDistributedLockManagerImpl : DistributedLockManager {
         return lock(key = key, leaseTime = 0, block = block)
     }
 
-    override fun <R> withdrawalTransactionAmountLick(account: V1Account, block: () -> R): R {
+    override fun <R> withdrawalTransactionAmountLock(account: V1Account, block: () -> R): R {
         val key = DistributedLockType.WITHDRAWAL_TRANSACTION_AMOUNT_LOCK.getKey(account.id.toString())
         return lock(key = key, leaseTime = 0, block = block)
+    }
+
+    override fun <R> exchangeRateCollectorTimerLock(date: String, block: () -> R): R {
+        val key = DistributedLockType.EXCHANGE_RATE_COLLECTOR_TIMER_LOCK.getKey(date)
+        return lock(key = key, waitTime = 0, leaseTime = 0, block = block)
     }
 
 }

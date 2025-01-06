@@ -17,7 +17,12 @@ enum class DistributedLockType(
     WITHDRAWAL_TRANSACTION_AMOUNT_LOCK(
         note = "외화 계좌 출금 거래 대기 금액 변경 Lock",
         keySpec = "fxs:{accountId}:withdrawal:transaction:lock"
-    );
+    ),
+    EXCHANGE_RATE_COLLECTOR_TIMER_LOCK(
+        note = "환율 정보 수집기 Timer Lock",
+        keySpec = "fxs:{data}:exchange:rate:collect:timer"
+    )
+    ;
 
     fun getKey(vararg args: String): String {
         return when (this) {
@@ -29,6 +34,9 @@ enum class DistributedLockType(
             }
             WITHDRAWAL_TRANSACTION_AMOUNT_LOCK -> {
                 this.keySpec.replace("{accountId}", args[0])
+            }
+            EXCHANGE_RATE_COLLECTOR_TIMER_LOCK -> {
+                this.keySpec.replace("{data}", args[0])
             }
         }
     }

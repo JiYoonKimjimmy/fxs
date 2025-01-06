@@ -6,6 +6,7 @@ import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
 import com.konai.fxs.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.infra.config.ApplicationProperties
+import com.konai.fxs.scheduler.ExchangeRateCollectTimerScheduler
 import com.konai.fxs.testsupport.event.FakeApplicationEventPublisher
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ
 import com.konai.fxs.testsupport.redis.EmbeddedRedis
@@ -48,9 +49,10 @@ object TestDependencies {
     val rabbitTemplate = MockRabbitMQ.rabbitTemplate
     val messageQueuePublisher = MessageQueuePublisherImpl(rabbitTemplate)
 
-    private val applicationProperties = ApplicationProperties(
+    val applicationProperties = ApplicationProperties(
         koreaeximApiKey = "M6qkz3m4nxahvH47Ilu4Rx3k91yDdAxh",
-        koreaeximApiType = "AP01"
+        koreaeximApiType = "AP01",
+        koreaeximCollectorSize = 10
     )
 
     private val fakeApplicationEventPublisher = FakeApplicationEventPublisher()
@@ -110,9 +112,17 @@ object TestDependencies {
         messageQueuePublisher
     )
     private val koreaeximHttpService = KoreaeximHttpServiceImpl(fakeKoreaeximHttpServiceProxy, applicationProperties)
-    val v1KoreaeximExchangeRateCollectService = V1KoreaeximExchangeRateCollectServiceImpl(koreaeximHttpService, fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
+    val v1KoreaeximExchangeRateCollectService = V1KoreaeximExchangeRateCollectServiceImpl(
+        fakeV1KoreaeximExchangeRateRepository,
+        v1KoreaeximExchangeRateCacheRepository,
+        koreaeximHttpService,
+        fakeDistributedLockManager,
+        messageQueuePublisher
+    )
 
     val v1KoreaeximExchangeRateFindService = V1KoreaeximExchangeRateFindServiceImpl(fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
+
+    val exchangeRateCollectTimerScheduler = ExchangeRateCollectTimerScheduler(v1KoreaeximExchangeRateCollectService, applicationProperties)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()

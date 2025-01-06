@@ -12,12 +12,14 @@ interface DistributedLockManager {
         leaseTime: Long = 60,
         timeUnit: TimeUnit = TimeUnit.SECONDS,
         block: () -> R
-    ): R
+    ): R?
 
     fun <R> sequenceLock(sequenceType: SequenceType, block: () -> R): R
 
     fun <R> accountLock(account: V1Account, block: () -> R): R
 
-    fun <R> withdrawalTransactionAmountLick(account: V1Account, block: () -> R): R
+    fun <R> withdrawalTransactionAmountLock(account: V1Account, block: () -> R): R
+
+    fun <R> exchangeRateCollectorTimerLock(date: String, block: () -> R): R
 
 }

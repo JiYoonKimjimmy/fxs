@@ -76,18 +76,18 @@ object MockRabbitMQ {
             bindingFunction = Exchange::setupDeadLetterExchange,
             dlx = V1_EXPIRE_TRANSACTION_DL_EXCHANGE
         ),
-        V1_EXCHANGE_RATE_TIMER_DL_EXCHANGE(
-            exchangeName = "fxs.v1.exchange.rate.timer.dl.exchange",
-            queueName = "fxs.v1.exchange.rate.timer.dl.queue",
-            routingKey = "fxs.v1.exchange.rate.timer.dl.routing-key",
+        V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_EXCHANGE(
+            exchangeName = "fxs.v1.exchange.rate.collector.timer.dl.exchange",
+            queueName = "fxs.v1.exchange.rate.collector.timer.dl.queue",
+            routingKey = "fxs.v1.exchange.rate.collector.timer.dl.routing-key",
             Exchange::setupDirectExchange
         ),
-        V1_EXCHANGE_RATE_TIMER_EXCHANGE(
-            exchangeName = "fxs.v1.exchange.rate.timer.exchange",
-            queueName = "fxs.v1.exchange.rate.timer.queue",
-            routingKey = "fxs.v1.exchange.rate.timer.routing-key",
+        V1_EXCHANGE_RATE_COLLECTOR_TIMER_EXCHANGE(
+            exchangeName = "fxs.v1.exchange.rate.collector.timer.exchange",
+            queueName = "fxs.v1.exchange.rate.collector.timer.queue",
+            routingKey = "fxs.v1.exchange.rate.collector.timer.routing-key",
             bindingFunction = Exchange::setupDeadLetterExchange,
-            dlx = V1_EXCHANGE_RATE_TIMER_DL_EXCHANGE
+            dlx = V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_EXCHANGE
         )
         ;
 

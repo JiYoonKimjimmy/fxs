@@ -13,3 +13,5 @@ springdoc:
 koreaexim-api:
   key: M6qkz3m4nxahvH47Ilu4Rx3k91yDdAxh
   type: AP01
+  collector:
+    size: 1000

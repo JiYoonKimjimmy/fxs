@@ -18,7 +18,7 @@ data class V1ExpireTransactionMessage(
     val amount: Long
 ) : BaseMessage()
 
-data class V1CollectExchangeRateTimerMessage(
+data class V1ExchangeRateCollectorTimerMessage(
     val index: Int,
     val date: String
 ) : BaseMessage()

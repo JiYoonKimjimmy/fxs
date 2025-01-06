@@ -2,6 +2,8 @@ package com.konai.fxs.common.lock
 
 import com.konai.fxs.common.enumerate.DistributedLockType
 import com.konai.fxs.common.enumerate.SequenceType
+import com.konai.fxs.infra.error.ErrorCode
+import com.konai.fxs.infra.error.exception.InternalServiceException
 import com.konai.fxs.v1.account.service.domain.V1Account
 import org.redisson.api.RedissonClient
 import org.slf4j.LoggerFactory
@@ -25,14 +27,16 @@ class DistributedLockManagerImpl(
         val lock = redissonClient.getLock(key)
 
         return try {
-            lock.tryLock(waitTime, leaseTime, timeUnit).also { logger.info("Redisson '$key' locked.") }
-            // block 함수 처리
-            block()
+            if (lock.tryLock(waitTime, leaseTime, timeUnit)) {
+                block().also { logger.info("Redisson '$key' locked.") }
+            } else {
+                logger.info("Redisson '$key' lock attempt failed.")
+                throw InternalServiceException(ErrorCode.REDISSON_LOCK_ATTEMPT_ERROR)
+            }
         } finally {
             try {
                 if (lock.isHeldByCurrentThread) {
-                    lock.unlock()
-                        .also { logger.info("Redisson '$key' unlocked.") }
+                    lock.unlock().also { logger.info("Redisson '$key' unlocked.") }
                 }
             } catch (e: IllegalMonitorStateException) {
                 logger.error("Redisson '$key' Lock already unLock.")
@@ -50,9 +54,13 @@ class DistributedLockManagerImpl(
         return lock(key = key, leaseTime = 0, block = block)
     }
 
-    override fun <R> withdrawalTransactionAmountLick(account: V1Account, block: () -> R): R {
+    override fun <R> withdrawalTransactionAmountLock(account: V1Account, block: () -> R): R {
         val key = DistributedLockType.WITHDRAWAL_TRANSACTION_AMOUNT_LOCK.getKey(account.id.toString())
         return lock(key = key, leaseTime = 0, block = block)
     }
 
+    override fun <R> exchangeRateCollectorTimerLock(date: String, block: () -> R): R {
+        val key = DistributedLockType.EXCHANGE_RATE_COLLECTOR_TIMER_LOCK.getKey(date)
+        return lock(key = key, waitTime = 0, leaseTime = 0, block = block)
+    }
 }

@@ -45,7 +45,7 @@ class V1TransactionAfterServiceImpl(
     }
 
     private suspend fun incrementWithdrawalTransactionPendingAmount(transaction: V1Transaction) {
-        distributedLockManager.withdrawalTransactionAmountLick(transaction.account) {
+        distributedLockManager.withdrawalTransactionAmountLock(transaction.account) {
             v1TransactionCacheService.incrementWithdrawalTransactionPendingAmountCache(transaction.baseAcquirer, transaction.amount)
         }
     }
@@ -55,7 +55,7 @@ class V1TransactionAfterServiceImpl(
     }
 
     private suspend fun decrementWithdrawalTransactionPendingAmount(transaction: V1Transaction) {
-        distributedLockManager.withdrawalTransactionAmountLick(transaction.account) {
+        distributedLockManager.withdrawalTransactionAmountLock(transaction.account) {
             v1TransactionCacheService.decrementWithdrawalTransactionPendingAmountCache(transaction.baseAcquirer, transaction.amount)
         }
     }

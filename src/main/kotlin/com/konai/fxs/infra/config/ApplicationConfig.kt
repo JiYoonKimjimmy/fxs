@@ -13,9 +13,11 @@ import org.springframework.context.annotation.Primary
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
 import org.springframework.retry.annotation.EnableRetry
 import org.springframework.scheduling.annotation.EnableAsync
+import org.springframework.scheduling.annotation.EnableScheduling
 
 @EnableRetry
 @EnableAsync
+@EnableScheduling
 @EnableLoggingFilter
 @EnableCorrelationFilter
 @EnableRedisRepositories

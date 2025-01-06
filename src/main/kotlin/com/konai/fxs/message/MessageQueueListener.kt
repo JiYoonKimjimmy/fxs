@@ -32,9 +32,9 @@ class MessageQueueListener(
         v1TransactionExpireService.expireTransaction(message.transactionId, message.amount)
     }
 
-    @RabbitListener(queues = [MessageQueue.V1_EXCHANGE_RATE_TIMER_DL_QUEUE])
-    fun receiveMessage(message: V1CollectExchangeRateTimerMessage) {
-        logging(message, MessageQueue.V1_EXCHANGE_RATE_TIMER_DL_QUEUE)
+    @RabbitListener(queues = [MessageQueue.V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_QUEUE])
+    fun receiveMessage(message: V1ExchangeRateCollectorTimerMessage) {
+        logging(message, MessageQueue.V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_QUEUE)
         v1KoreaeximExchangeRateCollectService.collect(message.index, message.date)
     }
 

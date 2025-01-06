@@ -31,6 +31,7 @@ enum class ErrorCode(
     UNKNOWN_ENVIRONMENT(HttpStatus.INTERNAL_SERVER_ERROR, "904", "Unknown environment of project"),
     ARGUMENT_NOT_VALID_ERROR(HttpStatus.BAD_REQUEST, "905", "Argument not valid"),
     CACHE_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "906", "Cache service error"),
+    REDISSON_LOCK_ATTEMPT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "907", "Redisson lock attempt error"),
 
     UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "999", "Unknown error"),
 
