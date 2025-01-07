@@ -22,6 +22,7 @@ class V1KoreaeximExchangeRateFixture {
         kftcBkpr: String = "1,434",
     ): V1KoreaeximExchangeRate {
         return fixtureMonkey.giveMeKotlinBuilder<V1KoreaeximExchangeRate>()
+            .setNotNullExp(V1KoreaeximExchangeRate::index)
             .setExp(V1KoreaeximExchangeRate::registerDate, registerDate)
             .setExp(V1KoreaeximExchangeRate::result, result)
             .setExp(V1KoreaeximExchangeRate::curUnit, curUnit)

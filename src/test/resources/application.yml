@@ -1,0 +1,17 @@
+# spring
+spring:
+  profiles:
+    include: base, external-url
+    active: test
+
+# springdoc
+springdoc:
+  swagger-ui:
+    url: /openapi3.yaml
+
+# koreaexim 한국수출입은행 API 연동 설정
+koreaexim-api:
+  key: M6qkz3m4nxahvH47Ilu4Rx3k91yDdAxh
+  type: AP01
+  collector:
+    size: 1000

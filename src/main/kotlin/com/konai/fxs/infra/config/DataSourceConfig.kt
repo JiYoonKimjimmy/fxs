@@ -11,18 +11,19 @@ import org.springframework.context.annotation.Primary
 
 @Configuration
 class DataSourceConfig(
-    @Value("\${spring.datasource.hikari.password}")
+    @Value("\${spring.datasource.password}")
     private val password: String
 ) {
 
     @Bean
     @Primary
     @ConfigurationProperties("spring.datasource.hikari")
-    fun getDataSource(dataSourceProperties: DataSourceProperties): HikariDataSource =
-        dataSourceProperties
+    fun getDataSource(dataSourceProperties: DataSourceProperties): HikariDataSource {
+        return dataSourceProperties
             .initializeDataSourceBuilder()
             .type(HikariDataSource::class.java)
             .password(DBEncryptUtil.decryptCustomInfo(password))
             .build()
+    }
 
 }
