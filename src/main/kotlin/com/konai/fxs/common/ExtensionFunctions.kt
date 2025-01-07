@@ -36,3 +36,7 @@ fun Logger.error(exception: Exception): Exception {
 fun String.emptyStringToNull(): String? {
     return this.ifEmpty { null }
 }
+
+fun String.convertToDouble(): Double {
+    return this.replace(",", EMPTY).toDouble()
+}

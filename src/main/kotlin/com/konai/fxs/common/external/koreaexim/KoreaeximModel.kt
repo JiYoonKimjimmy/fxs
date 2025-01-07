@@ -5,7 +5,7 @@ import com.konai.fxs.common.NONE
 import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate
 
 data class KoreaeximExchangeRateResponse(
-    @field:JsonProperty("result")          val result: Int,                 // 조회 결과 (1: 성공, 2: DATA코드 오류, 3: 인증코드 오류, 4: 일일제한횟수 마감)
+    @field:JsonProperty("result")          val result: Int,           // 조회 결과 (1: 성공, 2: DATA코드 오류, 3: 인증코드 오류, 4: 일일제한횟수 마감)
     @field:JsonProperty("cur_unit")        val curUnit: String?,      // 통화코드
     @field:JsonProperty("cur_nm")          val curNm: String?,        // 국가/통화명
     @field:JsonProperty("ttb")             val ttb: String?,          // 전신환(송금)받으실때(매입환율)

@@ -48,7 +48,11 @@ class V1ExchangeRateFindControllerTest(
                     status { isOk() }
                     content {
                         jsonPath("result.status", equalTo(ResultStatus.SUCCESS.name))
-                        jsonPath("data.curUnit", equalTo(currency))
+                        jsonPath("data.currency", equalTo(currency))
+                        jsonPath("data.currencyName", equalTo("미국 달러"))
+                        jsonPath("data.ttBuyRate", equalTo(1420.55))
+                        jsonPath("data.ttSellRate", equalTo(1449.24))
+                        jsonPath("data.dealCriteriaRate", equalTo(1434.9))
                     }
                 }
             }
