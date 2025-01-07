@@ -30,6 +30,10 @@ data class V1UpdateAccountRequest(
     }
 
     fun validation(): V1UpdateAccountRequest {
+        if (accountId <= 0) {
+            // `accountId` 요청 필드가 `0` 이하인 경우
+            throw InternalServiceException(ErrorCode.ARGUMENT_NOT_VALID_ERROR)
+        }
         val acquirerFields = listOf(acquirerId, acquirerType, acquirerName)
         if (acquirerFields.any { it != null } && acquirerFields.any { it == null }) {
             // `acquirer` 요청 필드가 하나라도 `null` 아니지만, 그 중 하나라도 `null` 인 경우, 예외 발생

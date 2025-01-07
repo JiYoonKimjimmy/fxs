@@ -16,6 +16,7 @@ class V1AccountManagementServiceImpl(
     private val v1AccountFindService: V1AccountFindService
 ) : V1AccountManagementService {
 
+    @Transactional
     override fun save(account: V1Account): V1Account {
         return account
             .checkDuplicatedAcquirer(v1AccountFindService::existsByAcquirer)
@@ -31,6 +32,7 @@ class V1AccountManagementServiceImpl(
         return v1AccountFindService.findAllByPredicate(predicate, pageable)
     }
 
+    @Transactional
     override fun update(predicate: V1AccountPredicate): V1Account {
         return findByPredicate(predicate = V1AccountPredicate(id = predicate.id))
             .checkCanBeUpdated()
