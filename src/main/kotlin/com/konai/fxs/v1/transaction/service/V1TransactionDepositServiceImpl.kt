@@ -33,7 +33,7 @@ class V1TransactionDepositServiceImpl(
         // 외화 계좌 잔액/평균 환율 변경 처리
         this.account
             .deposit(this.amount, this.exchangeRate)
-            .let(v1AccountSaveService::save)
+            .let(v1AccountSaveService::saveAndFlush)
         return this
     }
 

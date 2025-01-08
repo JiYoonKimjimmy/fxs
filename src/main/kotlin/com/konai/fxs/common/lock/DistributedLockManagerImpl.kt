@@ -28,7 +28,8 @@ class DistributedLockManagerImpl(
 
         return try {
             if (lock.tryLock(waitTime, leaseTime, timeUnit)) {
-                block().also { logger.info("Redisson '$key' locked.") }
+                logger.info("Redisson '$key' locked.")
+                block()
             } else {
                 logger.info("Redisson '$key' lock attempt failed.")
                 throw InternalServiceException(ErrorCode.REDISSON_LOCK_ATTEMPT_ERROR)

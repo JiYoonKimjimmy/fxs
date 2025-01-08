@@ -36,10 +36,13 @@ class V1TransactionEntity(
     )
     val targetAcquirer: V1AcquirerEntity?,
     @Column(name = "TYPE")
+    @Enumerated(EnumType.STRING)
     val type: TransactionType,
     @Column(name = "PURPOSE")
+    @Enumerated(EnumType.STRING)
     val purpose: TransactionPurpose,
     @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
     val status: TransactionStatus,
     @Column(name = "CURRENCY")
     val currency: String,

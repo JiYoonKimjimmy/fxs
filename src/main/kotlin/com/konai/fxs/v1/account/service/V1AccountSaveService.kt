@@ -6,4 +6,6 @@ interface V1AccountSaveService {
 
     fun save(account: V1Account): V1Account
 
+    fun saveAndFlush(account: V1Account): V1Account
+
 }

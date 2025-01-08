@@ -19,6 +19,10 @@ class FakeV1AccountRepositoryImpl(
             .let { v1AccountMapper.entityToDomain(it) }
     }
 
+    override fun saveAndFlush(account: V1Account): V1Account {
+        return save(account)
+    }
+
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
         return super.entities.values.find { checkPredicate(predicate, it) }
             ?.let { v1AccountMapper.entityToDomain(it) }

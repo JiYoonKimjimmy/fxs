@@ -96,7 +96,7 @@ class V1TransactionWithdrawalServiceImpl(
         // 외화 계좌 잔액 출금 처리
         this.account
             .withdrawal(this.amount)
-            .let(v1AccountSaveService::save)
+            .let(v1AccountSaveService::saveAndFlush)
         return this
     }
 
@@ -104,7 +104,7 @@ class V1TransactionWithdrawalServiceImpl(
         // 외화 계좌 잔액 입금 처리
         this.account
             .withdrawalCanceled(this.amount)
-            .let(v1AccountSaveService::save)
+            .let(v1AccountSaveService::saveAndFlush)
         return this
     }
 

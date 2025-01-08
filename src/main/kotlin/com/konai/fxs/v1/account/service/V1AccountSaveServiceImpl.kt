@@ -19,4 +19,11 @@ class V1AccountSaveServiceImpl(
         }
     }
 
+    @Transactional
+    override fun saveAndFlush(account: V1Account): V1Account {
+        return distributedLockManager.accountLock(account) {
+            v1AccountRepository.saveAndFlush(account)
+        }
+    }
+
 }

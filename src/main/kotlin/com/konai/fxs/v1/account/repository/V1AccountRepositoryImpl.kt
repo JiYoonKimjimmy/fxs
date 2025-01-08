@@ -23,6 +23,12 @@ class V1AccountRepositoryImpl(
             .let { v1AccountMapper.entityToDomain(it) }
     }
 
+    override fun saveAndFlush(account: V1Account): V1Account {
+        return v1AccountMapper.domainToEntity(account)
+            .let { v1AccountJpaRepository.saveAndFlush(it) }
+            .let { v1AccountMapper.entityToDomain(it) }
+    }
+
     override fun findByPredicate(predicate: V1AccountPredicate): V1Account? {
         return V1AccountJdslExecutor(predicate)
             .let { v1AccountJpaRepository.findOne(it.selectQuery()) }
