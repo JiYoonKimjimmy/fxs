@@ -1,8 +1,9 @@
 # external url
 external-url:
-  knotify:
-    host: http://118.33.122.28
-    port: 15519
-  koreaexim:
-    host: http://localhost
-    port: 8888
+  properties:
+    knotify:
+      host: http://118.33.122.28
+      port: 15519
+    koreaexim:
+      host: http://localhost
+      port: 8888

@@ -30,7 +30,7 @@ management:
 
 # encrypt CubeOne
 database:
-  encrypt-provider: CUBE_ONE
+  encrypt-provider: NONE
 
 # spring
 spring:
