@@ -1,0 +1,33 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPath": "/site/program/financial/exchangeJSON",
+    "queryParameters": {
+      "authkey": { "equalTo": "M6qkz3m4nxahvH47Ilu4Rx3k91yDdAxh" },
+      "data": { "equalTo": "AP01" },
+      "searchdate": { "equalTo": "20241217" }
+    }
+  },
+  "response": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "status": 200,
+    "jsonBody": [
+      {
+        "result":1,
+        "cur_unit":"USD",
+        "ttb":"1,420.55",
+        "tts":"1,449.24",
+        "deal_bas_r":"1,434.9",
+        "bkpr":"1,434",
+        "yy_efee_r":"0",
+        "ten_dd_efee_r":"0",
+        "kftc_bkpr":"1,434",
+        "kftc_deal_bas_r":"1,434.9",
+        "cur_nm":"미국 달러"
+      }
+    ]
+  }
+}

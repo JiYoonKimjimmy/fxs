@@ -120,7 +120,7 @@ object TestDependencies {
         messageQueuePublisher
     )
 
-    val v1KoreaeximExchangeRateFindService = V1KoreaeximExchangeRateFindServiceImpl(fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
+    val v1KoreaeximExchangeRateFindService = V1KoreaeximExchangeRateFindServiceImpl(koreaeximHttpService, fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
 
     val exchangeRateCollectTimerScheduler = ExchangeRateCollectTimerScheduler(v1KoreaeximExchangeRateCollectService, applicationProperties)
 

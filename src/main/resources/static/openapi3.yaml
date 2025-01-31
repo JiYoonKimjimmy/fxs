@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+  title: FXS API
+  description: FXS API
+  version: 0.0.1
+servers:
+- url: http://localhost:12300/fxs
+tags: []
+paths:
+  /api/v1/account:
+    post:
+      tags:
+      - api
+      operationId: save-account
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/api-v1-account-633819584'
+            examples:
+              save-account:
+                value: "{\r\n  \"acquirerId\" : \"MTO_ACQUIRER_ID_TEST_01\",\r\n \
+                  \ \"acquirerType\" : \"MTO_FUNDING\",\r\n  \"acquirerName\" : \"\
+                  MTO_ACQUIRER_NAME_TEST_01\",\r\n  \"currency\" : \"USD\",\r\n  \"\
+                  minRequiredBalance\" : 10000000,\r\n  \"averageExchangeRate\" :\
+                  \ 1300.0\r\n}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-v1-account1246901124'
+              examples:
+                save-account:
+                  value: "{\r\n  \"data\" : {\r\n    \"acquirerId\" : \"MTO_ACQUIRER_ID_TEST_01\"\
+                    ,\r\n    \"acquirerType\" : \"MTO_FUNDING\",\r\n    \"acquirerName\"\
+                    \ : \"MTO_ACQUIRER_NAME_TEST_01\",\r\n    \"currency\" : \"USD\"\
+                    ,\r\n    \"balance\" : 10000000000,\r\n    \"minRequiredBalance\"\
+                    \ : 10000000,\r\n    \"averageExchangeRate\" : 1300.0\r\n  },\r\
+                    \n  \"result\" : {\r\n    \"status\" : \"SUCCESS\",\r\n    \"\
+                    code\" : null,\r\n    \"message\" : null\r\n  }\r\n}"
+  /api/v1/account/{acquirerId}/{acquirerType}/{currency}:
+    get:
+      tags:
+      - api
+      operationId: find-account
+      parameters:
+      - name: acquirerId
+        in: path
+        description: ACQUIRER 아이디
+        required: true
+        schema:
+          type: string
+      - name: acquirerType
+        in: path
+        description: ACQUIRER TYPE
+        required: true
+        schema:
+          type: string
+      - name: currency
+        in: path
+        description: CURRENCY
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-v1-account-acquirerId-acquirerType-currency-112705493'
+              examples:
+                find-account:
+                  value: "{\r\n  \"data\" : {\r\n    \"acquirerId\" : \"MTO_ACQUIRER_ID_TEST_01\"\
+                    ,\r\n    \"acquirerType\" : \"MTO_FUNDING\",\r\n    \"acquirerName\"\
+                    \ : \"MTO_ACQUIRER_NAME_TEST_01\",\r\n    \"currency\" : \"USD\"\
+                    ,\r\n    \"balance\" : 10000000000,\r\n    \"minRequiredBalance\"\
+                    \ : 10000000,\r\n    \"averageExchangeRate\" : 1300.0\r\n  },\r\
+                    \n  \"result\" : {\r\n    \"status\" : \"SUCCESS\",\r\n    \"\
+                    code\" : null,\r\n    \"message\" : null\r\n  }\r\n}"
+components:
+  schemas:
+    api-v1-account-acquirerId-acquirerType-currency-112705493:
+      type: object
+      properties:
+        result:
+          required:
+          - status
+          type: object
+          properties:
+            code:
+              type: string
+              description: 응답 코드
+              nullable: true
+            message:
+              type: string
+              description: 응답 메세지
+              nullable: true
+            status:
+              type: string
+              description: 응답 상태
+        data:
+          required:
+          - acquirerId
+          - acquirerName
+          - acquirerType
+          - averageExchangeRate
+          - balance
+          - currency
+          - minRequiredBalance
+          type: object
+          properties:
+            balance:
+              type: number
+              description: 잔액
+            minRequiredBalance:
+              type: number
+              description: 계좌 최소 유지 잔액
+            averageExchangeRate:
+              type: number
+              description: 평균 환율
+            currency:
+              type: string
+              description: 통화
+            acquirerType:
+              type: string
+              description: "ACQUIRER 타입 [FX_DEPOSIT, FX_PURCHASER, MTO_FUNDING]"
+            acquirerId:
+              type: string
+              description: ACQUIRER 아이디
+            acquirerName:
+              type: string
+              description: ACQUIRER 명
+    api-v1-account1246901124:
+      type: object
+      properties:
+        result:
+          required:
+          - status
+          type: object
+          properties:
+            code:
+              type: string
+              description: 응답 코드
+              nullable: true
+            message:
+              type: string
+              description: 응답 메세지
+              nullable: true
+            status:
+              type: string
+              description: 응답 상태
+        data:
+          required:
+          - acquirerId
+          - acquirerName
+          - acquirerType
+          - averageExchangeRate
+          - balance
+          - currency
+          - minRequiredBalance
+          type: object
+          properties:
+            balance:
+              type: number
+              description: 잔액
+            minRequiredBalance:
+              type: number
+              description: 계좌 최소 유지 잔액
+            averageExchangeRate:
+              type: number
+              description: 평균 환율
+            currency:
+              type: string
+              description: 통화
+            acquirerType:
+              type: string
+              description: "ACQUIRER 타입 [Lcom.konai.fxs.global.support.enumerate.AcquirerType;@29eb5340"
+            acquirerId:
+              type: string
+              description: ACQUIRER 아이디
+            acquirerName:
+              type: string
+              description: ACQUIRER 명
+    api-v1-account-633819584:
+      required:
+      - acquirerId
+      - acquirerName
+      - acquirerType
+      - averageExchangeRate
+      - currency
+      - minRequiredBalance
+      type: object
+      properties:
+        minRequiredBalance:
+          type: number
+          description: 계좌 최소 유지 잔액
+        averageExchangeRate:
+          type: number
+          description: 평균 환율
+        currency:
+          type: string
+          description: 통화
+        acquirerType:
+          type: string
+          description: "ACQUIRER 타입 [Lcom.konai.fxs.global.support.enumerate.AcquirerType;@32b4f90"
+        acquirerId:
+          type: string
+          description: ACQUIRER 아이디
+        acquirerName:
+          type: string
+          description: ACQUIRER 명

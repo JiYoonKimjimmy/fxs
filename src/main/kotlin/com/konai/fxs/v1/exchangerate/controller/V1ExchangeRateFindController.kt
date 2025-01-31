@@ -3,6 +3,7 @@ package com.konai.fxs.v1.exchangerate.controller
 import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.v1.exchangerate.controller.model.V1FindLatestKoreaeximExchangeRateResponse
 import com.konai.fxs.v1.exchangerate.koreaexim.service.V1KoreaeximExchangeRateFindService
+import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate
 import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRateMapper
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,6 +16,11 @@ class V1ExchangeRateFindController(
     private val v1KoreaeximExchangeRateMapper: V1KoreaeximExchangeRateMapper,
     private val v1KoreaeximExchangeRateFindService: V1KoreaeximExchangeRateFindService
 ) {
+
+    @GetMapping("/koreaexim")
+    fun findKoreaeximExchangeRate(@RequestParam searchDate: String?): List<V1KoreaeximExchangeRate> {
+        return v1KoreaeximExchangeRateFindService.findAllExchangeRate(searchDate ?: LocalDate.now().convertPatternOf())
+    }
 
     @GetMapping("/koreaexim/{currency}")
     fun findKoreaeximExchangeRate(

@@ -64,6 +64,7 @@ class RestClientConfig(
             .connectTimeout(connectTimeout)
             .executor(Executors.newVirtualThreadPerTaskExecutor())
             .sslContext(SSLContext.getDefault())
+            .followRedirects(HttpClient.Redirect.ALWAYS)
             .build()
     }
 
