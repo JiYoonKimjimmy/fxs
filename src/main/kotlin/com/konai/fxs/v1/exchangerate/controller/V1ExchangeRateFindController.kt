@@ -18,8 +18,10 @@ class V1ExchangeRateFindController(
 ) {
 
     @GetMapping("/koreaexim")
-    fun findKoreaeximExchangeRate(@RequestParam searchDate: String?): List<V1KoreaeximExchangeRate> {
-        return v1KoreaeximExchangeRateFindService.findAllExchangeRate(searchDate ?: LocalDate.now().convertPatternOf())
+    fun findKoreaeximExchangeRate(
+        @RequestParam(required = false) searchDate: String = LocalDate.now().convertPatternOf()
+    ): List<V1KoreaeximExchangeRate> {
+        return v1KoreaeximExchangeRateFindService.findAllExchangeRate(searchDate)
     }
 
     @GetMapping("/koreaexim/{currency}")
