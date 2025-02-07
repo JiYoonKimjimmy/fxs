@@ -1,6 +1,7 @@
 package com.konai.fxs.v1.exchangerate.controller
 
 import com.konai.fxs.common.util.convertPatternOf
+import com.konai.fxs.scheduler.ExchangeRateCollectTimerScheduler
 import com.konai.fxs.v1.exchangerate.controller.model.V1FindLatestKoreaeximExchangeRateResponse
 import com.konai.fxs.v1.exchangerate.koreaexim.service.V1KoreaeximExchangeRateFindService
 import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchangeRate
@@ -14,7 +15,8 @@ import java.time.LocalDate
 @RestController
 class V1ExchangeRateFindController(
     private val v1KoreaeximExchangeRateMapper: V1KoreaeximExchangeRateMapper,
-    private val v1KoreaeximExchangeRateFindService: V1KoreaeximExchangeRateFindService
+    private val exchangeRateCollectTimerScheduler: ExchangeRateCollectTimerScheduler,
+    private val v1KoreaeximExchangeRateFindService: V1KoreaeximExchangeRateFindService,
 ) {
 
     @GetMapping("/koreaexim")
@@ -33,6 +35,11 @@ class V1ExchangeRateFindController(
             .let { v1KoreaeximExchangeRateMapper.domainToModel(it) }
             .let { V1FindLatestKoreaeximExchangeRateResponse(it) }
             .success(HttpStatus.OK)
+    }
+
+    @PostMapping("/set-timer")
+    fun setTimer() {
+        exchangeRateCollectTimerScheduler.readyKoreaeximExchangeRateCollectorTimer()
     }
 
 }

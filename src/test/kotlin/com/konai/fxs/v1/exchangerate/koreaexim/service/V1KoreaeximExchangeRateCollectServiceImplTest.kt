@@ -32,9 +32,10 @@ class V1KoreaeximExchangeRateCollectServiceImplTest : CustomBehaviorSpec({
     given("한국수출입은행 환율 정보 수집기 Timer 요청되어") {
         val date = LocalDate.now().convertPatternOf()
         val size = 1
+        val ttl = 1000
 
         `when`("요청 'size' 만큼 메시지 발생 성공인 경우") {
-            v1KoreaeximExchangeRateCollectService.ready(date, size)
+            v1KoreaeximExchangeRateCollectService.ready(date, size, ttl)
 
             then("처리 결과 정상 확인한다") {
                 val result = rabbitTemplate.receiveAndConvert(V1_EXCHANGE_RATE_COLLECTOR_TIMER_EXCHANGE.queueName) as V1ExchangeRateCollectorTimerMessage

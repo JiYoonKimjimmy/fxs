@@ -33,15 +33,16 @@ class KoreaeximHttpServiceImpl(
     }
 
     private fun checkSuccessResponse(response: List<KoreaeximExchangeRateResponse>): List<KoreaeximExchangeRateResponse> {
-        val result = response.first().result
-        if (result != 1) {
+        if (response.isEmpty()) {
+            handleErrorResponse()
+        } else {
             // API 연동 결과 `result != 1` 인 경우, 에러 처리
-            handleErrorResponse(result)
+            response.first().result.takeIf { it != 1 }?.let { handleErrorResponse(it) }
         }
         return response
     }
 
-    private fun handleErrorResponse(result: Int) {
+    private fun handleErrorResponse(result: Int? = null) {
         val errorCode = when (result) {
             // DATA 오류 : 요청 `data` 정보가 잘못된 경우
             2 -> ErrorCode.KOREAEXIM_API_TYPE_IS_INVALID

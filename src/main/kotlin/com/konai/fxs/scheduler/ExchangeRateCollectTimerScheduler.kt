@@ -16,12 +16,13 @@ class ExchangeRateCollectTimerScheduler(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    @Scheduled(cron = "0 59 11 * * ?")
+    @Scheduled(cron = "0 59 23 * * ?")
     fun readyKoreaeximExchangeRateCollectorTimer() {
         logger.info("!! Run 'readyKoreaeximExchangeRateCollectorTimer' Scheduler !!")
         val date = LocalDate.now().convertPatternOf()
         val size = applicationProperties.koreaeximCollectorSize
-        v1KoreaeximExchangeRateCollectService.ready(date, size)
+        val ttl = applicationProperties.koreaeximCollectorTTL
+        v1KoreaeximExchangeRateCollectService.ready(date, size, ttl)
     }
 
 }

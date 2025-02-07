@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
+import org.springframework.amqp.core.MessagePostProcessor
 import org.springframework.stereotype.Service
 
 @Service
@@ -26,12 +27,13 @@ class V1KoreaeximExchangeRateCollectServiceImpl(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun ready(date: String, size: Int) {
+    override fun ready(date: String, size: Int, ttl: Int) {
         try {
             distributedLockManager.exchangeRateCollectorTimerLock(date) {
                 for (i in 1..size) {
                     val message = V1ExchangeRateCollectorTimerMessage(index = i, date = date)
-                    messageQueuePublisher.sendDirectMessage(V1_EXCHANGE_RATE_COLLECTOR_TIMER_EXCHANGE, message)
+                    val messagePostProcessor = MessagePostProcessor { it.messageProperties.expiration = "${ttl * i}"; it }
+                    messageQueuePublisher.sendDirectMessage(V1_EXCHANGE_RATE_COLLECTOR_TIMER_EXCHANGE, message, messagePostProcessor)
                 }
             }
         } catch (e: Exception) {
@@ -48,8 +50,14 @@ class V1KoreaeximExchangeRateCollectServiceImpl(
          */
         return koreaeximHttpService.getExchangeRates(searchDate)
             .takeIf { it.isSuccess }
-            ?.let { saveAllKoreaeximExchangeRates(it.content) }
+            ?.content
+            ?.applyIndex(index)
+            ?.let { saveAllKoreaeximExchangeRates(it) }
             ?: emptyList()
+    }
+
+    private fun List<V1KoreaeximExchangeRate>.applyIndex(index: Int): List<V1KoreaeximExchangeRate> {
+        return this.map { it.applyIndex(index) }
     }
 
     private fun saveAllKoreaeximExchangeRates(content: List<V1KoreaeximExchangeRate>): List<V1KoreaeximExchangeRate> {

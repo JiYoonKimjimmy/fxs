@@ -14,5 +14,7 @@ class ApplicationProperties(
     val koreaeximApiType: String = EMPTY,
     @Value("\${koreaexim-api.collector.size}")
     val koreaeximCollectorSize: Int = ZERO,
+    @Value("\${koreaexim-api.collector.ttl}")
+    val koreaeximCollectorTTL: Int = ZERO,
 
 )

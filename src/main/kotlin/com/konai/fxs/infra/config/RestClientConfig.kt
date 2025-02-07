@@ -18,6 +18,8 @@ import org.springframework.http.client.JdkClientHttpRequestFactory
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.support.RestClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory
+import java.net.CookieManager
+import java.net.CookiePolicy
 import java.net.http.HttpClient
 import java.time.Duration
 import java.time.Instant
@@ -65,6 +67,7 @@ class RestClientConfig(
             .executor(Executors.newVirtualThreadPerTaskExecutor())
             .sslContext(SSLContext.getDefault())
             .followRedirects(HttpClient.Redirect.ALWAYS)
+            .cookieHandler(CookieManager().apply { setCookiePolicy(CookiePolicy.ACCEPT_ALL) })
             .build()
     }
 

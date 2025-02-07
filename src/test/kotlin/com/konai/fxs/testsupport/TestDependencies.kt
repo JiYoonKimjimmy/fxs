@@ -52,7 +52,8 @@ object TestDependencies {
     val applicationProperties = ApplicationProperties(
         koreaeximApiKey = "M6qkz3m4nxahvH47Ilu4Rx3k91yDdAxh",
         koreaeximApiType = "AP01",
-        koreaeximCollectorSize = 10
+        koreaeximCollectorSize = 10,
+        koreaeximCollectorTTL = 1000
     )
 
     private val fakeApplicationEventPublisher = FakeApplicationEventPublisher()

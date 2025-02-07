@@ -1,7 +1,7 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.service.domain
 
 data class V1KoreaeximExchangeRate(
-    val index: Int? = null,
+    var index: Int? = null,
     val registerDate: String,
     val result: Int,
     val curUnit: String,
@@ -14,4 +14,11 @@ data class V1KoreaeximExchangeRate(
     val tenDdEfeeR: String,
     val kftcDealBasR: String,
     val kftcBkpr: String
-)
+) {
+
+    fun applyIndex(index: Int): V1KoreaeximExchangeRate {
+        this.index = index
+        return this
+    }
+
+}
