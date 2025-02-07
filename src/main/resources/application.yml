@@ -15,3 +15,4 @@ koreaexim-api:
   type: AP01
   collector:
     size: 1000
+    ttl: 86400
