@@ -1,11 +1,13 @@
 package com.konai.fxs.common.external.koreaexim
 
 import com.konai.fxs.common.error
+import com.konai.fxs.common.getCorrelationId
 import com.konai.fxs.infra.config.ApplicationProperties
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.InternalServiceException
 import org.slf4j.LoggerFactory
 import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Recover
 import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 
@@ -30,6 +32,12 @@ class KoreaeximHttpServiceImpl(
             )
             .let { checkSuccessResponse(it) }
             .let { KoreaeximExchangeRateResult(it, searchDate) }
+    }
+
+    @Recover
+    fun recoverGetExchangeRates(e: Exception, searchDate: String): KoreaeximExchangeRateResult {
+        logger.error("[${getCorrelationId()}] FAILED KOREAEXIM API.", e)
+        return KoreaeximExchangeRateResult(searchDate = searchDate)
     }
 
     private fun checkSuccessResponse(response: List<KoreaeximExchangeRateResponse>): List<KoreaeximExchangeRateResponse> {

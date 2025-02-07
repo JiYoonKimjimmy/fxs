@@ -41,7 +41,7 @@ data class KoreaeximExchangeRateResult(
     val isSuccess: Boolean,
     val content: List<V1KoreaeximExchangeRate>
 ) {
-    constructor(response: List<KoreaeximExchangeRateResponse>, searchDate: String) : this(
+    constructor(response: List<KoreaeximExchangeRateResponse> = emptyList(), searchDate: String) : this(
         isSuccess = response.isNotEmpty() && (response.first().result == 1),
         content = response.map { it.toDomain(searchDate) }
     )
