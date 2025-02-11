@@ -1,36 +1,28 @@
 package com.konai.fxs.scheduler
 
+import com.konai.fxs.common.util.convertPatternOf
 import com.konai.fxs.testsupport.CustomBehaviorSpec
-import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_EXCHANGE
-import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_EXCHANGE_RATE_COLLECTOR_TIMER_EXCHANGE
-import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQTestListener
-import com.konai.fxs.testsupport.redis.EmbeddedRedisTestListener
-import io.kotest.matchers.shouldNotBe
-import kotlinx.coroutines.delay
+import com.konai.fxs.v1.exchangerate.koreaexim.service.V1KoreaeximExchangeRateCollectService
+import io.mockk.mockk
+import io.mockk.verify
+import java.time.LocalDate
 
 class ExchangeRateCollectTimerSchedulerTest : CustomBehaviorSpec({
 
-    listeners(
-        EmbeddedRedisTestListener(),
-        MockRabbitMQTestListener(V1_EXCHANGE_RATE_COLLECTOR_TIMER_EXCHANGE, V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_EXCHANGE)
-    )
-
-    val exchangeRateCollectTimerScheduler = dependencies.exchangeRateCollectTimerScheduler
-
-    val rabbitTemplate = dependencies.rabbitTemplate
-    val koreaeximCollectorSize = dependencies.applicationProperties.koreaeximCollectorSize
-    val koreaeximCollectorTTL = dependencies.applicationProperties.koreaeximCollectorTTL
+    val v1KoreaeximExchangeRateCollectService = mockk<V1KoreaeximExchangeRateCollectService>(relaxed = true)
+    val applicationProperties = dependencies.applicationProperties
+    val exchangeRateCollectTimerScheduler = ExchangeRateCollectTimerScheduler(v1KoreaeximExchangeRateCollectService, applicationProperties)
 
     given("한국수출입은행 환율 정보 수집 Timer 실행되어") {
+        val date = LocalDate.now().convertPatternOf()
+        val size = applicationProperties.koreaeximCollectorSize
+        val ttl = applicationProperties.koreaeximCollectorTTL
 
         `when`("Timer 메시지 발행 성공인 경우") {
             exchangeRateCollectTimerScheduler.readyKoreaeximExchangeRateCollectorTimer()
 
             then("메지시 발행 건수 정상 확인한다") {
-                repeat(koreaeximCollectorSize) {
-                    delay(koreaeximCollectorTTL.toLong())
-                    rabbitTemplate.receiveAndConvert(V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_EXCHANGE.queueName) shouldNotBe null
-                }
+                verify { v1KoreaeximExchangeRateCollectService.ready(date, size, ttl) }
             }
         }
     }
