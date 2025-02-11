@@ -6,7 +6,6 @@ import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.infra.config.ApplicationProperties
 import com.konai.fxs.message.MessageQueuePublisherImpl
-import com.konai.fxs.scheduler.ExchangeRateCollectTimerScheduler
 import com.konai.fxs.testsupport.event.FakeApplicationEventPublisher
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ
 import com.konai.fxs.testsupport.redis.EmbeddedRedis
