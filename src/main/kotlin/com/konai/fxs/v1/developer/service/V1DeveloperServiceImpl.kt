@@ -11,16 +11,16 @@ class V1DeveloperServiceImpl(
     private val v1KoreaeximExchangeRateCollectService: V1KoreaeximExchangeRateCollectService
 ) : V1DeveloperService {
 
-    override fun collectKoreaeximExchangeRate(searchDate: String): List<V1KoreaeximExchangeRate> {
-        TODO("Not yet implemented")
+    override fun readyKoreaeximCollectorTimer(date: String, size: Int, ttl: Int) {
+        v1KoreaeximExchangeRateCollectService.ready(date, size, ttl)
+    }
+
+    override fun collectKoreaeximExchangeRate(index: Int, searchDate: String): List<V1KoreaeximExchangeRate> {
+        return v1KoreaeximExchangeRateCollectService.collect(index, searchDate)
     }
 
     override fun findAllKoreaeximExchangeRate(searchDate: String): List<V1KoreaeximExchangeRate> {
         return koreaeximHttpService.getExchangeRates(searchDate).content
-    }
-
-    override fun readyCollectorTimer(date: String, size: Int, ttl: Int) {
-        v1KoreaeximExchangeRateCollectService.ready(date, size, ttl)
     }
 
 }

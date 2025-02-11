@@ -4,10 +4,10 @@ import com.konai.fxs.v1.exchangerate.koreaexim.service.domain.V1KoreaeximExchang
 
 interface V1DeveloperService {
 
-    fun collectKoreaeximExchangeRate(searchDate: String): List<V1KoreaeximExchangeRate>
+    fun readyKoreaeximCollectorTimer(date: String, size: Int, ttl: Int)
+
+    fun collectKoreaeximExchangeRate(index: Int, searchDate: String): List<V1KoreaeximExchangeRate>
 
     fun findAllKoreaeximExchangeRate(searchDate: String): List<V1KoreaeximExchangeRate>
-
-    fun readyCollectorTimer(date: String, size: Int, ttl: Int)
-
+    
 }

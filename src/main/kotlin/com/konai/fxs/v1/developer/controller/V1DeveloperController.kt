@@ -12,20 +12,28 @@ class V1DeveloperController(
     private val v1DeveloperService: V1DeveloperService
 ) {
 
+    @PostMapping("/exchange-rate/koreaexim/ready/collector/timer")
+    fun readyCollectorTimer(
+        @RequestParam(required = false) date: String = LocalDate.now().convertPatternOf(),
+        @RequestParam(required = false) size: Int = 1,
+        @RequestParam(required = false) ttl: Int = 10000,
+    ) {
+        v1DeveloperService.readyKoreaeximCollectorTimer(date, size, ttl)
+    }
+
+    @PostMapping("/exchange-rate/koreaexim/collect")
+    fun collectKoreaeximExchangeRate(
+        @RequestParam(required = false) index: Int = 1,
+        @RequestParam(required = false) searchDate: String = LocalDate.now().convertPatternOf()
+    ): List<V1KoreaeximExchangeRate> {
+        return v1DeveloperService.collectKoreaeximExchangeRate(index, searchDate)
+    }
+
     @GetMapping("/exchange-rate/koreaexim")
     fun findAllKoreaeximExchangeRate(
         @RequestParam(required = false) searchDate: String = LocalDate.now().convertPatternOf()
     ): List<V1KoreaeximExchangeRate> {
         return v1DeveloperService.findAllKoreaeximExchangeRate(searchDate)
-    }
-
-    @PostMapping("/exchange-rate/ready/collector/timer")
-    fun readyCollectorTimer(
-        @RequestParam(required = false) date: String = LocalDate.now().convertPatternOf(),
-        @RequestParam(required = false) size: Int = 1,
-        @RequestParam(required = false) ttl: Int = 10000
-    ) {
-        v1DeveloperService.readyCollectorTimer(date, size, ttl)
     }
 
 }
