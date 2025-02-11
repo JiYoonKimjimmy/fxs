@@ -8,7 +8,7 @@ import io.mockk.verify
 import java.time.LocalDate
 
 class ExchangeRateCollectTimerSchedulerTest : CustomBehaviorSpec({
-
+    
     val v1KoreaeximExchangeRateCollectService = mockk<V1KoreaeximExchangeRateCollectService>(relaxed = true)
     val applicationProperties = dependencies.applicationProperties
     val exchangeRateCollectTimerScheduler = ExchangeRateCollectTimerScheduler(v1KoreaeximExchangeRateCollectService, applicationProperties)

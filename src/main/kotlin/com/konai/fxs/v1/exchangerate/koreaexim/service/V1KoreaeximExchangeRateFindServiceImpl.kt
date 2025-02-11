@@ -1,6 +1,5 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.service
 
-import com.konai.fxs.common.external.koreaexim.KoreaeximHttpService
 import com.konai.fxs.infra.error.ErrorCode
 import com.konai.fxs.infra.error.exception.ResourceNotFoundException
 import com.konai.fxs.v1.exchangerate.koreaexim.repository.V1KoreaeximExchangeRateRepository
@@ -10,14 +9,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class V1KoreaeximExchangeRateFindServiceImpl(
-    private val koreaeximHttpService: KoreaeximHttpService,
     private val v1KoreaeximExchangeRateRepository: V1KoreaeximExchangeRateRepository,
     private val v1KoreaeximExchangeRateCacheRepository: V1KoreaeximExchangeRateCacheRepository,
 ) : V1KoreaeximExchangeRateFindService {
-
-    override fun findAllExchangeRate(searchDate: String): List<V1KoreaeximExchangeRate> {
-        return koreaeximHttpService.getExchangeRates(searchDate).content
-    }
 
     override fun findLatestExchangeRate(currency: String, requestDate: String): V1KoreaeximExchangeRate {
         return v1KoreaeximExchangeRateCacheRepository.findKoreaeximExchangeRateCache(currency = currency)

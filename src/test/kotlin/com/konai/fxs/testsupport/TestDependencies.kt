@@ -3,9 +3,9 @@ package com.konai.fxs.testsupport
 import com.konai.fxs.common.external.koreaexim.FakeKoreaeximHttpServiceProxy
 import com.konai.fxs.common.external.koreaexim.KoreaeximHttpServiceImpl
 import com.konai.fxs.common.lock.FakeDistributedLockManagerImpl
-import com.konai.fxs.message.MessageQueuePublisherImpl
 import com.konai.fxs.common.retry.FakeRetryableManagerImpl
 import com.konai.fxs.infra.config.ApplicationProperties
+import com.konai.fxs.message.MessageQueuePublisherImpl
 import com.konai.fxs.scheduler.ExchangeRateCollectTimerScheduler
 import com.konai.fxs.testsupport.event.FakeApplicationEventPublisher
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ
@@ -121,9 +121,7 @@ object TestDependencies {
         messageQueuePublisher
     )
 
-    val v1KoreaeximExchangeRateFindService = V1KoreaeximExchangeRateFindServiceImpl(koreaeximHttpService, fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
-
-    val exchangeRateCollectTimerScheduler = ExchangeRateCollectTimerScheduler(v1KoreaeximExchangeRateCollectService, applicationProperties)
+    val v1KoreaeximExchangeRateFindService = V1KoreaeximExchangeRateFindServiceImpl(fakeV1KoreaeximExchangeRateRepository, v1KoreaeximExchangeRateCacheRepository)
 
     // fixture
     val v1AccountFixture = V1AccountFixture()
