@@ -10,6 +10,10 @@ fun getCorrelationId(): String {
     return RequestContext.get(ContextField.CORRELATION_ID) ?: RequestContext.generateId()
 }
 
+fun setCorrelationId(correlationId: String?) {
+    RequestContext.put(ContextField.CORRELATION_ID, correlationId)
+}
+
 fun <T> Slice<T?>.firstOrNull(): T? {
     return this.content.ifEmpty { listOf(null) }.first()
 }

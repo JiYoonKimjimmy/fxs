@@ -3,6 +3,7 @@ package com.konai.fxs.message
 import com.konai.fxs.testsupport.CustomStringSpec
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQ.Exchange.V1_SAVE_TRANSACTION_EXCHANGE
 import com.konai.fxs.testsupport.rabbitmq.MockRabbitMQTestListener
+import com.konasl.commonlib.springweb.correlation.headerpropagator.CorrelationHeaderField
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
@@ -25,7 +26,9 @@ class MessageQueuePublisherImplTest : CustomStringSpec({
         messageQueuePublisher.sendDirectMessage(exchange, message)
 
         // then
-        val result = rabbitTemplate.receiveAndConvert(MessageQueue.V1_SAVE_TRANSACTION_QUEUE) as V1SaveTransactionMessage
+        val received = rabbitTemplate.receive(MessageQueue.V1_SAVE_TRANSACTION_QUEUE)!!
+        received.messageProperties.headers[CorrelationHeaderField.CORRELATION_ID_HEADER_FIELD.getName()] shouldBe null
+        val result = rabbitTemplate.messageConverter.fromMessage(received) as V1SaveTransactionMessage
         result shouldNotBe null
         result.transaction.id shouldBe transaction.id
         result.transaction.baseAcquirer.id shouldBe transaction.baseAcquirer.id

@@ -2,6 +2,8 @@ package com.konai.fxs.testsupport.rabbitmq
 
 import com.github.fridujo.rabbitmq.mock.compatibility.MockConnectionFactoryFactory
 import com.konai.fxs.common.EMPTY
+import com.konai.fxs.common.getCorrelationId
+import com.konasl.commonlib.springweb.correlation.headerpropagator.CorrelationHeaderField
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
@@ -19,7 +21,14 @@ object MockRabbitMQ {
             .let(::CachingConnectionFactory)
     }
     val rabbitTemplate: RabbitTemplate by lazy {
-        RabbitTemplate(connectionFactory).apply { messageConverter = Jackson2JsonMessageConverter() }
+        val messagePostProcessor = MessagePostProcessor {
+            it.messageProperties.headers[CorrelationHeaderField.CORRELATION_ID_HEADER_FIELD.getName()] = getCorrelationId()
+            it
+        }
+        RabbitTemplate(connectionFactory).apply {
+            messageConverter = Jackson2JsonMessageConverter()
+            this.setBeforePublishPostProcessors(messagePostProcessor)
+        }
     }
     private val rabbitAdmin: RabbitAdmin by lazy { RabbitAdmin(connectionFactory) }
 
