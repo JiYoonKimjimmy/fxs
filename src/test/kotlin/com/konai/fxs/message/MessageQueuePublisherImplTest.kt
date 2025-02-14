@@ -27,7 +27,8 @@ class MessageQueuePublisherImplTest : CustomStringSpec({
 
         // then
         val received = rabbitTemplate.receive(MessageQueue.V1_SAVE_TRANSACTION_QUEUE)!!
-        received.messageProperties.headers[CorrelationHeaderField.CORRELATION_ID_HEADER_FIELD.getName()] shouldBe null
+        received.messageProperties.headers[CorrelationHeaderField.CORRELATION_ID_HEADER_FIELD.getName()] shouldNotBe null
+
         val result = rabbitTemplate.messageConverter.fromMessage(received) as V1SaveTransactionMessage
         result shouldNotBe null
         result.transaction.id shouldBe transaction.id
