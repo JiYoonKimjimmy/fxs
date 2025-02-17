@@ -22,6 +22,7 @@ enum class ErrorCode(
     KOREAEXIM_API_KEY_IS_INVALID(HttpStatus.BAD_REQUEST, "010", "Koreaexim API key is invalid"),
     KOREAEXIM_API_REQUEST_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "011", "Koreaexim API request limit exceeded"),
     KOREAEXIM_API_UNKNOWN_ERROR(HttpStatus.BAD_REQUEST, "012", "Koreaexim API unknown error"),
+    KOREAEXIM_API_RESPONSE_IS_EMPTY(HttpStatus.NO_CONTENT, "013", "Koreaexim API response is empty"),
 
     EXCHANGE_RATE_NOT_FOUND(HttpStatus.NOT_FOUND, "013", "Exchange rate not found"),
 

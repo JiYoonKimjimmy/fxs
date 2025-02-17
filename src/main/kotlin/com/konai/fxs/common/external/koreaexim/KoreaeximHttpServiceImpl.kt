@@ -58,6 +58,8 @@ class KoreaeximHttpServiceImpl(
             3 -> ErrorCode.KOREAEXIM_API_KEY_IS_INVALID
             // 일일횟수 초과 : 일일 요청 횟수 초과인 경우
             4 -> ErrorCode.KOREAEXIM_API_REQUEST_LIMIT_EXCEEDED
+            // API 응답 Content 없는 경우
+            null -> ErrorCode.KOREAEXIM_API_RESPONSE_IS_EMPTY
             // 그 외, 미정의 에러 처리
             else -> ErrorCode.KOREAEXIM_API_UNKNOWN_ERROR
         }
