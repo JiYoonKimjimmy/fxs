@@ -15,7 +15,7 @@ plugins {
     id("com.gorylenko.gradle-git-properties") version "2.4.2"
     id("com.epages.restdocs-api-spec") version "0.19.2"
     id("org.hidetake.swagger.generator") version "2.19.2"
-    id("java-test-fixtures")
+    `java-test-fixtures`
     jacoco
 }
 
@@ -108,6 +108,8 @@ dependencies {
     testFixturesImplementation("com.navercorp.fixturemonkey:fixture-monkey-kotest:$fixtureMonkeyVersion")
     testFixturesImplementation("com.navercorp.fixturemonkey:fixture-monkey-jackson:$fixtureMonkeyVersion")
     testFixturesImplementation("com.navercorp.fixturemonkey:fixture-monkey-jakarta-validation:$fixtureMonkeyVersion")
+
+    testFixturesImplementation("jakarta.persistence:jakarta.persistence-api")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testRuntimeOnly("com.h2database:h2")
