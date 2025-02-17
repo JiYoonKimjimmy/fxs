@@ -33,7 +33,7 @@ class V1TransactionWithdrawalServiceImplTest : CustomBehaviorSpec({
 
     listeners(
         EmbeddedRedisTestListener(),
-        MockRabbitMQTestListener(V1_EXPIRE_TRANSACTION_EXCHANGE, V1_EXPIRE_TRANSACTION_DL_EXCHANGE)
+        MockRabbitMQTestListener(V1_EXPIRE_TRANSACTION_DL_EXCHANGE, V1_EXPIRE_TRANSACTION_EXCHANGE)
     )
 
     val v1TransactionWithdrawalService = dependencies.v1TransactionWithdrawalService
