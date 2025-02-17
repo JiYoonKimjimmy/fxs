@@ -1,11 +1,8 @@
 package com.konai.fxs.message
 
-import com.konai.fxs.common.getCorrelationId
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
 
-open class BaseMessage(
-    val correlationId: String = getCorrelationId()
-)
+open class BaseMessage
 
 data class V1SaveTransactionMessage(
     val transaction: V1Transaction

@@ -25,6 +25,7 @@ class RabbitMQConfig(
     @Bean
     fun defaultRabbitTemplate(connectionFactory: ConnectionFactory): RabbitTemplate {
         val messagePostProcessor = MessagePostProcessor {
+            it.messageProperties.correlationId
             it.messageProperties.headers[CorrelationHeaderField.CORRELATION_ID_HEADER_FIELD.getName()] = getCorrelationId()
             it
         }

@@ -16,25 +16,25 @@ class MessageQueueListener(
     // logger
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private fun logging(message: BaseMessage, queueName: String) {
-        logger.info("[${message.correlationId}] [$queueName] Received.")
+    private fun logging(queueName: String) {
+        logger.info("[$queueName] Received.")
     }
 
     @RabbitListener(queues = [MessageQueue.V1_SAVE_TRANSACTION_QUEUE])
     fun receiveMessage(message: V1SaveTransactionMessage) {
-        logging(message, MessageQueue.V1_SAVE_TRANSACTION_QUEUE)
+        logging(MessageQueue.V1_SAVE_TRANSACTION_QUEUE)
         v1TransactionSaveService.save(message.transaction)
     }
 
     @RabbitListener(queues = [MessageQueue.V1_EXPIRE_TRANSACTION_DL_QUEUE])
     fun receiveMessage(message: V1ExpireTransactionMessage) {
-        logging(message, MessageQueue.V1_EXPIRE_TRANSACTION_DL_QUEUE)
+        logging(MessageQueue.V1_EXPIRE_TRANSACTION_DL_QUEUE)
         v1TransactionExpireService.expireTransaction(message.transactionId, message.amount)
     }
 
     @RabbitListener(queues = [MessageQueue.V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_QUEUE])
     fun receiveMessage(message: V1ExchangeRateCollectorTimerMessage) {
-        logging(message, MessageQueue.V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_QUEUE)
+        logging(MessageQueue.V1_EXCHANGE_RATE_COLLECTOR_TIMER_DL_QUEUE)
         v1KoreaeximExchangeRateCollectService.collect(message.index, message.date)
     }
 

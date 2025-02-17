@@ -3,15 +3,17 @@ package com.konai.fxs.common
 import com.konai.fxs.infra.error.exception.BaseException
 import com.konasl.commonlib.springweb.correlation.core.ContextField
 import com.konasl.commonlib.springweb.correlation.core.RequestContext
+import com.konasl.commonlib.springweb.correlation.loggercontext.CorrelationLoggingField
 import org.slf4j.Logger
+import org.slf4j.MDC
 import org.springframework.data.domain.Slice
 
 fun getCorrelationId(): String {
-    return RequestContext.get(ContextField.CORRELATION_ID) ?: RequestContext.generateId()
+    return RequestContext.get(ContextField.CORRELATION_ID) ?: MDC.get(CorrelationLoggingField.CORRELATION_ID_LOG_FIELD.getName()) ?: RequestContext.generateId()
 }
 
 fun setCorrelationId(correlationId: String?) {
-    RequestContext.put(ContextField.CORRELATION_ID, correlationId)
+    MDC.put(CorrelationLoggingField.CORRELATION_ID_LOG_FIELD.getName(), correlationId)
 }
 
 fun <T> Slice<T?>.firstOrNull(): T? {
