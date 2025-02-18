@@ -1,5 +1,6 @@
 package com.konai.fxs.v1.exchangerate.koreaexim.service
 
+import com.konai.fxs.common.VIRTUAL_THREAD
 import com.konai.fxs.common.error
 import com.konai.fxs.common.external.koreaexim.KoreaeximHttpService
 import com.konai.fxs.common.lock.DistributedLockManager
@@ -61,11 +62,11 @@ class V1KoreaeximExchangeRateCollectServiceImpl(
     }
 
     private fun saveAllKoreaeximExchangeRates(content: List<V1KoreaeximExchangeRate>): List<V1KoreaeximExchangeRate> {
-        runBlocking {
+        runBlocking(Dispatchers.VIRTUAL_THREAD) {
             // 최근 Koreaexim 환율 Cache 정보 변경
-            launch(Dispatchers.IO) { v1KoreaeximExchangeRateRepository.saveAll(content) }
+            launch { v1KoreaeximExchangeRateRepository.saveAll(content) }
             // Koreaexim 환율 DB 정보 저장
-            launch(Dispatchers.IO) { v1KoreaeximExchangeRateCacheRepository.saveAllKoreaeximExchangeRateCache(content) }
+            launch { v1KoreaeximExchangeRateCacheRepository.saveAllKoreaeximExchangeRateCache(content) }
         }
         return content
     }

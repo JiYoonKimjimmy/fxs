@@ -1,5 +1,10 @@
 package com.konai.fxs.common
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.Executors
+
 const val COMPONENT_NAME = "FXS"
 const val COMPONENT_CODE = "210"
 
@@ -19,3 +24,6 @@ object Currency {
     const val USD = "USD"
     const val EUR = "EUR"
 }
+
+val Dispatchers.VIRTUAL_THREAD: ExecutorCoroutineDispatcher
+    get() = Executors.newSingleThreadExecutor().asCoroutineDispatcher()

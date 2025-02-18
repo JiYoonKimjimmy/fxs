@@ -4,6 +4,7 @@ import com.konai.fxs.common.enumerate.TransactionChannel
 import com.konai.fxs.v1.account.service.V1AccountSaveService
 import com.konai.fxs.v1.account.service.V1AccountValidationService
 import com.konai.fxs.v1.transaction.service.domain.V1Transaction
+import kotlinx.coroutines.runBlocking
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -109,11 +110,17 @@ class V1TransactionWithdrawalServiceImpl(
     }
 
     private fun V1Transaction.afterPendingTransaction(): V1Transaction {
-        return v1TransactionAfterService.cachingPendingTransaction(this)
+        runBlocking {
+            v1TransactionAfterService.cachingPendingTransaction(this@afterPendingTransaction)
+        }
+        return this
     }
 
     private fun V1Transaction.afterCompletedTransaction(): V1Transaction {
-        return v1TransactionAfterService.cachingCompletedTransaction(this)
+        runBlocking {
+            v1TransactionAfterService.cachingCompletedTransaction(this@afterCompletedTransaction)
+        }
+        return this
     }
 
     private fun V1Transaction.publishSaveTransactionEvent(): V1Transaction {

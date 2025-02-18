@@ -34,6 +34,9 @@ database:
 
 # spring
 spring:
+  threads:
+    virtual:
+      enabled: true
   datasource:
     hikari:
       pool-name: hikaricp-pool
