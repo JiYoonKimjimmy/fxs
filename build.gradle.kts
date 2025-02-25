@@ -70,12 +70,14 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0")
 
-    runtimeOnly("com.oracle.database.jdbc:ojdbc11")
+    runtimeOnly("com.h2database:h2")
 
     // prometheus
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     implementation("commons-io:commons-io:2.14.0")
+
+    implementation("com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0")
 
     kapt("org.springframework.boot:spring-boot-configuration-processor")
 

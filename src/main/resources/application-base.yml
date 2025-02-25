@@ -95,14 +95,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
-    show-sql: true
     generate-ddl: true
     open-in-view: false
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
   # redis
   data:
     redis:
@@ -115,3 +111,10 @@ spring:
   # rabbitmq
   rabbitmq:
     addresses: localhost:5672
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
+      multiline: true
+      logging: slf4j
